@@ -1,4 +1,4 @@
-baseURL = "https://stevenjohnstone.github.io/blog"
+baseURL = "https://stevenjohnstone.github.io/blog/"
 languageCode = "en-us"
 title = "rm -rf /"
 publishDir = "docs"
