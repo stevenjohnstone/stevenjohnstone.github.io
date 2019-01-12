@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on rm -rf /</title>
-    <link>https://stevenjohnstone.github.io/posts/</link>
+    <link>https://stevenjohnstone.github.io/blog/posts/</link>
     <description>Recent content in Posts on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 13 Oct 2017 13:53:00 +0100</lastBuildDate>
     
-	<atom:link href="https://stevenjohnstone.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://stevenjohnstone.github.io/blog/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>SO_REUASEADDR and Golang</title>
-      <link>https://stevenjohnstone.github.io/posts/so_reuaseaddr-golang/</link>
+      <link>https://stevenjohnstone.github.io/blog/posts/so_reuaseaddr-golang/</link>
       <pubDate>Fri, 13 Oct 2017 13:53:00 +0100</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/posts/so_reuaseaddr-golang/</guid>
+      <guid>https://stevenjohnstone.github.io/blog/posts/so_reuaseaddr-golang/</guid>
       <description>A Flaky Test I was investigating a test which failed with a very low probability. It boiled down to this:
 package main import ( &amp;quot;net&amp;quot; &amp;quot;time&amp;quot; ) func main() { //port zero means let the OS choose a free port l, err := net.Listen(&amp;quot;tcp&amp;quot;, &amp;quot;127.0.0.1:0&amp;quot;) if err != nil { panic(err) } addr := l.Addr().String() go func() { for { c, err := l.Accept() if err != nil { return } c.</description>
     </item>
     
     <item>
       <title>File Descriptors in Go</title>
-      <link>https://stevenjohnstone.github.io/posts/file-descriptor-go/</link>
+      <link>https://stevenjohnstone.github.io/blog/posts/file-descriptor-go/</link>
       <pubDate>Fri, 13 Oct 2017 11:39:00 +0100</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/posts/file-descriptor-go/</guid>
+      <guid>https://stevenjohnstone.github.io/blog/posts/file-descriptor-go/</guid>
       <description>Golang, File Descriptors and Finalizers If you Open() a file in Golang and it goes out of scope, then it&amp;rsquo;ll be closed the next time the garbage collector runs as there&amp;rsquo;s a cleanup finalizer set when Open() is called.
 You can see this in action in the following program:
 package main import ( &amp;quot;fmt&amp;quot; &amp;quot;os&amp;quot; &amp;quot;runtime&amp;quot; ) func allocate() int { //use this file as our test subject _, sourceFile, _, ok := runtime.</description>
@@ -34,10 +34,10 @@ package main import ( &amp;quot;fmt&amp;quot; &amp;quot;os&amp;quot; &amp;quot;r
     
     <item>
       <title>CVE-2017-15042</title>
-      <link>https://stevenjohnstone.github.io/posts/cve-2017-15042/</link>
+      <link>https://stevenjohnstone.github.io/blog/posts/cve-2017-15042/</link>
       <pubDate>Sat, 07 Oct 2017 14:46:09 +0100</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/posts/cve-2017-15042/</guid>
+      <guid>https://stevenjohnstone.github.io/blog/posts/cve-2017-15042/</guid>
       <description>I Went Looking For A STARTTLS Bug I&amp;rsquo;ve been putting together a cryptography course for my colleagues which focuses on mistakes. Its working title is Cryptography Done Wrong which should give you an idea of the tone. There&amp;rsquo;s a wealth of examples of systems assembled from sound cryptographic components which end up with security issues (for some definition of secure).
 Over the years, TLS has been an excellent source of examples for such a course.</description>
     </item>

@@ -3,38 +3,38 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://stevenjohnstone.github.io/posts/so_reuaseaddr-golang/</loc>
+    <loc>https://stevenjohnstone.github.io/blog/posts/so_reuaseaddr-golang/</loc>
     <lastmod>2017-10-13T13:53:00+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/posts/file-descriptor-go/</loc>
+    <loc>https://stevenjohnstone.github.io/blog/posts/file-descriptor-go/</loc>
     <lastmod>2017-10-13T11:39:00+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/posts/cve-2017-15042/</loc>
+    <loc>https://stevenjohnstone.github.io/blog/posts/cve-2017-15042/</loc>
     <lastmod>2017-10-07T14:46:09+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/categories/</loc>
+    <loc>https://stevenjohnstone.github.io/blog/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/posts/</loc>
+    <loc>https://stevenjohnstone.github.io/blog/posts/</loc>
     <lastmod>2017-10-13T13:53:00+01:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/tags/</loc>
+    <loc>https://stevenjohnstone.github.io/blog/tags/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/</loc>
+    <loc>https://stevenjohnstone.github.io/blog/</loc>
     <lastmod>2017-10-13T13:53:00+01:00</lastmod>
     <priority>0</priority>
   </url>
