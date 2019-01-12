@@ -30,7 +30,7 @@ it. What if I couldn't work out what this did? What tools could I use?
 We can embed the snippet in a C program and run it for some test cases:
 
 <pre>
-#include <stdio.h>
+#include \<stdio.h\>
 
 static int x3(int a, int b) {
 
