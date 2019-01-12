@@ -34,7 +34,7 @@ We can embed the snippet in a C program and run it for some test cases:
 Compile with
 
 <pre>
-gcc -masm=intel x3.c
+gcc -masm=intel 0x3.c
 </pre>
 
 and run to get
