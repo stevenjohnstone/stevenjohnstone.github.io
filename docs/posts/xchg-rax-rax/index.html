@@ -1,0 +1,271 @@
+<body>
+  <!DOCTYPE html>
+<html lang="en-us">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="xchg rax,rax - rm -rf /" property="og:title">
+<title>xchg rax,rax | rm -rf /</title>
+<link rel="stylesheet" href="https://stevenjohnstone.github.io/blog//css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
+
+
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://stevenjohnstone.github.io/blog//"><h1 class="title is-4">rm -rf /</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="subtitle is-6">January 12, 2019</h2>
+      <h1 class="title">xchg rax,rax</h1>
+      
+      <div class="content">
+        
+
+<h1 id="x86-64-kata">x86-64 Kata</h1>
+
+<p>The book <a href="https://www.amazon.co.uk/xchg-rax-xorpd/dp/1502958082">xchg rax,rax</a> (content available free <a href="https://www.xorpd.net/pages/xchg_rax/snip_00.html">here</a>) is
+a collection of 0x40 x86-64 snippets. It has no text other
+than chunks of assembly language. You read the code and ponder
+its meaning. <a href="https://en.wikipedia.org/wiki/Kata">Kata</a> for the budding reverse engineer.</p>
+
+<h1 id="spoiler-alert">Spoiler Alert</h1>
+
+<p>Program 0x03 is pretty neat:</p>
+
+<pre>
+sub rdx,rax
+sbb rcx,rcx
+and rcx,rdx
+add rax,rcx
+</pre>
+
+<p>Let me spoil this for you: at the end of this program, rax will contain
+the smaller of the original rax and rdx values. I know this from reading
+it. What if I couldn&rsquo;t work out what this did? What tools could I use?</p>
+
+<h1 id="emulation">Emulation</h1>
+
+<p>One possible course of action would be to make an executable program from our
+assembly language snippet and try some inputs and observe the corresponding outputs.
+That&rsquo;s a minor amount of busy work assuming that you have an x86-64 machine and you
+trust that the code isn&rsquo;t some kind of malware.</p>
+
+<p>Emulation allows us to run the code while keeping our tinfoil helmets on. Here&rsquo;s a
+program I wrote in Golang which</p>
+
+<ul>
+<li>assembles <a href="https://www.xorpd.net/pages/xchg_rax/snip_03.html">0x03</a> into machine code using <a href="http://www.keystone-engine.org/">keystone</a></li>
+<li>sets up the <a href="https://www.unicorn-engine.org/">unicorn</a> emulator to run the machine code</li>
+<li>passes in a few pairs of register values and prints the value of rax at the end</li>
+</ul>
+
+<pre>
+package main
+
+import (
+    "fmt"
+
+    // a branch of keystone golang bindings which builds on linux
+    "github.com/stevenjohnstone/keystone/bindings/go/keystone"
+    uc "github.com/unicorn-engine/unicorn/bindings/go/unicorn"
+)
+
+// This program explores a few inputs to
+// problem 0x03 of xchg rax,rax:
+// https://www.xorpd.net/pages/xchg_rax/snip_03.html
+//
+// This is a good excuse to give keystone and unicorn
+// a spin in golang
+func main() {
+
+    // first, convert the assembly language into numerical opcodes
+    // (machine language)
+    assembly := "sub rdx,rax; sbb rcx,rcx; and rcx,rdx; add rax,rcx"
+
+    ks, err := keystone.New(keystone.ARCH_X86, keystone.MODE_64)
+    if err != nil {
+        panic(err)
+    }
+    defer ks.Close()
+
+    err = ks.Option(keystone.OPT_SYNTAX, keystone.OPT_SYNTAX_INTEL);
+    if err != nil {
+        panic(err)
+    }
+
+    insn, _, ok := ks.Assemble(assembly, 0)
+    if !ok {
+        panic("failed to assemble")
+    }
+
+    // choose some initial values for rax and rdx
+    // to get a feel for what the algorithm does
+    regPairs := []struct {
+        rax, rdx uint64
+    }{
+        {0x0, 0x1},
+        {0x1, 0x1},
+        {0xf, 0xe},
+        {0xe, 0xf},
+        {0xffffffffffffffff, 0x00},
+    }
+
+    // try each pair of initial register values with the emulator
+    for i, regPair := range regPairs {
+        mu, _ := uc.NewUnicorn(uc.ARCH_X86, uc.MODE_64)
+        mu.MemMap(0x1000, 0x1000)
+        mu.MemWrite(0x1000, insn)
+
+        mu.RegWrite(uc.X86_REG_RAX, regPair.rax)
+        mu.RegWrite(uc.X86_REG_RDX, regPair.rdx)
+
+        if err := mu.Start(0x1000, 0x1000+uint64(len(insn))); err != nil {
+            panic(err)
+        }
+
+        endRax, _ := mu.RegRead(uc.X86_REG_RAX)
+        fmt.Printf("%d (rax: %x rdx %x) ->  rax: %x\n",
+            i, regPair.rax, regPair.rdx, endRax)
+    }
+}
+</pre>
+
+<p>Here&rsquo;s the output:
+<pre>
+0 (rax: 0 rdx 1) -&gt;  rax: 0
+1 (rax: 1 rdx 1) -&gt;  rax: 1
+2 (rax: f rdx e) -&gt;  rax: e
+3 (rax: e rdx f) -&gt;  rax: e
+4 (rax: ffffffffffffffff rdx 0) -&gt;  rax: 0
+</pre></p>
+
+<p>It appears plausible that 0x03 gives the minimum of rax and rdx. However, this is not a proof. Let&rsquo;s take things
+further.</p>
+
+<h1 id="z3">Z3</h1>
+
+<p><a href="https://github.com/Z3Prover/z3">Z3</a>: read about it for yourself, I wouldn&rsquo;t do it justice. Suffice it to say,
+we can use SMT solvers to prove properties of software.</p>
+
+<p>The plan of attack is:</p>
+
+<ul>
+<li>turn the assembly into <a href="https://en.wikipedia.org/wiki/Static_single_assignment_form">SSA</a> form</li>
+<li>make <em>assertions</em> which model the effects of the instructions in the program</li>
+<li>show that an assertion which contradicts our <em>theorem</em> leads to the model being unsatisfiable</li>
+</ul>
+
+<p>I&rsquo;ve opted to use <a href="http://smtlib.cs.uiowa.edu/">SMT-LIB</a> to demonstrate.</p>
+
+<pre>
+(set-logic QF_BV)
+
+; Convention here is add a label to the end of the register
+; to mark a step in the program for which the value applies.
+; e.g.
+; rdx0 is the first value of rdx, rdx1 is the value at the
+; next step of the program, rdxN is the value at the Nth
+; step.
+;
+; Essentially, we're turning an assembly program into SSA form
+(declare-fun rdx0 () ( _ BitVec 64))
+(declare-fun rdx1 () ( _ BitVec 64))
+
+(declare-fun rcx0 () ( _ BitVec 64))
+(declare-fun rcx1 () ( _ BitVec 64))
+(declare-fun rcx2 () ( _ BitVec 64))
+
+(declare-fun rax0 () ( _ BitVec 64))
+(declare-fun rax3 () ( _ BitVec 64))
+
+; The carry flag
+(declare-fun cf () (_ Bool))
+
+; sub sets the carry flag if unsigned subtraction will result in
+; an overflow i.e. rax0 > rdx0
+(assert ( = cf (bvult rdx0 rax0)))
+(assert ( = rdx1 (bvsub rdx0 rax0)))
+
+; sbb is 'subtract with carry'. If the carry flag is set, we take
+; away one from the result of sub
+(assert ( = rcx1
+(ite (= cf true)
+ (bvsub (bvsub rcx0 rcx0) #x0000000000000001)
+ (bvsub rcx0 rcx0))
+))
+
+; and rxc1,rdx1
+(assert ( = rcx2 (bvand rcx1 rdx1)))
+; add rax0,rcv2
+(assert ( = rax3 (bvadd rax0 rcx2)))
+
+; assert conditions which should fail if this is indeed a minimum
+; function. In the case below, we assert that rax0 <= rdx0 and
+; rax3 != rax0 (which we suspect is false) and so if we get 'unsat'
+; as the result, then we've proved rax0 <= rdx0 => rax3 == rax0
+
+; note the use of push here. Allows us to reuse the work above by
+; popping the asserts below from the stack
+(push 1)
+    (assert ( or (bvult rax0 rdx0) (= rax0 rdx0)))
+        (check-sat)
+        (push 1)
+            (assert ( distinct rax3 rax0))
+            (check-sat)
+(pop 2)
+
+; We show here that rax0 > rdx0 (along with our previous assertions) can
+; can be satisfied. We then show that adding rax3 != rdx0 leads to
+; unsat, which means that rax3 == rdx0
+(assert (bvugt rax0 rdx0))
+(check-sat)
+(assert ( distinct rax3 rdx0))
+
+(check-sat)
+
+</pre>
+
+<p>Running with z3 give</p>
+
+<pre>
+sat
+unsat
+sat
+unsat
+</pre>
+
+<h1 id="why">Why?</h1>
+
+<p>This is surely overkill for such a small problem? Yes. However, as we move to more complex binary executables (e.g. malware)
+the ideas touched on here come into their own.</p>
+
+      </div>
+    </div>
+  </section>
+  
+
+  <section class="section">
+  <div class="container has-text-centered">
+    <p></p>
+  </div>
+</section>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+</body>

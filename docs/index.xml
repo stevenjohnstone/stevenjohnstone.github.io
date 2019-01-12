@@ -6,10 +6,21 @@
     <description>Recent content on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 13 Oct 2017 13:53:00 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 12 Jan 2019 17:16:29 +0000</lastBuildDate>
     
 	<atom:link href="https://stevenjohnstone.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>xchg rax,rax</title>
+      <link>https://stevenjohnstone.github.io/blog/posts/xchg-rax-rax/</link>
+      <pubDate>Sat, 12 Jan 2019 17:16:29 +0000</pubDate>
+      
+      <guid>https://stevenjohnstone.github.io/blog/posts/xchg-rax-rax/</guid>
+      <description>x86-64 Kata The book xchg rax,rax (content available free here) is a collection of 0x40 x86-64 snippets. It has no text other than chunks of assembly language. You read the code and ponder its meaning. Kata for the budding reverse engineer.
+Spoiler Alert Program 0x03 is pretty neat:
+ sub rdx,rax sbb rcx,rcx and rcx,rdx add rax,rcx  Let me spoil this for you: at the end of this program, rax will contain the smaller of the original rax and rdx values.</description>
+    </item>
     
     <item>
       <title>SO_REUASEADDR and Golang</title>
