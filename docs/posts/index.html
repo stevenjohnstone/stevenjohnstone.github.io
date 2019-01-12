@@ -1,183 +1,131 @@
-<!DOCTYPE html>
+<body>
+  <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
-    <title>rm -rf / </title>
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized" content="320">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="Posts - rm -rf /" property="og:title">
+<title>Posts | rm -rf /</title>
+<link rel="stylesheet" href="https://stevenjohnstone.github.io//css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
-    <meta name="viewport" content="width=device-width,minimum-scale=1">
-    <meta name="generator" content="Hugo 0.40.1" />
-    
-    
-      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
-    
-
-    
-    
-      <link href="/dist/css/app.955516233bcafa4d2a1c13cea63c7b50.css" rel="stylesheet">
-    
-
-    
-
-    
-      
-    
-
-    
-      <link href="https://stevenjohnstone.github.io/posts/index.xml" rel="alternate" type="application/rss+xml" title="rm -rf /" />
-      <link href="https://stevenjohnstone.github.io/posts/index.xml" rel="feed" type="application/rss+xml" title="rm -rf /" />
-    
-
-    <meta property="og:title" content="Posts" />
-<meta property="og:description" content="" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://stevenjohnstone.github.io/posts/" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
 
 
-
-<meta property="og:updated_time" content="2017-10-13T13:53:00&#43;01:00"/>
-
-
-
-
-
-
-
-
-
-
-<meta itemprop="name" content="Posts">
-<meta itemprop="description" content="">
-
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Posts"/>
-<meta name="twitter:description" content=""/>
-
-  </head>
-
-  <body class="ma0 avenir bg-near-white">
-
-    
-
-  <header>
-    <div class="pb3-m pb6-l bg-black">
-      <nav class="pv3 ph3 ph4-ns" role="navigation">
-  <div class="flex-l justify-between items-center center">
-    <a href="https://stevenjohnstone.github.io/" class="f3 fw2 hover-white no-underline white-90 dib">
-      rm -rf /
-    </a>
-    <div class="flex-l items-center">
-      
-
-      
-      
-
-
-
-
-
-
-
-
-
-    </div>
-  </div>
-</nav>
-
-      <div class="tc-l pv3 ph3 ph4-ns">
-        <h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">
-          Posts
-        </h1>
-        
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://stevenjohnstone.github.io//"><h1 class="title is-4">rm -rf /</h1></a>
       </div>
-    </div>
-  </header>
-
-
-    <main class="pb7" role="main">
-      
-  <article class="pa3 pa4-ns nested-copy-line-height nested-img">
-    <section class="cf ph3 ph5-l pv3 pv4-l f4 tc-l center measure-wide lh-copy mid-gray"></section>
-    <section class="flex-ns flex-wrap justify-around mt5">
-      
-        <div class="relative w-100 w-30-l mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/so_reuaseaddr-golang/" class="link black dim">
-        SO_REUASEADDR and Golang
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      A Flaky Test I was investigating a test which failed with a very low probability. It boiled down to this:
-package main import ( &quot;net&quot; &quot;time&quot; ) func main() { //port zero means let the OS choose a free port l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;) if err != nil { panic(err) } addr := l.Addr().String() go func() { for { c, err := l.Accept() if err != nil { return } c.
-    </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+        </nav>
+      </div>
+    </nav>
   </div>
-</div>
-</div>
+</section>
+
+  <section class="section">
+    <div class="container">
       
-        <div class="relative w-100 w-30-l mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/file-descriptor-go/" class="link black dim">
-        File Descriptors in Go
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      Golang, File Descriptors and Finalizers If you Open() a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a cleanup finalizer set when Open() is called.
+      <article>
+        <h2 class="subtitle is-6">October 13, 2017</h2>
+        <h1 class="title"><a href="https://stevenjohnstone.github.io/posts/so_reuaseaddr-golang/">SO_REUASEADDR and Golang</a></h1>
+        
+        <div class="content">
+          A Flaky Test I was investigating a test which failed with a very low probability. It boiled down to this:
+package main import ( &quot;net&quot; &quot;time&quot; ) func main() { //port zero means let the OS choose a free port l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;) if err != nil { panic(err) } addr := l.Addr().String() go func() { for { c, err := l.Accept() if err != nil { return } c.
+          
+          ...<a class="button is-link" href="https://stevenjohnstone.github.io/posts/so_reuaseaddr-golang/" style="height:28px">
+            Read more
+            <span class="icon is-small">
+              <i class="fa fa-angle-double-right"></i>
+            </span>
+          </a>
+          
+        </div>
+      </article>
+      
+      <article>
+        <h2 class="subtitle is-6">October 13, 2017</h2>
+        <h1 class="title"><a href="https://stevenjohnstone.github.io/posts/file-descriptor-go/">File Descriptors in Go</a></h1>
+        
+        <div class="content">
+          Golang, File Descriptors and Finalizers If you Open() a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a cleanup finalizer set when Open() is called.
 You can see this in action in the following program:
 package main import ( &quot;fmt&quot; &quot;os&quot; &quot;runtime&quot; ) func allocate() int { //use this file as our test subject _, sourceFile, _, ok := runtime.
-    </div>
-  </div>
-</div>
-</div>
+          
+          ...<a class="button is-link" href="https://stevenjohnstone.github.io/posts/file-descriptor-go/" style="height:28px">
+            Read more
+            <span class="icon is-small">
+              <i class="fa fa-angle-double-right"></i>
+            </span>
+          </a>
+          
+        </div>
+      </article>
       
-        <div class="relative w-100 w-30-l mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/cve-2017-15042/" class="link black dim">
-        CVE-2017-15042
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      I Went Looking For A STARTTLS Bug I&rsquo;ve been putting together a cryptography course for my colleagues which focuses on mistakes. Its working title is Cryptography Done Wrong which should give you an idea of the tone. There&rsquo;s a wealth of examples of systems assembled from sound cryptographic components which end up with security issues (for some definition of secure).
+      <article>
+        <h2 class="subtitle is-6">October 7, 2017</h2>
+        <h1 class="title"><a href="https://stevenjohnstone.github.io/posts/cve-2017-15042/">CVE-2017-15042</a></h1>
+        
+        <div class="content">
+          I Went Looking For A STARTTLS Bug I&rsquo;ve been putting together a cryptography course for my colleagues which focuses on mistakes. Its working title is Cryptography Done Wrong which should give you an idea of the tone. There&rsquo;s a wealth of examples of systems assembled from sound cryptographic components which end up with security issues (for some definition of secure).
 Over the years, TLS has been an excellent source of examples for such a course.
-    </div>
-  </div>
-</div>
-</div>
+          
+          ...<a class="button is-link" href="https://stevenjohnstone.github.io/posts/cve-2017-15042/" style="height:28px">
+            Read more
+            <span class="icon is-small">
+              <i class="fa fa-angle-double-right"></i>
+            </span>
+          </a>
+          
+        </div>
+      </article>
       
-    </section>
-</article>
-
-    </main>
-    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
-  <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://stevenjohnstone.github.io/" >
-    &copy; 2019 rm -rf /
-  </a>
-    <div>
-
-
-
-
-
-
-
-
-</div>
+    </div>
+  </section>
+  <section class="section">
+  <div class="container">
+    <nav class="level is-mobile">
+      <div class="level-left">
+        <div class="level-item">
+          
+          <a class="button is-disabled">
+            <span class="icon is-small is-marginless">
+              <i class="fa fa-angle-left"></i>
+            </span>
+            Newer
+          </a>
+          
+        </div>
+      </div>
+      <div class="level-right is-marginless">
+        <div class="level-item">
+          
+          <a class="button is-disabled">
+            Older
+            <span class="icon is-small is-marginless">
+              <i class="fa fa-angle-right"></i>
+            </span>
+          </a>
+          
+        </div>
+      </div>
+    </nav>
   </div>
-</footer>
+</section>
 
-    
+  <section class="section">
+  <div class="container has-text-centered">
+    <p></p>
+  </div>
+</section>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
 
-  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 
-  </body>
-</html>
+</body>

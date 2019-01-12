@@ -1,131 +1,39 @@
-<!DOCTYPE html>
+<body>
+  <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
-    <title>rm -rf /  | File Descriptors in Go</title>
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized" content="320">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="File Descriptors in Go - rm -rf /" property="og:title">
+<title>File Descriptors in Go | rm -rf /</title>
+<link rel="stylesheet" href="https://stevenjohnstone.github.io//css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
-    <meta name="viewport" content="width=device-width,minimum-scale=1">
-    <meta name="generator" content="Hugo 0.40.1" />
-    
-    
-      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
-    
-
-    
-    
-      <link href="/dist/css/app.955516233bcafa4d2a1c13cea63c7b50.css" rel="stylesheet">
-    
-
-    
-
-    
-      
-    
-
-    
-
-    <meta property="og:title" content="File Descriptors in Go" />
-<meta property="og:description" content="Golang, File Descriptors and Finalizers If you Open() a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a cleanup finalizer set when Open() is called.
-You can see this in action in the following program:
-package main import ( &quot;fmt&quot; &quot;os&quot; &quot;runtime&quot; ) func allocate() int { //use this file as our test subject _, sourceFile, _, ok := runtime." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://stevenjohnstone.github.io/posts/file-descriptor-go/" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
 
 
-
-<meta property="article:published_time" content="2017-10-13T11:39:00&#43;01:00"/>
-
-<meta property="article:modified_time" content="2017-10-13T11:39:00&#43;01:00"/>
-
-
-
-
-
-
-
-
-
-
-
-<meta itemprop="name" content="File Descriptors in Go">
-<meta itemprop="description" content="Golang, File Descriptors and Finalizers If you Open() a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a cleanup finalizer set when Open() is called.
-You can see this in action in the following program:
-package main import ( &quot;fmt&quot; &quot;os&quot; &quot;runtime&quot; ) func allocate() int { //use this file as our test subject _, sourceFile, _, ok := runtime.">
-
-
-<meta itemprop="datePublished" content="2017-10-13T11:39:00&#43;01:00" />
-<meta itemprop="dateModified" content="2017-10-13T11:39:00&#43;01:00" />
-<meta itemprop="wordCount" content="371">
-
-
-
-<meta itemprop="keywords" content="" />
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="File Descriptors in Go"/>
-<meta name="twitter:description" content="Golang, File Descriptors and Finalizers If you Open() a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a cleanup finalizer set when Open() is called.
-You can see this in action in the following program:
-package main import ( &quot;fmt&quot; &quot;os&quot; &quot;runtime&quot; ) func allocate() int { //use this file as our test subject _, sourceFile, _, ok := runtime."/>
-
-  </head>
-
-  <body class="ma0 avenir bg-near-white">
-
-    
-   
-  
-
-  <header>
-    <div class="bg-black">
-      <nav class="pv3 ph3 ph4-ns" role="navigation">
-  <div class="flex-l justify-between items-center center">
-    <a href="https://stevenjohnstone.github.io/" class="f3 fw2 hover-white no-underline white-90 dib">
-      rm -rf /
-    </a>
-    <div class="flex-l items-center">
-      
-
-      
-      
-
-
-
-
-
-
-
-
-
-    </div>
-  </div>
-</nav>
-
-    </div>
-  </header>
-
-
-
-    <main class="pb7" role="main">
-      
-  
-  <article class="flex-l flex-wrap justify-between mw8 center ph3">
-
-    <header class="mt4 w-100">
-      <p class="f6 b helvetica tracked">
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://stevenjohnstone.github.io//"><h1 class="title is-4">rm -rf /</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
           
-        POSTS
-      </p>
-      <h1 class="f1 athelas mb1">File Descriptors in Go</h1>
-      
-      <time class="f6 mv4 dib tracked" datetime="2017-10-13T11:39:00&#43;01:00">October 13, 2017</time>      
-      
-      
-    </header>
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
 
-    <section class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l">
+  <section class="section">
+    <div class="container">
+      <h2 class="subtitle is-6">October 13, 2017</h2>
+      <h1 class="title">File Descriptors in Go</h1>
+      
+      <div class="content">
+        
 
 <h1 id="golang-file-descriptors-and-finalizers">Golang, File Descriptors and Finalizers</h1>
 
@@ -209,46 +117,20 @@ successful opens = 0
 <h1 id="don-t-rely-on-the-garbage-collector">Don&rsquo;t Rely on the Garbage Collector</h1>
 
 <p>&hellip;for anything other than collecting memory resources. Tying other resource types to garbage collection is a bad idea and could lead to resource exhaustion. After all, you aren&rsquo;t guaranteed to ever have the garbage collector run for your program. Close files when you&rsquo;re finished with them; defer is your friend.</p>
-<ul class="pa0">
-  
-</ul>
-<div class="mt6">
-        
+
       </div>
-    </section>
+    </div>
+  </section>
+  
 
-    <aside class="w-30-l mt6-l">
-
-
-
-
-</aside>
-
-  </article>
-
-    </main>
-    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
-  <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://stevenjohnstone.github.io/" >
-    &copy; 2019 rm -rf /
-  </a>
-    <div>
-
-
-
-
-
-
-
-
-</div>
+  <section class="section">
+  <div class="container has-text-centered">
+    <p></p>
   </div>
-</footer>
+</section>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
 
-    
-
-  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 
-  </body>
-</html>
+</body>

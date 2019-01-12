@@ -1,3 +1,9 @@
 [submodule "themes/ananke"]
 	path = themes/ananke
 	url = https://github.com/budparr/gohugo-theme-ananke.git
+[submodule "themes/temple"]
+	path = themes/temple
+	url = https://github.com/aos/temple.git
+[submodule "themes/hemingway2"]
+	path = themes/hemingway2
+	url = https://gitlab.com/beli3ver/hemingway2
