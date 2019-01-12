@@ -106,7 +106,7 @@ and run to get
 
 # Emulation
 
-Suppose that we don't aren't running on the target system (something without an
+Suppose that we aren't running on the target system (something without an
 x86-64 processor) or we're concerned about the code being malware (when we start
 to look at more complex code). Then actually running the code natively isn't an
 option.
