@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>rm -rf /  | So_reuaseaddr Golang</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.40.1" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.955516233bcafa4d2a1c13cea63c7b50.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+    
+
+    
+
+    <meta property="og:title" content="So_reuaseaddr Golang" />
+<meta property="og:description" content="A Flaky Test I was investigating a test which failed with a very low probability. It boiled down to this:
+package main import ( &quot;net&quot; &quot;time&quot; ) func main() { //port zero means let the OS choose a free port l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;) if err != nil { panic(err) } addr := l.Addr().String() go func() { for { c, err := l.Accept() if err != nil { return } c." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://stevenjohnstone.github.io/posts/so_reuaseaddr-golang/" />
+
+
+
+<meta property="article:published_time" content="2017-10-13T13:53:00&#43;01:00"/>
+
+<meta property="article:modified_time" content="2017-10-13T13:53:00&#43;01:00"/>
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="So_reuaseaddr Golang">
+<meta itemprop="description" content="A Flaky Test I was investigating a test which failed with a very low probability. It boiled down to this:
+package main import ( &quot;net&quot; &quot;time&quot; ) func main() { //port zero means let the OS choose a free port l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;) if err != nil { panic(err) } addr := l.Addr().String() go func() { for { c, err := l.Accept() if err != nil { return } c.">
+
+
+<meta itemprop="datePublished" content="2017-10-13T13:53:00&#43;01:00" />
+<meta itemprop="dateModified" content="2017-10-13T13:53:00&#43;01:00" />
+<meta itemprop="wordCount" content="482">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="So_reuaseaddr Golang"/>
+<meta name="twitter:description" content="A Flaky Test I was investigating a test which failed with a very low probability. It boiled down to this:
+package main import ( &quot;net&quot; &quot;time&quot; ) func main() { //port zero means let the OS choose a free port l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;) if err != nil { panic(err) } addr := l.Addr().String() go func() { for { c, err := l.Accept() if err != nil { return } c."/>
+
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="https://stevenjohnstone.github.io/" class="f3 fw2 hover-white no-underline white-90 dib">
+      rm -rf /
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+
+
+
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+
+    <header class="mt4 w-100">
+      <p class="f6 b helvetica tracked">
+          
+        POSTS
+      </p>
+      <h1 class="f1 athelas mb1">So_reuaseaddr Golang</h1>
+      
+      <time class="f6 mv4 dib tracked" datetime="2017-10-13T13:53:00&#43;01:00">October 13, 2017</time>      
+      
+      
+    </header>
+
+    <section class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l">
+
+<h1 id="a-flaky-test">A Flaky Test</h1>
+
+<p>I was investigating a test which failed with a very low probability. It boiled down to this:</p>
+
+<pre><code>package main
+
+import (
+	&quot;net&quot;
+	&quot;time&quot;
+)
+
+func main() {
+	//port zero means let the OS choose a free port
+	l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)
+	if err != nil {
+		panic(err)
+	}
+
+	addr := l.Addr().String()
+
+	go func() {
+		for {
+			c, err := l.Accept()
+			if err != nil {
+				return
+			}
+			c.Close()
+		}
+	}()
+
+	time.Sleep(time.Second)
+	if err := l.Close(); err != nil {
+		panic(err)
+	}
+
+	//listen on the same port as before
+	l, err = net.Listen(&quot;tcp&quot;, addr)
+	if err != nil {
+		panic(err)
+	}
+}
+</code></pre>
+
+<p>It&rsquo;s pretty standard to stop a goroutine which is blocked in Accept() by calling Close() on the listener. Passes casual inspection, linters don&rsquo;t complain etc. However, if you run the above enough times, you may see something like this:</p>
+
+<pre><code>panic: listen tcp 127.0.0.1:37327: bind: address already in use
+</code></pre>
+
+<p>Address already in use? This caused me some confusion as I know that <a href="http://man7.org/linux/man-pages/man7/socket.7.html">SO_RESUSEADDR</a> is set set by Golang in net.Listen and I&rsquo;ve been conditioned to think &ldquo;SO_RESUSEADDR&rdquo; when I see EALREADY in a situation like this.</p>
+
+<h1 id="root-cause">Root Cause</h1>
+
+<p>The problem here is that Close() of a listener doesn&rsquo;t immediately close the underlying file descriptor. What it <a href="https://golang.org/src/internal/poll/fd_unix.go#L69">does</a> is decrement a reference count and if that reference count is non-zero will exit with a file descriptor still open. Subsequent calls to net.Listen may fail with &ldquo;bind: address already in use&rdquo; because the address really is in use. Not waiting on sockets to leave TIME_WAIT, just <em>open</em>.</p>
+
+<p>The reference count on the underlying file descriptor may be non-zero because a goroutine is still in the guts of <a href="https://golang.org/src/internal/poll/fd_unix.go#L317">Accept()</a> where it has locked the file-descriptor. This explains our intermittent failure: we call Close() and then Listen() but there&rsquo;s a goroutine still in Accept() which has prevented the underlying file-descriptor from being closed.</p>
+
+<h1 id="the-fix">The fix</h1>
+
+<p>&hellip;is to ensure that the goroutine is not in Accept() when we try to listen again on the same port. For example, we can close a channel to signal that the goroutine is done:</p>
+
+<pre><code>package main
+
+import (
+	&quot;net&quot;
+	&quot;time&quot;
+)
+
+func main() {
+	//port zero means let the OS choose a free port
+	l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)
+	if err != nil {
+		panic(err)
+	}
+
+	addr := l.Addr().String()
+	done := make(chan bool)
+
+	go func() {
+		for {
+			c, err := l.Accept()
+			if err != nil {
+				close(done)
+				return
+			}
+			c.Close()
+		}
+	}()
+
+	time.Sleep(time.Second)
+	if err := l.Close(); err != nil {
+		panic(err)
+	}
+
+	//wait for the goroutine to have left Accept()
+	&lt;-done
+
+	//listen on the same port as before
+	l, err = net.Listen(&quot;tcp&quot;, addr)
+	if err != nil {
+		panic(err)
+	}
+}
+</code></pre>
+
+<h1 id="lessons-learned">Lessons Learned</h1>
+
+<ul>
+<li>when Close() of a listener returns, the underlying file descriptor may still be open</li>
+<li>any method calls for the listener must complete to be sure that the underlying file descriptor is closed</li>
+</ul>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6">
+        
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://stevenjohnstone.github.io/" >
+    &copy; 2019 rm -rf /
+  </a>
+    <div>
+
+
+
+
+
+
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,5 @@
+baseURL = "https://stevenjohnstone.github.io/"
+languageCode = "en-us"
+title = "rm -rf /"
+publishDir = "docs"
+theme = "ananke"
