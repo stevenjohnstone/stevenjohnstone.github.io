@@ -1,5 +1,5 @@
 ---
-title: "File Descriptor Go"
+title: "File Descriptors in Go"
 date: 2017-10-13T11:39:00+01:00
 ---
 

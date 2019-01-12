@@ -1,5 +1,5 @@
 ---
-title: "So_reuaseaddr Golang"
+title: "SO_REUASEADDR and Golang"
 date: 2017-10-13T13:53:00+01:00
 ---
 
