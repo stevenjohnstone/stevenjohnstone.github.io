@@ -25,12 +25,91 @@ Let me spoil this for you: at the end of this program, rax will contain
 the smaller of the original rax and rdx values. I know this from reading
 it. What if I couldn't work out what this did? What tools could I use?
 
+# Assemble It
+
+We can embed the snippet in a C program and run it for some test cases:
+
+<pre>
+#include <stdio.h>
+
+static int x3(int a, int b) {
+
+    int out;
+    asm(
+        // it's not stated in xchg rax,rax but it's
+        // intel syntax. Note the noprefix means we
+        // don't need % before registers
+        ".intel_syntax noprefix;"
+        // a bit of preamble to get registers
+        // set up correctly. We're okay with just working
+        // with int rather than long int
+        "mov eax, %1;"
+        "mov edx, %2;"
+
+        // 0x03 code below
+        "sub rdx, rax;"
+        "sbb rcx,rcx;"
+        "and rcx,rdx;"
+        "add rax,rcx;"
+
+        // put the result into out
+        "mov %0, eax;"
+        // tell the compiler that out is in memory
+        : "=m" (out)
+        // tell the compiler that a and b are inputs
+        : "m" (a) , "m" (b)
+        // this is the list of registers which are clobbered
+        : "rax","rdx","rcx");
+    return out;
+}
+
+struct input {
+    int a;
+    int b;
+};
+
+int main(int argc, const char **argv) {
+
+
+    struct input inputs[] = {
+        {0x0, 0x1},
+        {0x1, 0x1},
+        {0xf, 0xe},
+        {0xe, 0xf},
+        {~0, 0x00},
+    };
+
+    for (int i = 0; i < sizeof(inputs)/sizeof(inputs[0]); i++) {
+        printf("%d (rax: %016x rdx %016x) ->  rax: %016x\n",
+                i, inputs[i].a, inputs[i].b, x3(inputs[i].a, inputs[i].b));
+    }
+   return 0;
+}
+</pre>
+
+Compile with
+
+<pre>
+gcc -masm=intel x3.c
+</pre>
+
+and run to get
+
+<pre>
+0 (rax: 0000000000000000 rdx 0000000000000001) ->  rax: 0000000000000000
+1 (rax: 0000000000000001 rdx 0000000000000001) ->  rax: 0000000000000001
+2 (rax: 000000000000000f rdx 000000000000000e) ->  rax: 000000000000000e
+3 (rax: 000000000000000e rdx 000000000000000f) ->  rax: 000000000000000e
+4 (rax: 00000000ffffffff rdx 0000000000000000) ->  rax: 0000000000000000
+</pre>
+
+
 # Emulation
 
-One possible course of action would be to make an executable program from our
-assembly language snippet and try some inputs and observe the corresponding outputs.
-That's a minor amount of busy work assuming that you have an x86-64 machine and you
-trust that the code isn't some kind of malware.
+Suppose that we don't aren't running on the target system (something without an
+x86-64 processor) or we're concerned about the code being malware (when we start
+to look at more complex code). Then actually running the code natively isn't an
+option.
 
 Emulation allows us to run the code while keeping our tinfoil helmets on. Here's a
 program I wrote in Golang which
@@ -87,7 +166,7 @@ func main() {
 		{0x1, 0x1},
 		{0xf, 0xe},
 		{0xe, 0xf},
-		{0xffffffffffffffff, 0x00},
+		{0xffffffff, 0x00},
 	}
 
 	// try each pair of initial register values with the emulator
@@ -104,19 +183,19 @@ func main() {
 		}
 
 		endRax, _ := mu.RegRead(uc.X86_REG_RAX)
-        fmt.Printf("%d (rax: %x rdx %x) ->  rax: %x\n",
+        fmt.Printf("%d (rax: %016x rdx %016x) ->  rax: %016x\n",
             i, regPair.rax, regPair.rdx, endRax)
 	}
 }
 </pre>
 
-Here's the output:
+Here's the output (just as above):
 <pre>
-0 (rax: 0 rdx 1) ->  rax: 0
-1 (rax: 1 rdx 1) ->  rax: 1
-2 (rax: f rdx e) ->  rax: e
-3 (rax: e rdx f) ->  rax: e
-4 (rax: ffffffffffffffff rdx 0) ->  rax: 0
+0 (rax: 0000000000000000 rdx 0000000000000001) ->  rax: 0000000000000000
+1 (rax: 0000000000000001 rdx 0000000000000001) ->  rax: 0000000000000001
+2 (rax: 000000000000000f rdx 000000000000000e) ->  rax: 000000000000000e
+3 (rax: 000000000000000e rdx 000000000000000f) ->  rax: 000000000000000e
+4 (rax: 00000000ffffffff rdx 0000000000000000) ->  rax: 0000000000000000
 </pre>
 
 It appears plausible that 0x03 gives the minimum of rax and rdx. However, this is not a proof. Let's take things
