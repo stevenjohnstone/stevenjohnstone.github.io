@@ -6,9 +6,37 @@
     <description>Recent content in Categories on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Sat, 12 Jan 2019 17:16:29 +0000</lastBuildDate>
     
 	<atom:link href="https://stevenjohnstone.github.io/blog/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>reverse engineering</title>
+      <link>https://stevenjohnstone.github.io/blog/categories/reverse-engineering/</link>
+      <pubDate>Sat, 12 Jan 2019 17:16:29 +0000</pubDate>
+      
+      <guid>https://stevenjohnstone.github.io/blog/categories/reverse-engineering/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>golang</title>
+      <link>https://stevenjohnstone.github.io/blog/categories/golang/</link>
+      <pubDate>Fri, 13 Oct 2017 13:53:00 +0100</pubDate>
+      
+      <guid>https://stevenjohnstone.github.io/blog/categories/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>security</title>
+      <link>https://stevenjohnstone.github.io/blog/categories/security/</link>
+      <pubDate>Sat, 07 Oct 2017 14:46:09 +0100</pubDate>
+      
+      <guid>https://stevenjohnstone.github.io/blog/categories/security/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

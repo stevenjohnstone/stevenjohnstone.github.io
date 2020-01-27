@@ -7,44 +7,13 @@ body {
   
 }
 
-.grid-container {
-  margin: auto;
-  justify-content: center;
-
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-}
-
-.grid-item {
-  position: relative;
-  flex: intial;
-}
-
-.grid-item img {
-  object-fit: cover;
-  overflow: hidden;
-  margin: 5px;
-}
-
-.grid-item .grid-item-title  {
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  color: white;
-  font-weight: bold;
-  margin: 10px;
-  background-color: black;
-  opacity: 0.6;
-
-  text-decoration: none;
-  align-items: left;
-  justify-content: left;
-}
 
 a {
   color: inherit;
+}
+
+a.contents {
+  text-decoration: none;
 }
 
 /* header and footer areas */
