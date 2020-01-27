@@ -1,44 +1,49 @@
-<body>
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-us">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta content="" name="keywords">
-<meta content="SO_REUASEADDR and Golang - rm -rf /" property="og:title">
-<title>SO_REUASEADDR and Golang | rm -rf /</title>
-<link rel="stylesheet" href="https://stevenjohnstone.github.io/blog//css/style.css">
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="SO_REUASEADDR and Golang" />
+    <meta property="og:url" content="https://stevenjohnstone.github.io/blog/posts/so_reuaseaddr-golang/" />
+    
+   
+    <title>SO_REUASEADDR and Golang | rm -rf /</title>
+   
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css">
+<link rel="stylesheet" type="text/css" href="/blog/css/fonts.css">
 
+    
+  </head>
 
-  <section class="section">
-  <div class="container">
-    <nav class="nav">
-      <div class="nav-left">
-        <a class="nav-item" href="https://stevenjohnstone.github.io/blog//"><h1 class="title is-4">rm -rf /</h1></a>
-      </div>
-      <div class="nav-right">
-        <nav class="nav-item level is-mobile">
-          
-        </nav>
-      </div>
-    </nav>
-  </div>
-</section>
-
-  <section class="section">
-    <div class="container">
-      <h2 class="subtitle is-6">October 13, 2017</h2>
-      <h1 class="title">SO_REUASEADDR and Golang</h1>
+  <body>
+    <nav>
+    <ul class="menu">
       
-      <div class="content">
-        
+      <li><a href="/blog/blog/">Home</a></li>
+      
+      <li><a href="/blog/blog/about/">About</a></li>
+      
+      <li><a href="/blog/blog/categories/">Categories</a></li>
+      
+      <li><a href="/blog/blog/tags/">Tags</a></li>
+      
+      <li><a href="/blog/blog/index.xml">Subscribe</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
 
+<div class="article-meta">
+<h1><span class="title">SO_REUASEADDR and Golang</span></h1>
+
+<h2 class="date">2017/10/13</h2>
+</div>
+
+<main>
 <h1 id="a-flaky-test">A Flaky Test</h1>
-
 <p>I was investigating a test which failed with a very low probability. It boiled down to this:</p>
-
 <pre><code>package main
 
 import (
@@ -76,25 +81,14 @@ func main() {
 		panic(err)
 	}
 }
-</code></pre>
-
-<p>It&rsquo;s pretty standard to stop a goroutine which is blocked in Accept() by calling Close() on the listener. Passes casual inspection, linters don&rsquo;t complain etc. However, if you run the above enough times, you may see something like this:</p>
-
+</code></pre><p>It&rsquo;s pretty standard to stop a goroutine which is blocked in Accept() by calling Close() on the listener. Passes casual inspection, linters don&rsquo;t complain etc. However, if you run the above enough times, you may see something like this:</p>
 <pre><code>panic: listen tcp 127.0.0.1:37327: bind: address already in use
-</code></pre>
-
-<p>Address already in use? This caused me some confusion as I know that <a href="http://man7.org/linux/man-pages/man7/socket.7.html">SO_RESUSEADDR</a> is set set by Golang in net.Listen and I&rsquo;ve been conditioned to think &ldquo;SO_RESUSEADDR&rdquo; when I see EALREADY in a situation like this.</p>
-
+</code></pre><p>Address already in use? This caused me some confusion as I know that <a href="http://man7.org/linux/man-pages/man7/socket.7.html">SO_RESUSEADDR</a> is set set by Golang in net.Listen and I&rsquo;ve been conditioned to think &ldquo;SO_RESUSEADDR&rdquo; when I see EALREADY in a situation like this.</p>
 <h1 id="root-cause">Root Cause</h1>
-
 <p>The problem here is that Close() of a listener doesn&rsquo;t immediately close the underlying file descriptor. What it <a href="https://golang.org/src/internal/poll/fd_unix.go#L69">does</a> is decrement a reference count and if that reference count is non-zero will exit with a file descriptor still open. Subsequent calls to net.Listen may fail with &ldquo;bind: address already in use&rdquo; because the address really is in use. Not waiting on sockets to leave TIME_WAIT, just <em>open</em>.</p>
-
 <p>The reference count on the underlying file descriptor may be non-zero because a goroutine is still in the guts of <a href="https://golang.org/src/internal/poll/fd_unix.go#L317">Accept()</a> where it has locked the file-descriptor. This explains our intermittent failure: we call Close() and then Listen() but there&rsquo;s a goroutine still in Accept() which has prevented the underlying file-descriptor from being closed.</p>
-
 <h1 id="the-fix">The fix</h1>
-
 <p>&hellip;is to ensure that the goroutine is not in Accept() when we try to listen again on the same port. For example, we can close a channel to signal that the goroutine is done:</p>
-
 <pre><code>package main
 
 import (
@@ -137,28 +131,21 @@ func main() {
 		panic(err)
 	}
 }
-</code></pre>
-
-<h1 id="lessons-learned">Lessons Learned</h1>
-
+</code></pre><h1 id="lessons-learned">Lessons Learned</h1>
 <ul>
 <li>when Close() of a listener returns, the underlying file descriptor may still be open</li>
 <li>any method calls for the listener must complete to be sure that the underlying file descriptor is closed</li>
 </ul>
 
-      </div>
-    </div>
-  </section>
+</main>
+
+  <footer>
   
+  
+  <hr/>
+  © <a href="https://stevenjohnstone.com">Stevie Johnstone</a> 2020 | <a href="https://github.com/stevenjohnstone">Github</a>
+  
+  </footer>
+  </body>
+</html>
 
-  <section class="section">
-  <div class="container has-text-centered">
-    <p></p>
-  </div>
-</section>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-
-<script>hljs.initHighlightingOnLoad();</script>
-
-
-</body>

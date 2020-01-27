@@ -1,5 +1,7 @@
 ---
 title: "SO_REUASEADDR and Golang"
+categories:
+    - golang
 date: 2017-10-13T13:53:00+01:00
 ---
 

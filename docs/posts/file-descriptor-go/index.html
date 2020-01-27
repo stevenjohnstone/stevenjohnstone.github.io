@@ -1,46 +1,50 @@
-<body>
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-us">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta content="" name="keywords">
-<meta content="File Descriptors in Go - rm -rf /" property="og:title">
-<title>File Descriptors in Go | rm -rf /</title>
-<link rel="stylesheet" href="https://stevenjohnstone.github.io/blog//css/style.css">
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="File Descriptors in Go" />
+    <meta property="og:url" content="https://stevenjohnstone.github.io/blog/posts/file-descriptor-go/" />
+    
+   
+    <title>File Descriptors in Go | rm -rf /</title>
+   
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css">
+<link rel="stylesheet" type="text/css" href="/blog/css/fonts.css">
 
+    
+  </head>
 
-  <section class="section">
-  <div class="container">
-    <nav class="nav">
-      <div class="nav-left">
-        <a class="nav-item" href="https://stevenjohnstone.github.io/blog//"><h1 class="title is-4">rm -rf /</h1></a>
-      </div>
-      <div class="nav-right">
-        <nav class="nav-item level is-mobile">
-          
-        </nav>
-      </div>
-    </nav>
-  </div>
-</section>
-
-  <section class="section">
-    <div class="container">
-      <h2 class="subtitle is-6">October 13, 2017</h2>
-      <h1 class="title">File Descriptors in Go</h1>
+  <body>
+    <nav>
+    <ul class="menu">
       
-      <div class="content">
-        
+      <li><a href="/blog/blog/">Home</a></li>
+      
+      <li><a href="/blog/blog/about/">About</a></li>
+      
+      <li><a href="/blog/blog/categories/">Categories</a></li>
+      
+      <li><a href="/blog/blog/tags/">Tags</a></li>
+      
+      <li><a href="/blog/blog/index.xml">Subscribe</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
 
+<div class="article-meta">
+<h1><span class="title">File Descriptors in Go</span></h1>
+
+<h2 class="date">2017/10/13</h2>
+</div>
+
+<main>
 <h1 id="golang-file-descriptors-and-finalizers">Golang, File Descriptors and Finalizers</h1>
-
 <p>If you <a href="https://golang.org/pkg/os/#Open">Open()</a> a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a  cleanup <em>finalizer</em> set when Open() is called.</p>
-
 <p>You can see this in action in the following program:</p>
-
 <pre><code>package main
 
 import (
@@ -74,32 +78,19 @@ func main() {
     allocate()
 }
 
-</code></pre>
-
-<p>On my system, the output is</p>
-
+</code></pre><p>On my system, the output is</p>
 <pre><code>successful opens = 1020
 successful opens = 1020
-</code></pre>
-
-<p>The first time allocate() is called, it manages to open the file 1020 times before returning. The call to <a href="https://golang.org/pkg/runtime/#GC">runtime.GC()</a> causes the garbage collector to run which closes the open files allowing the next allocate() to open the file 1020 times. What happens if we don&rsquo;t call the garbage collector?</p>
-
+</code></pre><p>The first time allocate() is called, it manages to open the file 1020 times before returning. The call to <a href="https://golang.org/pkg/runtime/#GC">runtime.GC()</a> causes the garbage collector to run which closes the open files allowing the next allocate() to open the file 1020 times. What happens if we don&rsquo;t call the garbage collector?</p>
 <p>We modify main:</p>
-
 <pre><code>func main() {
     allocate()
     allocate()
 }
-</code></pre>
-
-<p>The result is now:</p>
-
+</code></pre><p>The result is now:</p>
 <pre><code>successful opens = 1020
 successful opens = 0
-</code></pre>
-
-<p>The garbage collector hasn&rsquo;t run by the time the second allocate() call happens so the available file descriptors for the process are exhausted. When would the garbage collector run?</p>
-
+</code></pre><p>The garbage collector hasn&rsquo;t run by the time the second allocate() call happens so the available file descriptors for the process are exhausted. When would the garbage collector run?</p>
 <pre><code>func main() {
 	allocate()
 	for i := 0; ; i++ {
@@ -110,27 +101,19 @@ successful opens = 0
 	}
 }
 
-</code></pre>
-
-<p>With main as above, it takes ~30k iterations of allocate for the garbage collector to run on my system. This isn&rsquo;t too surprising. Exhaustion of file descriptors will not result in enough memory being used to trigger a garbage collection. The garbage collector is oblivious to the lack of system resources other than memory.</p>
-
-<h1 id="don-t-rely-on-the-garbage-collector">Don&rsquo;t Rely on the Garbage Collector</h1>
-
+</code></pre><p>With main as above, it takes ~30k iterations of allocate for the garbage collector to run on my system. This isn&rsquo;t too surprising. Exhaustion of file descriptors will not result in enough memory being used to trigger a garbage collection. The garbage collector is oblivious to the lack of system resources other than memory.</p>
+<h1 id="dont-rely-on-the-garbage-collector">Don&rsquo;t Rely on the Garbage Collector</h1>
 <p>&hellip;for anything other than collecting memory resources. Tying other resource types to garbage collection is a bad idea and could lead to resource exhaustion. After all, you aren&rsquo;t guaranteed to ever have the garbage collector run for your program. Close files when you&rsquo;re finished with them; defer is your friend.</p>
 
-      </div>
-    </div>
-  </section>
+</main>
+
+  <footer>
   
+  
+  <hr/>
+  © <a href="https://stevenjohnstone.com">Stevie Johnstone</a> 2020 | <a href="https://github.com/stevenjohnstone">Github</a>
+  
+  </footer>
+  </body>
+</html>
 
-  <section class="section">
-  <div class="container has-text-centered">
-    <p></p>
-  </div>
-</section>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-
-<script>hljs.initHighlightingOnLoad();</script>
-
-
-</body>

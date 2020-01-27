@@ -1,5 +1,13 @@
 ---
 title: "xchg rax,rax"
+categories:
+    - reverse engineering
+tags:
+    - xchg rax,rax
+    - assembly language
+    - unicorn engine
+    - Z3
+    - SAT
 date: 2019-01-12T17:16:29Z
 ---
 

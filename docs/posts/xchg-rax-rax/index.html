@@ -1,158 +1,116 @@
-<body>
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-us">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta content="" name="keywords">
-<meta content="xchg rax,rax - rm -rf /" property="og:title">
-<title>xchg rax,rax | rm -rf /</title>
-<link rel="stylesheet" href="https://stevenjohnstone.github.io/blog//css/style.css">
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="xchg rax,rax" />
+    <meta property="og:url" content="https://stevenjohnstone.github.io/blog/posts/xchg-rax-rax/" />
+    
+   
+    <title>xchg rax,rax | rm -rf /</title>
+   
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css">
+<link rel="stylesheet" type="text/css" href="/blog/css/fonts.css">
 
+    
+  </head>
 
-  <section class="section">
-  <div class="container">
-    <nav class="nav">
-      <div class="nav-left">
-        <a class="nav-item" href="https://stevenjohnstone.github.io/blog//"><h1 class="title is-4">rm -rf /</h1></a>
-      </div>
-      <div class="nav-right">
-        <nav class="nav-item level is-mobile">
-          
-        </nav>
-      </div>
-    </nav>
-  </div>
-</section>
-
-  <section class="section">
-    <div class="container">
-      <h2 class="subtitle is-6">January 12, 2019</h2>
-      <h1 class="title">xchg rax,rax</h1>
+  <body>
+    <nav>
+    <ul class="menu">
       
-      <div class="content">
-        
+      <li><a href="/blog/blog/">Home</a></li>
+      
+      <li><a href="/blog/blog/about/">About</a></li>
+      
+      <li><a href="/blog/blog/categories/">Categories</a></li>
+      
+      <li><a href="/blog/blog/tags/">Tags</a></li>
+      
+      <li><a href="/blog/blog/index.xml">Subscribe</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
 
+<div class="article-meta">
+<h1><span class="title">xchg rax,rax</span></h1>
+
+<h2 class="date">2019/01/12</h2>
+</div>
+
+<main>
 <h1 id="x86-64-kata">x86-64 Kata</h1>
-
 <p>The book <a href="https://www.amazon.co.uk/xchg-rax-xorpd/dp/1502958082">xchg rax,rax</a> (content available free <a href="https://www.xorpd.net/pages/xchg_rax/snip_00.html">here</a>) is
 a collection of 0x40 x86-64 snippets. It has no text other
 than chunks of assembly language. You read the code and ponder
 its meaning. <a href="https://en.wikipedia.org/wiki/Kata">Kata</a> for the budding reverse engineer.</p>
-
 <h1 id="spoiler-alert">Spoiler Alert</h1>
-
 <p>Program 0x03 is pretty neat:</p>
-
-<pre>
-sub rdx,rax
-sbb rcx,rcx
-and rcx,rdx
-add rax,rcx
-</pre>
-
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 <p>Let me spoil this for you: at the end of this program, rax will contain
 the smaller of the original rax and rdx values. I know this from reading
 it. What if I couldn&rsquo;t work out what this did? What tools could I use?</p>
-
 <h1 id="assemble-it">Assemble It</h1>
-
 <p>We can embed the snippet in a C program and run it for some test cases:</p>
-
-<script src="//gist.github.com/stevenjohnstone/5d8e6a2c7ab64613bb585856b52ac271.js"></script>
+<script type="application/javascript" src="https://gist.github.com/stevenjohnstone/5d8e6a2c7ab64613bb585856b52ac271.js"></script>
 
 <p>Compile with</p>
-
-<pre>
-gcc -masm=intel 0x3.c
-</pre>
-
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 <p>and run to get</p>
-
-<pre>
-0 (rax: 0000000000000000 rdx 0000000000000001) ->  rax: 0000000000000000
-1 (rax: 0000000000000001 rdx 0000000000000001) ->  rax: 0000000000000001
-2 (rax: 000000000000000f rdx 000000000000000e) ->  rax: 000000000000000e
-3 (rax: 000000000000000e rdx 000000000000000f) ->  rax: 000000000000000e
-4 (rax: 00000000ffffffff rdx 0000000000000000) ->  rax: 0000000000000000
-</pre>
-
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 <h1 id="emulation">Emulation</h1>
-
 <p>Suppose that we aren&rsquo;t running on the target system (something without an
 x86-64 processor) or we&rsquo;re concerned about the code being malware (when we start
 to look at more complex code). Then actually running the code natively isn&rsquo;t an
 option.</p>
-
 <p>Emulation allows us to run the code while keeping our tinfoil helmets on. Here&rsquo;s a
 program I wrote in Golang which</p>
-
 <ul>
 <li>assembles <a href="https://www.xorpd.net/pages/xchg_rax/snip_03.html">0x03</a> into machine code using <a href="http://www.keystone-engine.org/">keystone</a></li>
 <li>sets up the <a href="https://www.unicorn-engine.org/">unicorn</a> emulator to run the machine code</li>
 <li>passes in a few pairs of register values and prints the value of rax at the end</li>
 </ul>
+<script type="application/javascript" src="https://gist.github.com/stevenjohnstone/cbf145560e94b56c0d09ae1aeb24ceb2.js"></script>
 
-<script src="//gist.github.com/stevenjohnstone/cbf145560e94b56c0d09ae1aeb24ceb2.js"></script>
-
-<p>Here&rsquo;s the output (just as above):
-<pre>
-0 (rax: 0000000000000000 rdx 0000000000000001) -&gt;  rax: 0000000000000000
-1 (rax: 0000000000000001 rdx 0000000000000001) -&gt;  rax: 0000000000000001
-2 (rax: 000000000000000f rdx 000000000000000e) -&gt;  rax: 000000000000000e
-3 (rax: 000000000000000e rdx 000000000000000f) -&gt;  rax: 000000000000000e
-4 (rax: 00000000ffffffff rdx 0000000000000000) -&gt;  rax: 0000000000000000
-</pre></p>
-
+<p>Here&rsquo;s the output (just as above):</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 <p>It appears plausible that 0x03 gives the minimum of rax and rdx. However, this is not a proof. Let&rsquo;s take things
 further.</p>
-
 <h1 id="z3">Z3</h1>
-
 <p><a href="https://github.com/Z3Prover/z3">Z3</a>: read about it for yourself, I wouldn&rsquo;t do it justice. Suffice it to say,
 we can use SMT solvers to prove properties of software.</p>
-
 <p>The plan of attack is:</p>
-
 <ul>
 <li>turn the assembly into <a href="https://en.wikipedia.org/wiki/Static_single_assignment_form">SSA</a> form</li>
 <li>make <em>assertions</em> which model the effects of the instructions in the program</li>
 <li>show that an assertion which contradicts our <em>theorem</em> leads to the model being unsatisfiable</li>
 </ul>
-
 <p>I&rsquo;ve opted to use <a href="http://smtlib.cs.uiowa.edu/">SMT-LIB</a> to demonstrate.</p>
-
-<script src="//gist.github.com/stevenjohnstone/da22d90c193c26ab614ce918bb427a77.js"></script>
+<script type="application/javascript" src="https://gist.github.com/stevenjohnstone/da22d90c193c26ab614ce918bb427a77.js"></script>
 
 <p>Running with z3 gives</p>
-
-<pre>
-sat
-unsat
-sat
-unsat
-</pre>
-
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 <h1 id="why">Why?</h1>
-
 <p>This is surely overkill for such a small problem? Yes. However, as we move to more complex binary executables (e.g. malware)
 the ideas touched on here come into their own.</p>
 
-      </div>
-    </div>
-  </section>
+</main>
+
+  <footer>
   
+  
+  <hr/>
+  © <a href="https://stevenjohnstone.com">Stevie Johnstone</a> 2020 | <a href="https://github.com/stevenjohnstone">Github</a>
+  
+  </footer>
+  </body>
+</html>
 
-  <section class="section">
-  <div class="container has-text-centered">
-    <p></p>
-  </div>
-</section>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-
-<script>hljs.initHighlightingOnLoad();</script>
-
-
-</body>

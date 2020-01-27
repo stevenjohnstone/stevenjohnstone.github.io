@@ -2,14 +2,35 @@ baseURL = "https://stevenjohnstone.github.io/blog/"
 languageCode = "en-us"
 title = "rm -rf /"
 publishDir = "docs"
-theme = "hemingway2"
+theme = "hugo-xmin-mod"
 pygmentsStyle = "friendly"
 pygmentsCodeFences = true
 
-[taxonomies]
-  tag = "tags"
-  category = "categories"
+googleAnalytics = ""
+disqusShortname = ""
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+footnotereturnlinkcontents = "↩"
 
-[author]
-  name = "Steven Johnstone"
-  github = "stevenjohnstone"
+[permalinks]
+    post = "/post/:year/:month/:day/:slug/"
+    note = "/note/:year/:month/:day/:slug/"
+
+[[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+[[menu.main]]
+    name = "Categories"
+    url = "/categories/"
+    weight = 2 
+[[menu.main]]
+    name = "Tags"
+    url = "/tags/"
+    weight = 3
+[[menu.main]]
+    name = "Subscribe"
+    url = "/index.xml"
+
+[params]
+    description = "A website built through Hugo and blogdown."
+    footer = "&copy; Stevie Johnstone 2017-2020 | [Github](https://github.com/stevenjohnstone)"

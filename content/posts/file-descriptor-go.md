@@ -1,5 +1,7 @@
 ---
 title: "File Descriptors in Go"
+categories:
+    - golang
 date: 2017-10-13T11:39:00+01:00
 ---
 

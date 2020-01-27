@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on rm -rf /</title>
@@ -19,7 +19,7 @@
       <guid>https://stevenjohnstone.github.io/blog/posts/xchg-rax-rax/</guid>
       <description>x86-64 Kata The book xchg rax,rax (content available free here) is a collection of 0x40 x86-64 snippets. It has no text other than chunks of assembly language. You read the code and ponder its meaning. Kata for the budding reverse engineer.
 Spoiler Alert Program 0x03 is pretty neat:
- sub rdx,rax sbb rcx,rcx and rcx,rdx add rax,rcx  Let me spoil this for you: at the end of this program, rax will contain the smaller of the original rax and rdx values.</description>
+Let me spoil this for you: at the end of this program, rax will contain the smaller of the original rax and rdx values.</description>
     </item>
     
     <item>
