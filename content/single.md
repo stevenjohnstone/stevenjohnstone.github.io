@@ -1,0 +1,5 @@
+---
+Title: 'All Posts'
+---
+
+{{< single >}}
