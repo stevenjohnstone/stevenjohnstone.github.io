@@ -28,6 +28,8 @@ a {
 
 a.contents {
   text-decoration: none;
+  padding-top: 24px;
+  padding-bottom: 24px;
 }
 
 /* header and footer areas */
