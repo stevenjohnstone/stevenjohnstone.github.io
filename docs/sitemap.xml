@@ -3,17 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/</loc>
-    <lastmod>2019-01-12T17:16:29+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/tags/assembly-language/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
     <loc>/categories/</loc>
+    <lastmod>2019-01-12T17:16:29+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
