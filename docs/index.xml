@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>rm -rf /</title>
-    <link>https://stevenjohnstone.github.io/blog/</link>
+    <link>/</link>
     <description>Recent content on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 12 Jan 2019 17:16:29 +0000</lastBuildDate>
     
-	<atom:link href="https://stevenjohnstone.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>xchg rax,rax</title>
-      <link>https://stevenjohnstone.github.io/blog/posts/xchg-rax-rax/</link>
+      <link>/posts/xchg-rax-rax/</link>
       <pubDate>Sat, 12 Jan 2019 17:16:29 +0000</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/blog/posts/xchg-rax-rax/</guid>
+      <guid>/posts/xchg-rax-rax/</guid>
       <description>x86-64 Kata The book xchg rax,rax (content available free here) is a collection of 0x40 x86-64 snippets. It has no text other than chunks of assembly language. You read the code and ponder its meaning. Kata for the budding reverse engineer.
 Spoiler Alert Program 0x03 is pretty neat:
 Let me spoil this for you: at the end of this program, rax will contain the smaller of the original rax and rdx values.</description>
@@ -24,20 +24,20 @@ Let me spoil this for you: at the end of this program, rax will contain the smal
     
     <item>
       <title>SO_REUASEADDR and Golang</title>
-      <link>https://stevenjohnstone.github.io/blog/posts/so_reuaseaddr-golang/</link>
+      <link>/posts/so_reuaseaddr-golang/</link>
       <pubDate>Fri, 13 Oct 2017 13:53:00 +0100</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/blog/posts/so_reuaseaddr-golang/</guid>
+      <guid>/posts/so_reuaseaddr-golang/</guid>
       <description>A Flaky Test I was investigating a test which failed with a very low probability. It boiled down to this:
 package main import ( &amp;quot;net&amp;quot; &amp;quot;time&amp;quot; ) func main() { //port zero means let the OS choose a free port l, err := net.Listen(&amp;quot;tcp&amp;quot;, &amp;quot;127.0.0.1:0&amp;quot;) if err != nil { panic(err) } addr := l.Addr().String() go func() { for { c, err := l.Accept() if err != nil { return } c.</description>
     </item>
     
     <item>
       <title>File Descriptors in Go</title>
-      <link>https://stevenjohnstone.github.io/blog/posts/file-descriptor-go/</link>
+      <link>/posts/file-descriptor-go/</link>
       <pubDate>Fri, 13 Oct 2017 11:39:00 +0100</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/blog/posts/file-descriptor-go/</guid>
+      <guid>/posts/file-descriptor-go/</guid>
       <description>Golang, File Descriptors and Finalizers If you Open() a file in Golang and it goes out of scope, then it&amp;rsquo;ll be closed the next time the garbage collector runs as there&amp;rsquo;s a cleanup finalizer set when Open() is called.
 You can see this in action in the following program:
 package main import ( &amp;quot;fmt&amp;quot; &amp;quot;os&amp;quot; &amp;quot;runtime&amp;quot; ) func allocate() int { //use this file as our test subject _, sourceFile, _, ok := runtime.</description>
@@ -45,29 +45,29 @@ package main import ( &amp;quot;fmt&amp;quot; &amp;quot;os&amp;quot; &amp;quot;r
     
     <item>
       <title>CVE-2017-15042</title>
-      <link>https://stevenjohnstone.github.io/blog/posts/cve-2017-15042/</link>
+      <link>/posts/cve-2017-15042/</link>
       <pubDate>Sat, 07 Oct 2017 14:46:09 +0100</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/blog/posts/cve-2017-15042/</guid>
+      <guid>/posts/cve-2017-15042/</guid>
       <description>I Went Looking For A STARTTLS Bug I&amp;rsquo;ve been putting together a cryptography course for my colleagues which focuses on mistakes. Its working title is Cryptography Done Wrong which should give you an idea of the tone. There&amp;rsquo;s a wealth of examples of systems assembled from sound cryptographic components which end up with security issues (for some definition of secure).
 Over the years, TLS has been an excellent source of examples for such a course.</description>
     </item>
     
     <item>
       <title>About</title>
-      <link>https://stevenjohnstone.github.io/blog/about/</link>
+      <link>/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/blog/about/</guid>
+      <guid>/about/</guid>
       <description></description>
     </item>
     
     <item>
       <title>All Posts</title>
-      <link>https://stevenjohnstone.github.io/blog/single/</link>
+      <link>/single/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/blog/single/</guid>
+      <guid>/single/</guid>
       <description>2019-12-01 xchg rax,rax  x86-64 Kata The book xchg rax,rax (content available free here) is a collection of 0x40 x86-64 snippets. It has no text other than chunks of assembly language. You read the code and ponder its meaning. Kata for the budding reverse engineer.
 Spoiler Alert Program 0x03 is pretty neat:
 Let me spoil this for you: at the end of this program, rax will contain the smaller of the original rax and rdx values.</description>

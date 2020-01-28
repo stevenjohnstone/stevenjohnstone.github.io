@@ -3,96 +3,96 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/</loc>
+    <loc>/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/tags/assembly-language/</loc>
+    <loc>/tags/assembly-language/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/categories/</loc>
+    <loc>/categories/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/posts/</loc>
+    <loc>/posts/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/categories/reverse-engineering/</loc>
+    <loc>/categories/reverse-engineering/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/tags/sat/</loc>
+    <loc>/tags/sat/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/tags/</loc>
+    <loc>/tags/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/tags/unicorn-engine/</loc>
+    <loc>/tags/unicorn-engine/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/tags/xchg-raxrax/</loc>
+    <loc>/tags/xchg-raxrax/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/posts/xchg-rax-rax/</loc>
+    <loc>/posts/xchg-rax-rax/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/tags/z3/</loc>
+    <loc>/tags/z3/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/categories/golang/</loc>
+    <loc>/categories/golang/</loc>
     <lastmod>2017-10-13T13:53:00+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/posts/so_reuaseaddr-golang/</loc>
+    <loc>/posts/so_reuaseaddr-golang/</loc>
     <lastmod>2017-10-13T13:53:00+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/posts/file-descriptor-go/</loc>
+    <loc>/posts/file-descriptor-go/</loc>
     <lastmod>2017-10-13T11:39:00+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/tags/cve-2017-15042/</loc>
+    <loc>/tags/cve-2017-15042/</loc>
     <lastmod>2017-10-07T14:46:09+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/posts/cve-2017-15042/</loc>
+    <loc>/posts/cve-2017-15042/</loc>
     <lastmod>2017-10-07T14:46:09+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/categories/security/</loc>
+    <loc>/categories/security/</loc>
     <lastmod>2017-10-07T14:46:09+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/about/</loc>
+    <loc>/about/</loc>
   </url>
   
   <url>
-    <loc>https://stevenjohnstone.github.io/blog/single/</loc>
+    <loc>/single/</loc>
   </url>
   
 </urlset>

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>SAT on rm -rf /</title>
-    <link>https://stevenjohnstone.github.io/blog/tags/sat/</link>
+    <link>/tags/sat/</link>
     <description>Recent content in SAT on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 12 Jan 2019 17:16:29 +0000</lastBuildDate>
     
-	<atom:link href="https://stevenjohnstone.github.io/blog/tags/sat/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/sat/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>xchg rax,rax</title>
-      <link>https://stevenjohnstone.github.io/blog/posts/xchg-rax-rax/</link>
+      <link>/posts/xchg-rax-rax/</link>
       <pubDate>Sat, 12 Jan 2019 17:16:29 +0000</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/blog/posts/xchg-rax-rax/</guid>
+      <guid>/posts/xchg-rax-rax/</guid>
       <description>x86-64 Kata The book xchg rax,rax (content available free here) is a collection of 0x40 x86-64 snippets. It has no text other than chunks of assembly language. You read the code and ponder its meaning. Kata for the budding reverse engineer.
 Spoiler Alert Program 0x03 is pretty neat:
 Let me spoil this for you: at the end of this program, rax will contain the smaller of the original rax and rdx values.</description>

@@ -2,39 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on rm -rf /</title>
-    <link>https://stevenjohnstone.github.io/blog/categories/</link>
+    <link>/categories/</link>
     <description>Recent content in Categories on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 12 Jan 2019 17:16:29 +0000</lastBuildDate>
     
-	<atom:link href="https://stevenjohnstone.github.io/blog/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>reverse engineering</title>
-      <link>https://stevenjohnstone.github.io/blog/categories/reverse-engineering/</link>
+      <link>/categories/reverse-engineering/</link>
       <pubDate>Sat, 12 Jan 2019 17:16:29 +0000</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/blog/categories/reverse-engineering/</guid>
+      <guid>/categories/reverse-engineering/</guid>
       <description></description>
     </item>
     
     <item>
       <title>golang</title>
-      <link>https://stevenjohnstone.github.io/blog/categories/golang/</link>
+      <link>/categories/golang/</link>
       <pubDate>Fri, 13 Oct 2017 13:53:00 +0100</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/blog/categories/golang/</guid>
+      <guid>/categories/golang/</guid>
       <description></description>
     </item>
     
     <item>
       <title>security</title>
-      <link>https://stevenjohnstone.github.io/blog/categories/security/</link>
+      <link>/categories/security/</link>
       <pubDate>Sat, 07 Oct 2017 14:46:09 +0100</pubDate>
       
-      <guid>https://stevenjohnstone.github.io/blog/categories/security/</guid>
+      <guid>/categories/security/</guid>
       <description></description>
     </item>
     
