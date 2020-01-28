@@ -26,7 +26,7 @@ a {
   top: 0;
 }
 
-a.contents {
+.contents {
   text-decoration: none;
   padding-top: 24px;
   padding-bottom: 24px;
