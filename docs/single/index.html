@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A website built through Hugo and blogdown.">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="All Posts" />
+    <meta property="og:url" content="https://stevenjohnstone.github.io/blog/single/" />
+    
+   
+    <title>All Posts | rm -rf /</title>
+   
+
+<link rel="stylesheet" type="text/css" href="/blog/css/style.css">
+<link rel="stylesheet" type="text/css" href="/blog/css/fonts.css">
+
+    
+  </head>
+
+  <body>
+    <a class="skip-link" href="#maincontent">Skip to main</a>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="https://stevenjohnstone.github.io/blog/">Home</a></li>
+      
+      <li><a href="https://stevenjohnstone.github.io/blog/categories/">Categories</a></li>
+      
+      <li><a href="https://stevenjohnstone.github.io/blog/tags/">Tags</a></li>
+      
+      <li><a href="https://stevenjohnstone.github.io/blog/index.xml">Subscribe</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">All Posts</span></h1>
+
+
+</div>
+
+<main id="maincontent">
+
+    <h2>2019-12-01
+    xchg rax,rax
+    </h2>
+    <h1 id="x86-64-kata">x86-64 Kata</h1>
+<p>The book <a href="https://www.amazon.co.uk/xchg-rax-xorpd/dp/1502958082">xchg rax,rax</a> (content available free <a href="https://www.xorpd.net/pages/xchg_rax/snip_00.html">here</a>) is
+a collection of 0x40 x86-64 snippets. It has no text other
+than chunks of assembly language. You read the code and ponder
+its meaning. <a href="https://en.wikipedia.org/wiki/Kata">Kata</a> for the budding reverse engineer.</p>
+<h1 id="spoiler-alert">Spoiler Alert</h1>
+<p>Program 0x03 is pretty neat:</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>Let me spoil this for you: at the end of this program, rax will contain
+the smaller of the original rax and rdx values. I know this from reading
+it. What if I couldn&rsquo;t work out what this did? What tools could I use?</p>
+<h1 id="assemble-it">Assemble It</h1>
+<p>We can embed the snippet in a C program and run it for some test cases:</p>
+<script type="application/javascript" src="https://gist.github.com/stevenjohnstone/5d8e6a2c7ab64613bb585856b52ac271.js"></script>
+
+<p>Compile with</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>and run to get</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<h1 id="emulation">Emulation</h1>
+<p>Suppose that we aren&rsquo;t running on the target system (something without an
+x86-64 processor) or we&rsquo;re concerned about the code being malware (when we start
+to look at more complex code). Then actually running the code natively isn&rsquo;t an
+option.</p>
+<p>Emulation allows us to run the code while keeping our tinfoil helmets on. Here&rsquo;s a
+program I wrote in Golang which</p>
+<ul>
+<li>assembles <a href="https://www.xorpd.net/pages/xchg_rax/snip_03.html">0x03</a> into machine code using <a href="http://www.keystone-engine.org/">keystone</a></li>
+<li>sets up the <a href="https://www.unicorn-engine.org/">unicorn</a> emulator to run the machine code</li>
+<li>passes in a few pairs of register values and prints the value of rax at the end</li>
+</ul>
+<script type="application/javascript" src="https://gist.github.com/stevenjohnstone/cbf145560e94b56c0d09ae1aeb24ceb2.js"></script>
+
+<p>Here&rsquo;s the output (just as above):</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>It appears plausible that 0x03 gives the minimum of rax and rdx. However, this is not a proof. Let&rsquo;s take things
+further.</p>
+<h1 id="z3">Z3</h1>
+<p><a href="https://github.com/Z3Prover/z3">Z3</a>: read about it for yourself, I wouldn&rsquo;t do it justice. Suffice it to say,
+we can use SMT solvers to prove properties of software.</p>
+<p>The plan of attack is:</p>
+<ul>
+<li>turn the assembly into <a href="https://en.wikipedia.org/wiki/Static_single_assignment_form">SSA</a> form</li>
+<li>make <em>assertions</em> which model the effects of the instructions in the program</li>
+<li>show that an assertion which contradicts our <em>theorem</em> leads to the model being unsatisfiable</li>
+</ul>
+<p>I&rsquo;ve opted to use <a href="http://smtlib.cs.uiowa.edu/">SMT-LIB</a> to demonstrate.</p>
+<script type="application/javascript" src="https://gist.github.com/stevenjohnstone/da22d90c193c26ab614ce918bb427a77.js"></script>
+
+<p>Running with z3 gives</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<h1 id="why">Why?</h1>
+<p>This is surely overkill for such a small problem? Yes. However, as we move to more complex binary executables (e.g. malware)
+the ideas touched on here come into their own.</p>
+
+
+    <h2>2017-13-10
+    SO_REUASEADDR and Golang
+    </h2>
+    <h1 id="a-flaky-test">A Flaky Test</h1>
+<p>I was investigating a test which failed with a very low probability. It boiled down to this:</p>
+<pre><code>package main
+
+import (
+	&quot;net&quot;
+	&quot;time&quot;
+)
+
+func main() {
+	//port zero means let the OS choose a free port
+	l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)
+	if err != nil {
+		panic(err)
+	}
+
+	addr := l.Addr().String()
+
+	go func() {
+		for {
+			c, err := l.Accept()
+			if err != nil {
+				return
+			}
+			c.Close()
+		}
+	}()
+
+	time.Sleep(time.Second)
+	if err := l.Close(); err != nil {
+		panic(err)
+	}
+
+	//listen on the same port as before
+	l, err = net.Listen(&quot;tcp&quot;, addr)
+	if err != nil {
+		panic(err)
+	}
+}
+</code></pre><p>It&rsquo;s pretty standard to stop a goroutine which is blocked in Accept() by calling Close() on the listener. Passes casual inspection, linters don&rsquo;t complain etc. However, if you run the above enough times, you may see something like this:</p>
+<pre><code>panic: listen tcp 127.0.0.1:37327: bind: address already in use
+</code></pre><p>Address already in use? This caused me some confusion as I know that <a href="http://man7.org/linux/man-pages/man7/socket.7.html">SO_RESUSEADDR</a> is set set by Golang in net.Listen and I&rsquo;ve been conditioned to think &ldquo;SO_RESUSEADDR&rdquo; when I see EALREADY in a situation like this.</p>
+<h1 id="root-cause">Root Cause</h1>
+<p>The problem here is that Close() of a listener doesn&rsquo;t immediately close the underlying file descriptor. What it <a href="https://golang.org/src/internal/poll/fd_unix.go#L69">does</a> is decrement a reference count and if that reference count is non-zero will exit with a file descriptor still open. Subsequent calls to net.Listen may fail with &ldquo;bind: address already in use&rdquo; because the address really is in use. Not waiting on sockets to leave TIME_WAIT, just <em>open</em>.</p>
+<p>The reference count on the underlying file descriptor may be non-zero because a goroutine is still in the guts of <a href="https://golang.org/src/internal/poll/fd_unix.go#L317">Accept()</a> where it has locked the file-descriptor. This explains our intermittent failure: we call Close() and then Listen() but there&rsquo;s a goroutine still in Accept() which has prevented the underlying file-descriptor from being closed.</p>
+<h1 id="the-fix">The fix</h1>
+<p>&hellip;is to ensure that the goroutine is not in Accept() when we try to listen again on the same port. For example, we can close a channel to signal that the goroutine is done:</p>
+<pre><code>package main
+
+import (
+	&quot;net&quot;
+	&quot;time&quot;
+)
+
+func main() {
+	//port zero means let the OS choose a free port
+	l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)
+	if err != nil {
+		panic(err)
+	}
+
+	addr := l.Addr().String()
+	done := make(chan bool)
+
+	go func() {
+		for {
+			c, err := l.Accept()
+			if err != nil {
+				close(done)
+				return
+			}
+			c.Close()
+		}
+	}()
+
+	time.Sleep(time.Second)
+	if err := l.Close(); err != nil {
+		panic(err)
+	}
+
+	//wait for the goroutine to have left Accept()
+	&lt;-done
+
+	//listen on the same port as before
+	l, err = net.Listen(&quot;tcp&quot;, addr)
+	if err != nil {
+		panic(err)
+	}
+}
+</code></pre><h1 id="lessons-learned">Lessons Learned</h1>
+<ul>
+<li>when Close() of a listener returns, the underlying file descriptor may still be open</li>
+<li>any method calls for the listener must complete to be sure that the underlying file descriptor is closed</li>
+</ul>
+
+
+    <h2>2017-13-10
+    File Descriptors in Go
+    </h2>
+    <h1 id="golang-file-descriptors-and-finalizers">Golang, File Descriptors and Finalizers</h1>
+<p>If you <a href="https://golang.org/pkg/os/#Open">Open()</a> a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a  cleanup <em>finalizer</em> set when Open() is called.</p>
+<p>You can see this in action in the following program:</p>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;os&quot;
+	&quot;runtime&quot;
+)
+
+func allocate() int {
+	//use this file as our test subject
+	_, sourceFile, _, ok := runtime.Caller(1)
+	if !ok {
+		panic(&quot;source file not found&quot;)
+	}
+	counter := 0
+	var files []*os.File
+	for {
+		f, err := os.Open(sourceFile)
+		if err != nil {
+			fmt.Printf(&quot;successful opens= %d\n&quot;, counter)
+			return counter
+		}
+		counter++
+		files = append(files, f)
+	}
+}
+
+func main() {
+    allocate()
+    runtime.GC()
+    allocate()
+}
+
+</code></pre><p>On my system, the output is</p>
+<pre><code>successful opens = 1020
+successful opens = 1020
+</code></pre><p>The first time allocate() is called, it manages to open the file 1020 times before returning. The call to <a href="https://golang.org/pkg/runtime/#GC">runtime.GC()</a> causes the garbage collector to run which closes the open files allowing the next allocate() to open the file 1020 times. What happens if we don&rsquo;t call the garbage collector?</p>
+<p>We modify main:</p>
+<pre><code>func main() {
+    allocate()
+    allocate()
+}
+</code></pre><p>The result is now:</p>
+<pre><code>successful opens = 1020
+successful opens = 0
+</code></pre><p>The garbage collector hasn&rsquo;t run by the time the second allocate() call happens so the available file descriptors for the process are exhausted. When would the garbage collector run?</p>
+<pre><code>func main() {
+	allocate()
+	for i := 0; ; i++ {
+		if allocate() &gt; 0 {
+			fmt.Printf(&quot;garbage collection ran after %d iterations&quot;, i)
+			return
+		}
+	}
+}
+
+</code></pre><p>With main as above, it takes ~30k iterations of allocate for the garbage collector to run on my system. This isn&rsquo;t too surprising. Exhaustion of file descriptors will not result in enough memory being used to trigger a garbage collection. The garbage collector is oblivious to the lack of system resources other than memory.</p>
+<h1 id="dont-rely-on-the-garbage-collector">Don&rsquo;t Rely on the Garbage Collector</h1>
+<p>&hellip;for anything other than collecting memory resources. Tying other resource types to garbage collection is a bad idea and could lead to resource exhaustion. After all, you aren&rsquo;t guaranteed to ever have the garbage collector run for your program. Close files when you&rsquo;re finished with them; defer is your friend.</p>
+
+
+    <h2>2017-07-10
+    CVE-2017-15042
+    </h2>
+    <h1 id="i-went-looking-for-a-starttlshttpsenwikipediaorgwikiopportunistic_tls-bug">I Went Looking For A <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS">STARTTLS</a> Bug</h1>
+<p>I&rsquo;ve been putting together a cryptography course for my colleagues which focuses on <em>mistakes</em>. Its working title is <em>Cryptography Done Wrong</em> which should give you an idea of the tone. There&rsquo;s a wealth of examples of systems assembled from sound cryptographic components which end up with security issues (for some definition of secure).</p>
+<p>Over the years, <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security">TLS</a> has been an excellent source of examples for such a course. I&rsquo;m not talking about <a href="heartbleed.com">heartbleed</a>, <a href="https://en.wikipedia.org/wiki/CRIME">CRIME</a> and all that; I&rsquo;m talking about mistakes made <em>using TLS</em>.</p>
+<p>It&rsquo;s very common for developers with only a passing familiarity with TLS to focus primarily on the encryption of the data stream and neglect how the identity of the remote party is established. When the identity of the other party is not established a <a href="https://en.wikipedia.org/wiki/Man-in-the-middle_attack">man-in-the-middle (MITM)</a> can intercept and modify traffic and the victims will have no idea. Think about how many potential attackers there are: the wifi access point in Starbucks, your ISP, your friendly three-letter-agencies etc. If you haven&rsquo;t already, I suggest reading <a href="http://crypto.stanford.edu/~dabo/pubs/abstracts/ssl-client-bugs.html"><em>The Most Dangerous Code in the World</em></a> to see just how many big names have gotten this very wrong.  If you&rsquo;re a poor soul working with OpenSSL, I suggest taking a look at the <a href="https://github.com/iSECPartners/ssl-conservatory">SSL conservatory project</a> for practical advice.</p>
+<p>As if to make things more error prone, some protocols (<a href="https://www.limilabs.com/blog/ssl-vs-tls-vs-starttls-stls">SMTP</a>, <a href="https://tools.ietf.org/html/rfc6120#section-5">XMPP</a>, postgresql) were retrofitted with TLS support using STARTTLS so that the same port could be used for legacy plaintext communication and TLS. Having worked in the field of <a href="https://www.acano.com/"><em>unified communications</em></a> where XMPP was a big deal, I&rsquo;ve seen my fair share of STARTTLS related security vulnerabilities. Could I find some new ones on a rainy Saturday afternoon?</p>
+<h1 id="starttls-bugs">STARTTLS bugs</h1>
+<p>To STARTTLS, the client and server negotiate in plaintext with a variation on the following:</p>
+<p><strong>Client: &ldquo;Hey server, how&rsquo;s it going?&quot;</strong></p>
+<p><strong>Server: &ldquo;Not bad, client&rdquo;</strong></p>
+<p><strong>Server: &ldquo;Hey client, I support TLS! Do you?&quot;</strong></p>
+<p><strong>Client: &ldquo;Yes&rdquo;</strong></p>
+<p><strong>Server: &ldquo;Cool! Let&rsquo;s do TLS&rdquo;</strong></p>
+<p><strong>Client: &ldquo;Ok&rdquo;</strong></p>
+<p>There is no mechanism to establish the identity of either party or the authenticity of the received messages. Therefore, a MITM can modify this conversation so it appears to the client that the server doesn&rsquo;t support TLS e.g. the client see this:</p>
+<p><strong>Client: &ldquo;Hey server, how&rsquo;s it going?&quot;</strong></p>
+<p><strong>Server: &ldquo;Not bad, client&rdquo;</strong></p>
+<p><strong>Server: &ldquo;Hey client, I don&rsquo;t support TLS&rdquo;</strong></p>
+<p><strong>Client: &ldquo;Ok&rdquo;</strong></p>
+<p>The client will proceed to communicate in plaintext revealing sensitive data, credentials etc.</p>
+<p>When using STARTTLS or other <em>opportunistic encryption</em> schemes it&rsquo;s important that the client can specify a policy which says how to behave if TLS is not negotiated. Your web browser will warn you if there&rsquo;s something wrong with the TLS negotiation with a website and may offer you a chance to proceed at your own risk: you&rsquo;d expect no less from an email or chat client.</p>
+<h1 id="the-trawl">The Trawl</h1>
+<p>I work mostly in golang these days so I decided to focus on opensource golang libraries. I picked SMTP, XMPP and postgres wire protocol as targets for investigation.</p>
+<p>I looked at some golang SMTP packages and decided quickly that they all boiled down to <a href="https://golang.org/pkg/net/smtp/">net/smtp</a>.</p>
+<p><strong>I wasn&rsquo;t optimistic that I&rsquo;d find any issues and there&rsquo;s probably a lesson there.</strong></p>
+<p>The function <a href="https://golang.org/src/net/smtp/smtp.go?s=8958:9036#L296">SendMail</a> was immediately fishy because it has no means to pass in a policy or callback to decide what to do when TLS negotiation fails. A quick read of the code (it&rsquo;s a very easy read like much of golang&rsquo;s standard library) confirmed that the default was to roll on if TLS was not negotiated.</p>
+<p>I read the code over and over for about 30 minutes with a vaguely paranoid feeling that I must be wrong. So I parked it and went on the hunt for more bugs and almost immediately found another, though not in something as well-known as golang&rsquo;s standard library. That bug will have to wait for another post. I guess it helps to have a focus for a code review and having many possible targets. Starting off with a single code base looking for <em>any</em> security bug is probably a lot harder than looking for one type of security bug in all public repos on github for a given language.</p>
+<h1 id="reporting-process">Reporting Process</h1>
+<p>Go has an easy to follow process for reporting security vulnerabilities: <a href="https://golang.org/security">https://golang.org/security</a>. Here&rsquo;s how it worked in practice:</p>
+<ul>
+<li>I reported the issue at 11:09 AM GMT on Tuesday 3rd October 2017 via email to <a href="mailto:security@golang.org">security@golang.org</a></li>
+<li>I received a response at 2:29 AM GMT the following day from Russ Cox (<a href="mailto:rsc@google.com">rsc@google.com</a>) confirming the issue and spelling out the timeline for dealing with the issue.</li>
+<li>Over the course of the next 24 hours or so I was informed of the actions which would be taken and given a link to a <a href="https://go-review.googlesource.com/c/go/+/68170">patch</a> <em>so I had a chance to comment</em></li>
+<li>1.9.1 and 1.8.4 were released on Oct 4th 2017 addressing the capture of PLAIN credentials</li>
+<li>I was asked if I wanted <a href="https://github.com/golang/go/issues/22134">credit</a> and since I&rsquo;m human I said &ldquo;yes, please&rdquo;</li>
+</ul>
+<p>I was pleasantly surprised by the quick turnaround and the fact that I was kept in the loop. The golang team decided to solve the issues in two stages:</p>
+<ol>
+<li>in the security point release: disallow PLAIN credentials on non-TLS connections</li>
+<li>acknowledge the general weakness in a public issue <a href="https://github.com/golang/go/issues/22145">https://github.com/golang/go/issues/22145</a> and aim to fix in 1.10</li>
+</ol>
+<p>As someone who has run a PSIRT (Product Security Incident Response Team) I appreciate the professionalism shown here. They are following the important parts of <a href="http://standards.iso.org/ittf/PubliclyAvailableStandards/c045170_ISO_IEC_29147_2014.zip">ISO 29417</a>.</p>
+<h1 id="lessons-learned">Lessons Learned</h1>
+<ul>
+<li>No codebase is above suspicion no matter how nice</li>
+<li>Hunting for one type of bug in a large number of projects can yield results quickly</li>
+<li>STARTLS is easy to get wrong</li>
+<li>golang has a mature security vulnerability reporting mechanism</li>
+</ul>
+
+
+    <h2>About
+    </h2>
+    
+
+
+</main>
+
+  <footer>
+  
+  
+  <hr/>
+  © Stevie Johnstone 2017-2020 | <a href="https://github.com/stevenjohnstone">Github</a>
+  
+  </footer>
+  </body>
+</html>
+
