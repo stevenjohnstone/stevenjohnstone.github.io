@@ -30,7 +30,7 @@ An Example Consider the following code:
       <guid>/posts/xchg-rax-rax/</guid>
       <description>x86-64 Kata The book xchg rax,rax (content available free here) is a collection of 0x40 x86-64 snippets. It has no text other than chunks of assembly language. You read the code and ponder its meaning. Kata for the budding reverse engineer.
 Spoiler Alert Program 0x03 is pretty neat:
-Let me spoil this for you: at the end of this program, rax will contain the smaller of the original rax and rdx values.</description>
+sub rdx,rax sbb rcx,rcx and rcx,rdx add rax,rcx Let me spoil this for you: at the end of this program, rax will contain the smaller of the original rax and rdx values.</description>
     </item>
     
     <item>

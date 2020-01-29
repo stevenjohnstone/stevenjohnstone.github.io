@@ -245,16 +245,71 @@ than chunks of assembly language. You read the code and ponder
 its meaning. <a href="https://en.wikipedia.org/wiki/Kata">Kata</a> for the budding reverse engineer.</p>
 <h1 id="spoiler-alert">Spoiler Alert</h1>
 <p>Program 0x03 is pretty neat:</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<p>Let me spoil this for you: at the end of this program, rax will contain
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#06287e">sub</span> <span style="color:#60add5">rdx</span>,<span style="color:#60add5">rax</span>
+<span style="color:#06287e">sbb</span> <span style="color:#60add5">rcx</span>,<span style="color:#60add5">rcx</span>
+<span style="color:#06287e">and</span> <span style="color:#60add5">rcx</span>,<span style="color:#60add5">rdx</span>
+<span style="color:#06287e">add</span> <span style="color:#60add5">rax</span>,<span style="color:#60add5">rcx</span>
+</code></pre></div><p>Let me spoil this for you: at the end of this program, rax will contain
 the smaller of the original rax and rdx values. I know this from reading
 it. What if I couldn&rsquo;t work out what this did? What tools could I use?</p>
 <h1 id="assemble-it">Assemble It</h1>
 <p>We can embed the snippet in a C program and run it for some test cases:</p>
-<script type="application/javascript" src="https://gist.github.com/stevenjohnstone/5d8e6a2c7ab64613bb585856b52ac271.js"></script>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#007020">#</span><span style="color:#007020">include</span> <span style="color:#007020">&lt;stdio.h&gt;</span><span style="color:#007020">
+</span><span style="color:#007020"></span>
+<span style="color:#007020;font-weight:bold">static</span> <span style="color:#902000">int</span> <span style="color:#06287e">x3</span>(<span style="color:#902000">int</span> a, <span style="color:#902000">int</span> b) {
 
-<p>Compile with</p>
+    <span style="color:#902000">int</span> out;
+    <span style="color:#007020;font-weight:bold">asm</span>(
+        <span style="color:#60a0b0;font-style:italic">// it&#39;s not stated in xchg rax,rax but it&#39;s
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#60a0b0;font-style:italic">// intel syntax. Note the noprefix means we
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#60a0b0;font-style:italic">// don&#39;t need % before registers
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">.intel_syntax noprefix;</span><span style="color:#4070a0">&#34;</span>
+        <span style="color:#60a0b0;font-style:italic">// a bit of preamble to get registers
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#60a0b0;font-style:italic">// set up correctly. We&#39;re okay with just working
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#60a0b0;font-style:italic">// with int rather than long int
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">mov eax, %1;</span><span style="color:#4070a0">&#34;</span>
+        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">mov edx, %2;</span><span style="color:#4070a0">&#34;</span>
+
+        <span style="color:#60a0b0;font-style:italic">// 0x03 code below
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">sub rdx, rax;</span><span style="color:#4070a0">&#34;</span>
+        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">sbb rcx,rcx;</span><span style="color:#4070a0">&#34;</span>
+        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">and rcx,rdx;</span><span style="color:#4070a0">&#34;</span>
+        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">add rax,rcx;</span><span style="color:#4070a0">&#34;</span>
+
+        <span style="color:#60a0b0;font-style:italic">// put the result into out
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">mov %0, eax;</span><span style="color:#4070a0">&#34;</span>
+        <span style="color:#60a0b0;font-style:italic">// tell the compiler that out is in memory
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#666">:</span> <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">=m</span><span style="color:#4070a0">&#34;</span> (out)
+        <span style="color:#60a0b0;font-style:italic">// tell the compiler that a and b are inputs
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#666">:</span> <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">m</span><span style="color:#4070a0">&#34;</span> (a) , <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">m</span><span style="color:#4070a0">&#34;</span> (b)
+        <span style="color:#60a0b0;font-style:italic">// this is the list of registers which are clobbered
+</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#666">:</span> <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">rax</span><span style="color:#4070a0">&#34;</span>,<span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">rdx</span><span style="color:#4070a0">&#34;</span>,<span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">rcx</span><span style="color:#4070a0">&#34;</span>);
+    <span style="color:#007020;font-weight:bold">return</span> out;
+}
+
+<span style="color:#007020;font-weight:bold">struct</span> input {
+    <span style="color:#902000">int</span> a;
+    <span style="color:#902000">int</span> b;
+};
+
+<span style="color:#902000">int</span> <span style="color:#06287e">main</span>(<span style="color:#902000">int</span> argc, <span style="color:#007020;font-weight:bold">const</span> <span style="color:#902000">char</span> <span style="color:#666">*</span><span style="color:#666">*</span>argv) {
+
+
+    <span style="color:#007020;font-weight:bold">struct</span> input inputs[] <span style="color:#666">=</span> {
+        {<span style="color:#40a070">0x0</span>, <span style="color:#40a070">0x1</span>},
+        {<span style="color:#40a070">0x1</span>, <span style="color:#40a070">0x1</span>},
+        {<span style="color:#40a070">0xf</span>, <span style="color:#40a070">0xe</span>},
+        {<span style="color:#40a070">0xe</span>, <span style="color:#40a070">0xf</span>},
+        {<span style="color:#666">~</span><span style="color:#40a070">0</span>, <span style="color:#40a070">0x00</span>},
+    };
+
+    <span style="color:#007020;font-weight:bold">for</span> (<span style="color:#902000">int</span> i <span style="color:#666">=</span> <span style="color:#40a070">0</span>; i <span style="color:#666">&lt;</span> <span style="color:#007020;font-weight:bold">sizeof</span>(inputs)<span style="color:#666">/</span><span style="color:#007020;font-weight:bold">sizeof</span>(inputs[<span style="color:#40a070">0</span>]); i<span style="color:#666">+</span><span style="color:#666">+</span>) {
+        printf(<span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">%d (rax: %016x rdx %016x) -&gt;  rax: %016x</span><span style="color:#4070a0;font-weight:bold">\n</span><span style="color:#4070a0">&#34;</span>,
+                i, inputs[i].a, inputs[i].b, x3(inputs[i].a, inputs[i].b));
+    }
+   <span style="color:#007020;font-weight:bold">return</span> <span style="color:#40a070">0</span>;
+}
+</code></pre></div><p>Compile with</p>
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
 <p>and run to get</p>
@@ -272,9 +327,74 @@ program I wrote in Golang which</p>
 <li>sets up the <a href="https://www.unicorn-engine.org/">unicorn</a> emulator to run the machine code</li>
 <li>passes in a few pairs of register values and prints the value of rax at the end</li>
 </ul>
-<script type="application/javascript" src="https://gist.github.com/stevenjohnstone/cbf145560e94b56c0d09ae1aeb24ceb2.js"></script>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
 
-<p>Here&rsquo;s the output (just as above):</p>
+<span style="color:#007020;font-weight:bold">import</span> (
+	<span style="color:#4070a0">&#34;fmt&#34;</span>
+
+	<span style="color:#60a0b0;font-style:italic">// a branch of keystone golang bindings which builds on linux
+</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#4070a0">&#34;github.com/stevenjohnstone/keystone/bindings/go/keystone&#34;</span>
+	uc <span style="color:#4070a0">&#34;github.com/unicorn-engine/unicorn/bindings/go/unicorn&#34;</span>
+)
+
+<span style="color:#60a0b0;font-style:italic">// This program explores a few inputs to
+</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;font-style:italic">// problem 0x03 of xchg rax,rax:
+</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;font-style:italic">// https://www.xorpd.net/pages/xchg_rax/snip_03.html
+</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;font-style:italic">//
+</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;font-style:italic">// This is a good excuse to give keystone and unicorn
+</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;font-style:italic">// a spin in golang
+</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
+
+	<span style="color:#60a0b0;font-style:italic">// first, convert the assembly language into numerical opcodes
+</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#60a0b0;font-style:italic">// (machine language)
+</span><span style="color:#60a0b0;font-style:italic"></span>	assembly <span style="color:#666">:=</span> <span style="color:#4070a0">&#34;sub rdx,rax; sbb rcx,rcx; and rcx,rdx; add rax,rcx&#34;</span>
+
+	ks, err <span style="color:#666">:=</span> keystone.<span style="color:#06287e">New</span>(keystone.ARCH_X86, keystone.MODE_64)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
+	}
+	<span style="color:#007020;font-weight:bold">defer</span> ks.<span style="color:#06287e">Close</span>()
+
+	err = ks.<span style="color:#06287e">Option</span>(keystone.OPT_SYNTAX, keystone.OPT_SYNTAX_INTEL)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
+	}
+
+	insn, _, ok <span style="color:#666">:=</span> ks.<span style="color:#06287e">Assemble</span>(assembly, <span style="color:#40a070">0</span>)
+	<span style="color:#007020;font-weight:bold">if</span> !ok {
+		<span style="color:#007020">panic</span>(<span style="color:#4070a0">&#34;failed to assemble&#34;</span>)
+	}
+
+	<span style="color:#60a0b0;font-style:italic">// choose some initial values for rax and rdx
+</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#60a0b0;font-style:italic">// to get a feel for what the algorithm does
+</span><span style="color:#60a0b0;font-style:italic"></span>	regPairs <span style="color:#666">:=</span> []<span style="color:#007020;font-weight:bold">struct</span> {
+		rax, rdx <span style="color:#902000">uint64</span>
+	}{
+		{<span style="color:#40a070">0x0</span>, <span style="color:#40a070">0x1</span>},
+		{<span style="color:#40a070">0x1</span>, <span style="color:#40a070">0x1</span>},
+		{<span style="color:#40a070">0xf</span>, <span style="color:#40a070">0xe</span>},
+		{<span style="color:#40a070">0xe</span>, <span style="color:#40a070">0xf</span>},
+		{<span style="color:#40a070">0xffffffff</span>, <span style="color:#40a070">0x00</span>},
+	}
+
+	<span style="color:#60a0b0;font-style:italic">// try each pair of initial register values with the emulator
+</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#007020;font-weight:bold">for</span> i, regPair <span style="color:#666">:=</span> <span style="color:#007020;font-weight:bold">range</span> regPairs {
+		mu, _ <span style="color:#666">:=</span> uc.<span style="color:#06287e">NewUnicorn</span>(uc.ARCH_X86, uc.MODE_64)
+		mu.<span style="color:#06287e">MemMap</span>(<span style="color:#40a070">0x1000</span>, <span style="color:#40a070">0x1000</span>)
+		mu.<span style="color:#06287e">MemWrite</span>(<span style="color:#40a070">0x1000</span>, insn)
+
+		mu.<span style="color:#06287e">RegWrite</span>(uc.X86_REG_RAX, regPair.rax)
+		mu.<span style="color:#06287e">RegWrite</span>(uc.X86_REG_RDX, regPair.rdx)
+
+		<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> mu.<span style="color:#06287e">Start</span>(<span style="color:#40a070">0x1000</span>, <span style="color:#40a070">0x1000</span><span style="color:#666">+</span><span style="color:#007020">uint64</span>(<span style="color:#007020">len</span>(insn))); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+			<span style="color:#007020">panic</span>(err)
+		}
+
+		endRax, _ <span style="color:#666">:=</span> mu.<span style="color:#06287e">RegRead</span>(uc.X86_REG_RAX)
+		fmt.<span style="color:#06287e">Printf</span>(<span style="color:#4070a0">&#34;%d (rax: %016x rdx %016x) -&gt;  rax: %016x\n&#34;</span>, i, regPair.rax, regPair.rdx, endRax)
+	}
+}
+</code></pre></div><p>Here&rsquo;s the output (just as above):</p>
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
 <p>It appears plausible that 0x03 gives the minimum of rax and rdx. However, this is not a proof. Let&rsquo;s take things
@@ -289,9 +409,71 @@ we can use SMT solvers to prove properties of software.</p>
 <li>show that an assertion which contradicts our <em>theorem</em> leads to the model being unsatisfiable</li>
 </ul>
 <p>I&rsquo;ve opted to use <a href="http://smtlib.cs.uiowa.edu/">SMT-LIB</a> to demonstrate.</p>
-<script type="application/javascript" src="https://gist.github.com/stevenjohnstone/da22d90c193c26ab614ce918bb427a77.js"></script>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-lisp" data-lang="lisp">(<span style="color:#bb60d5">set-logic</span> <span style="color:#bb60d5">QF_BV</span>)
 
-<p>Running with z3 gives</p>
+<span style="color:#60a0b0;font-style:italic">; Convention here is add a label to the end of the register</span>
+<span style="color:#60a0b0;font-style:italic">; to mark a step in the program for which the value applies.</span>
+<span style="color:#60a0b0;font-style:italic">; e.g.</span>
+<span style="color:#60a0b0;font-style:italic">; rdx0 is the first value of rdx, rdx1 is the value at the</span>
+<span style="color:#60a0b0;font-style:italic">; next step of the program, rdxN is the value at the Nth</span>
+<span style="color:#60a0b0;font-style:italic">; step.</span>
+<span style="color:#60a0b0;font-style:italic">;</span>
+<span style="color:#60a0b0;font-style:italic">; Essentially, we&#39;re turning an assembly program into SSA form</span>
+(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rdx0</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
+(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rdx1</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
+
+(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rcx0</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
+(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rcx1</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
+(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rcx2</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
+
+(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rax0</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
+(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rax3</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
+
+<span style="color:#60a0b0;font-style:italic">; The carry flag</span>
+(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">cf</span> () (<span style="color:#bb60d5">_</span> <span style="color:#bb60d5">Bool</span>))
+
+<span style="color:#60a0b0;font-style:italic">; sub sets the carry flag if unsigned subtraction will result in</span>
+<span style="color:#60a0b0;font-style:italic">; an overflow i.e. rax0 &gt; rdx0</span>
+(<span style="color:#007020">assert</span> ( <span style="color:#06287e">=</span> <span style="color:#bb60d5">cf</span> (<span style="color:#bb60d5">bvult</span> <span style="color:#bb60d5">rdx0</span> <span style="color:#bb60d5">rax0</span>)))
+(<span style="color:#007020">assert</span> ( <span style="color:#06287e">=</span> <span style="color:#bb60d5">rdx1</span> (<span style="color:#bb60d5">bvsub</span> <span style="color:#bb60d5">rdx0</span> <span style="color:#bb60d5">rax0</span>)))
+
+<span style="color:#60a0b0;font-style:italic">; sbb is &#39;subtract with carry&#39;. If the carry flag is set, we take</span>
+<span style="color:#60a0b0;font-style:italic">; away one from the result of sub</span>
+(<span style="color:#007020">assert</span> ( <span style="color:#06287e">=</span> <span style="color:#bb60d5">rcx1</span>
+(<span style="color:#bb60d5">ite</span> (<span style="color:#06287e">=</span> <span style="color:#bb60d5">cf</span> <span style="color:#bb60d5">true</span>)
+ (<span style="color:#bb60d5">bvsub</span> (<span style="color:#bb60d5">bvsub</span> <span style="color:#bb60d5">rcx0</span> <span style="color:#bb60d5">rcx0</span>) <span style="color:#40a070">#x0000000000000001</span>)
+ (<span style="color:#bb60d5">bvsub</span> <span style="color:#bb60d5">rcx0</span> <span style="color:#bb60d5">rcx0</span>))
+))
+
+<span style="color:#60a0b0;font-style:italic">; and rxc1,rdx1</span>
+(<span style="color:#007020">assert</span> ( <span style="color:#06287e">=</span> <span style="color:#bb60d5">rcx2</span> (<span style="color:#bb60d5">bvand</span> <span style="color:#bb60d5">rcx1</span> <span style="color:#bb60d5">rdx1</span>)))
+<span style="color:#60a0b0;font-style:italic">; add rax0,rcv2</span>
+(<span style="color:#007020">assert</span> ( <span style="color:#06287e">=</span> <span style="color:#bb60d5">rax3</span> (<span style="color:#bb60d5">bvadd</span> <span style="color:#bb60d5">rax0</span> <span style="color:#bb60d5">rcx2</span>)))
+
+<span style="color:#60a0b0;font-style:italic">; assert conditions which should fail if this is indeed a minimum</span>
+<span style="color:#60a0b0;font-style:italic">; function. In the case below, we assert that rax0 &lt;= rdx0 and</span>
+<span style="color:#60a0b0;font-style:italic">; rax3 != rax0 (which we suspect is false) and so if we get &#39;unsat&#39;</span>
+<span style="color:#60a0b0;font-style:italic">; as the result, then we&#39;ve proved rax0 &lt;= rdx0 =&gt; rax3 == rax0</span>
+
+<span style="color:#60a0b0;font-style:italic">; note the use of push here. Allows us to reuse the work above by</span>
+<span style="color:#60a0b0;font-style:italic">; popping the asserts below from the stack</span>
+(<span style="color:#007020">push</span> <span style="color:#40a070">1</span>)
+    (<span style="color:#007020">assert</span> ( <span style="color:#007020">or</span> (<span style="color:#bb60d5">bvult</span> <span style="color:#bb60d5">rax0</span> <span style="color:#bb60d5">rdx0</span>) (<span style="color:#06287e">not</span> (<span style="color:#bb60d5">distinct</span> <span style="color:#bb60d5">rax0</span> <span style="color:#bb60d5">rdx0</span>))))
+        (<span style="color:#bb60d5">check-sat</span>)
+        (<span style="color:#007020">push</span> <span style="color:#40a070">1</span>)
+            (<span style="color:#007020">assert</span> ( <span style="color:#bb60d5">distinct</span> <span style="color:#bb60d5">rax3</span> <span style="color:#bb60d5">rax0</span>))
+            (<span style="color:#bb60d5">check-sat</span>)
+(<span style="color:#007020">pop</span> <span style="color:#40a070">2</span>)
+
+<span style="color:#60a0b0;font-style:italic">; We show here that rax0 &gt; rdx0 (along with our previous assertions) can</span>
+<span style="color:#60a0b0;font-style:italic">; can be satisfied. We then show that adding rax3 != rdx0 leads to</span>
+<span style="color:#60a0b0;font-style:italic">; unsat, which means that rax3 == rdx0</span>
+(<span style="color:#007020">assert</span> (<span style="color:#bb60d5">bvugt</span> <span style="color:#bb60d5">rax0</span> <span style="color:#bb60d5">rdx0</span>))
+(<span style="color:#bb60d5">check-sat</span>)
+(<span style="color:#007020">assert</span> ( <span style="color:#bb60d5">distinct</span> <span style="color:#bb60d5">rax3</span> <span style="color:#bb60d5">rdx0</span>))
+
+(<span style="color:#bb60d5">check-sat</span>)
+</code></pre></div><p>Running with z3 gives</p>
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
 <h1 id="why">Why?</h1>
