@@ -13,7 +13,7 @@ date: 2019-01-12T17:16:29Z
 
 # x86-64 Kata
 
-The book [xchg rax,rax](https://www.amazon.co.uk/xchg-rax-xorpd/dp/1502958082) (content available free [here](https://www.xorpd.net/pages/xchg_rax/snip_00.html)) is
+The book [xchg rax,rax](https://www.amazon.co.uk/xchg-rax-xorpd/dp/1502958082) ([content available free here](https://www.xorpd.net/pages/xchg_rax/snip_00.html)) is
 a collection of 0x40 x86-64 snippets. It has no text other
 than chunks of assembly language. You read the code and ponder
 its meaning. [Kata](https://en.wikipedia.org/wiki/Kata) for the budding reverse engineer.
