@@ -22,12 +22,12 @@ its meaning. [Kata](https://en.wikipedia.org/wiki/Kata) for the budding reverse 
 
 Program 0x03 is pretty neat:
 
-<pre>
+```asm
 sub rdx,rax
 sbb rcx,rcx
 and rcx,rdx
 add rax,rcx
-</pre>
+```
 
 Let me spoil this for you: at the end of this program, rax will contain
 the smaller of the original rax and rdx values. I know this from reading
@@ -37,7 +37,63 @@ it. What if I couldn't work out what this did? What tools could I use?
 
 We can embed the snippet in a C program and run it for some test cases:
 
-{{<gist stevenjohnstone 5d8e6a2c7ab64613bb585856b52ac271>}}
+```C
+#include <stdio.h>
+
+static int x3(int a, int b) {
+
+    int out;
+    asm(
+        // it's not stated in xchg rax,rax but it's
+        // intel syntax. Note the noprefix means we
+        // don't need % before registers
+        ".intel_syntax noprefix;"
+        // a bit of preamble to get registers
+        // set up correctly. We're okay with just working
+        // with int rather than long int
+        "mov eax, %1;"
+        "mov edx, %2;"
+
+        // 0x03 code below
+        "sub rdx, rax;"
+        "sbb rcx,rcx;"
+        "and rcx,rdx;"
+        "add rax,rcx;"
+
+        // put the result into out
+        "mov %0, eax;"
+        // tell the compiler that out is in memory
+        : "=m" (out)
+        // tell the compiler that a and b are inputs
+        : "m" (a) , "m" (b)
+        // this is the list of registers which are clobbered
+        : "rax","rdx","rcx");
+    return out;
+}
+
+struct input {
+    int a;
+    int b;
+};
+
+int main(int argc, const char **argv) {
+
+
+    struct input inputs[] = {
+        {0x0, 0x1},
+        {0x1, 0x1},
+        {0xf, 0xe},
+        {0xe, 0xf},
+        {~0, 0x00},
+    };
+
+    for (int i = 0; i < sizeof(inputs)/sizeof(inputs[0]); i++) {
+        printf("%d (rax: %016x rdx %016x) ->  rax: %016x\n",
+                i, inputs[i].a, inputs[i].b, x3(inputs[i].a, inputs[i].b));
+    }
+   return 0;
+}
+```
 
 Compile with
 
@@ -70,7 +126,77 @@ program I wrote in Golang which
 * sets up the [unicorn](https://www.unicorn-engine.org/) emulator to run the machine code
 * passes in a few pairs of register values and prints the value of rax at the end
 
-{{<gist stevenjohnstone cbf145560e94b56c0d09ae1aeb24ceb2>}}
+```golang
+package main
+
+import (
+	"fmt"
+
+	// a branch of keystone golang bindings which builds on linux
+	"github.com/stevenjohnstone/keystone/bindings/go/keystone"
+	uc "github.com/unicorn-engine/unicorn/bindings/go/unicorn"
+)
+
+// This program explores a few inputs to
+// problem 0x03 of xchg rax,rax:
+// https://www.xorpd.net/pages/xchg_rax/snip_03.html
+//
+// This is a good excuse to give keystone and unicorn
+// a spin in golang
+func main() {
+
+	// first, convert the assembly language into numerical opcodes
+	// (machine language)
+	assembly := "sub rdx,rax; sbb rcx,rcx; and rcx,rdx; add rax,rcx"
+
+	ks, err := keystone.New(keystone.ARCH_X86, keystone.MODE_64)
+	if err != nil {
+		panic(err)
+	}
+	defer ks.Close()
+
+	err = ks.Option(keystone.OPT_SYNTAX, keystone.OPT_SYNTAX_INTEL)
+	if err != nil {
+		panic(err)
+	}
+
+	insn, _, ok := ks.Assemble(assembly, 0)
+	if !ok {
+		panic("failed to assemble")
+	}
+
+	// choose some initial values for rax and rdx
+	// to get a feel for what the algorithm does
+	regPairs := []struct {
+		rax, rdx uint64
+	}{
+		{0x0, 0x1},
+		{0x1, 0x1},
+		{0xf, 0xe},
+		{0xe, 0xf},
+		{0xffffffff, 0x00},
+	}
+
+	// try each pair of initial register values with the emulator
+	for i, regPair := range regPairs {
+		mu, _ := uc.NewUnicorn(uc.ARCH_X86, uc.MODE_64)
+		mu.MemMap(0x1000, 0x1000)
+		mu.MemWrite(0x1000, insn)
+
+		mu.RegWrite(uc.X86_REG_RAX, regPair.rax)
+		mu.RegWrite(uc.X86_REG_RDX, regPair.rdx)
+
+		if err := mu.Start(0x1000, 0x1000+uint64(len(insn))); err != nil {
+			panic(err)
+		}
+
+		endRax, _ := mu.RegRead(uc.X86_REG_RAX)
+		fmt.Printf("%d (rax: %016x rdx %016x) ->  rax: %016x\n", i, regPair.rax, regPair.rdx, endRax)
+	}
+}
+```
+
+
 
 Here's the output (just as above):
 <pre>
@@ -97,7 +223,72 @@ The plan of attack is:
 
 I've opted to use [SMT-LIB](http://smtlib.cs.uiowa.edu/) to demonstrate.
 
-{{<gist stevenjohnstone da22d90c193c26ab614ce918bb427a77>}}
+```lisp
+(set-logic QF_BV)
+
+; Convention here is add a label to the end of the register
+; to mark a step in the program for which the value applies.
+; e.g.
+; rdx0 is the first value of rdx, rdx1 is the value at the
+; next step of the program, rdxN is the value at the Nth
+; step.
+;
+; Essentially, we're turning an assembly program into SSA form
+(declare-fun rdx0 () ( _ BitVec 64))
+(declare-fun rdx1 () ( _ BitVec 64))
+
+(declare-fun rcx0 () ( _ BitVec 64))
+(declare-fun rcx1 () ( _ BitVec 64))
+(declare-fun rcx2 () ( _ BitVec 64))
+
+(declare-fun rax0 () ( _ BitVec 64))
+(declare-fun rax3 () ( _ BitVec 64))
+
+; The carry flag
+(declare-fun cf () (_ Bool))
+
+; sub sets the carry flag if unsigned subtraction will result in
+; an overflow i.e. rax0 > rdx0
+(assert ( = cf (bvult rdx0 rax0)))
+(assert ( = rdx1 (bvsub rdx0 rax0)))
+
+; sbb is 'subtract with carry'. If the carry flag is set, we take
+; away one from the result of sub
+(assert ( = rcx1
+(ite (= cf true)
+ (bvsub (bvsub rcx0 rcx0) #x0000000000000001)
+ (bvsub rcx0 rcx0))
+))
+
+; and rxc1,rdx1
+(assert ( = rcx2 (bvand rcx1 rdx1)))
+; add rax0,rcv2
+(assert ( = rax3 (bvadd rax0 rcx2)))
+
+; assert conditions which should fail if this is indeed a minimum
+; function. In the case below, we assert that rax0 <= rdx0 and
+; rax3 != rax0 (which we suspect is false) and so if we get 'unsat'
+; as the result, then we've proved rax0 <= rdx0 => rax3 == rax0
+
+; note the use of push here. Allows us to reuse the work above by
+; popping the asserts below from the stack
+(push 1)
+    (assert ( or (bvult rax0 rdx0) (not (distinct rax0 rdx0))))
+        (check-sat)
+        (push 1)
+            (assert ( distinct rax3 rax0))
+            (check-sat)
+(pop 2)
+
+; We show here that rax0 > rdx0 (along with our previous assertions) can
+; can be satisfied. We then show that adding rax3 != rdx0 leads to
+; unsat, which means that rax3 == rdx0
+(assert (bvugt rax0 rdx0))
+(check-sat)
+(assert ( distinct rax3 rdx0))
+
+(check-sat)
+```
 
 
 Running with z3 gives
