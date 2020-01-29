@@ -589,7 +589,7 @@ the ideas touched on here come into their own.</p>
 
 
     <h2>2017-13-10
-    File Descriptors in Go
+    Leaking File Descriptors in Go
     </h2>
     <h1 id="golang-file-descriptors-and-finalizers">Golang, File Descriptors and Finalizers</h1>
 <p>If you <a href="https://golang.org/pkg/os/#Open">Open()</a> a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a  cleanup <em>finalizer</em> set when Open() is called.</p>

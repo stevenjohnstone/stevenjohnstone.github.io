@@ -44,7 +44,7 @@ package main import ( &amp;#34;net&amp;#34; &amp;#34;time&amp;#34; ) func main()
     </item>
     
     <item>
-      <title>File Descriptors in Go</title>
+      <title>Leaking File Descriptors in Go</title>
       <link>/posts/file-descriptor-go/</link>
       <pubDate>Fri, 13 Oct 2017 11:39:00 +0100</pubDate>
       

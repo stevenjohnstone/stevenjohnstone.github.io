@@ -1,7 +1,8 @@
 ---
-title: "File Descriptors in Go"
+title: "Leaking File Descriptors in Go"
 categories:
     - golang
+    - bugs
 date: 2017-10-13T11:39:00+01:00
 ---
 

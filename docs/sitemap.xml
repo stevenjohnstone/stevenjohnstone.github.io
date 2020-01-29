@@ -88,6 +88,11 @@
   </url>
   
   <url>
+    <loc>/categories/bugs/</loc>
+    <lastmod>2017-10-13T11:39:00+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/posts/file-descriptor-go/</loc>
     <lastmod>2017-10-13T11:39:00+01:00</lastmod>
   </url>
