@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A website built through Hugo and blogdown.">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Golang: Panicking Safely" />
+    <meta property="og:url" content="/posts/panic/" />
+    
+   <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+    <title>Golang: Panicking Safely | rm -rf /</title>
+   
+
+<link rel="stylesheet" type="text/css" href="/css/style.css">
+<link rel="stylesheet" type="text/css" href="/css/fonts.css">
+
+    
+  </head>
+
+  <body>
+    <a class="skip-link" href="#maincontent">Skip to main</a>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/categories/">Categories</a></li>
+      
+      <li><a href="/tags/">Tags</a></li>
+      
+      <li><a href="/index.xml">Subscribe</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Golang: Panicking Safely</span></h1>
+
+<h2 class="date">2020/01/28</h2>
+</div>
+
+<main id="maincontent">
+<p>Golang code can panic, causing availability issues, maybe even a denial of service vector.
+Compared to C and C++, it&rsquo;s pretty innocuous. Still, denial of service is a serious issue: why not just use <code>recover</code> in all goroutines
+and keep the show on the road?</p>
+<h1 id="an-example">An Example</h1>
+<p>Consider the following code:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#60a0b0;font-style:italic">// buggy reads data from input 16 bytes at a time, munges it and then writes it to output
+</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">buggy</span>(input, output <span style="color:#902000">string</span>) <span style="color:#902000">error</span> {
+    in, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Open</span>(input)
+    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">return</span> err
+    }
+    <span style="color:#007020;font-weight:bold">defer</span> in.<span style="color:#06287e">Close</span>() <span style="color:#60a0b0;font-style:italic">// okay to ignore errors
+</span><span style="color:#60a0b0;font-style:italic"></span>
+    out, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Create</span>(output)
+    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">return</span> err
+    }
+
+    <span style="color:#007020;font-weight:bold">var</span> buf [<span style="color:#40a070">16</span>]<span style="color:#902000">byte</span>
+
+    <span style="color:#007020;font-weight:bold">for</span> {
+        _, err <span style="color:#666">:=</span> io.<span style="color:#06287e">ReadFull</span>(in, buf)
+        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">==</span> io.EOF {
+            <span style="color:#007020;font-weight:bold">break</span>
+        }
+        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+            _ = out.<span style="color:#06287e">Close</span>()
+            <span style="color:#007020;font-weight:bold">return</span> err
+        }
+
+        <span style="color:#06287e">bufferMunger</span>(buf)
+
+        <span style="color:#007020;font-weight:bold">if</span> _, err <span style="color:#666">:=</span> out.<span style="color:#06287e">Write</span>(buf); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+            _ = out.<span style="color:#06287e">Close</span>()
+            <span style="color:#007020;font-weight:bold">return</span> err
+        }
+    }
+
+    <span style="color:#60a0b0;font-style:italic">// Avoids a common bug where files which are written to
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// are closed without checking the error...with async IO
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// the Close() could result in data actually making it to
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// disk which can error
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#007020;font-weight:bold">return</span> out.<span style="color:#06287e">Close</span>()
+}
+</code></pre></div><p>Now, suppose that this is called in a program which <em>recovers all panics and keeps rolling on</em>. If <code>bufferMunger</code> panics,
+then (at least temporarily), <code>buggy</code> will leak a file descriptor for
+<code>out</code>, as explained in an <a href="/posts/file-descriptor-go/">earlier post</a>. With a little imagination, these scenarious can be extended to leaks of</p>
+<ul>
+<li>database connections</li>
+<li>database transactions</li>
+<li>customer reservations</li>
+</ul>
+<p>etc.</p>
+<p>It could be argued that it&rsquo;d be better if the program failed hard rather than continuing on in some broken way. Nevertheless, a large chunk of Go code in the wild does keep rolling on
+because it <em>runs inside an HTTP handler</em>. It may surprise some that <strong>net/http will recover from panics in HTTP handlers</strong>.</p>
+<h1 id="http-handlers">HTTP Handlers</h1>
+<p>When writing HTTP handlers, we have a couple of strategies for avoiding strange <em>resource exhaustion</em> bugs caused by
+panics:</p>
+<ol>
+<li>make sure all code is &ldquo;panic safe&rdquo; (can be recovered)</li>
+<li>configure http middleware to turn a panic into an exit</li>
+</ol>
+<h2 id="panic-safety">Panic Safety</h2>
+<p>Let&rsquo;s make <code>buggy</code> &ldquo;panic safe&rdquo;. For the sake of argument, suppose that <code>bufferMunger</code> doesn&rsquo;t
+leak resources when it panics. If it can, it needs modifications too.</p>
+<h3 id="using-defer">Using defer</h3>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#60a0b0;font-style:italic">// buggy reads data from input 16 bytes at a time, munges it and then writes it to output
+</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">buggy</span>(input, output <span style="color:#902000">string</span>) <span style="color:#902000">error</span> {
+    in, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Open</span>(input)
+    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">return</span> err
+    }
+    <span style="color:#007020;font-weight:bold">defer</span> in.<span style="color:#06287e">Close</span>() <span style="color:#60a0b0;font-style:italic">// okay to ignore errors
+</span><span style="color:#60a0b0;font-style:italic"></span>
+
+    out, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Create</span>(output)
+    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">return</span> err
+    }
+
+<span style="display:block;width:100%;background-color:#d8d8d8">    <span style="color:#902000">bool</span> outClosed = <span style="color:#007020;font-weight:bold">false</span>
+</span><span style="display:block;width:100%;background-color:#d8d8d8">    <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
+</span><span style="display:block;width:100%;background-color:#d8d8d8">        <span style="color:#007020;font-weight:bold">if</span> !outClosed {
+</span><span style="display:block;width:100%;background-color:#d8d8d8">            _ = out.<span style="color:#06287e">Close</span>()
+</span><span style="display:block;width:100%;background-color:#d8d8d8">        }
+</span><span style="display:block;width:100%;background-color:#d8d8d8">    }
+</span>
+    <span style="color:#007020;font-weight:bold">var</span> buf [<span style="color:#40a070">16</span>]<span style="color:#902000">byte</span>
+
+    <span style="color:#007020;font-weight:bold">for</span> {
+        _, err <span style="color:#666">:=</span> io.<span style="color:#06287e">ReadFull</span>(in, buf)
+        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">==</span> io.EOF {
+            <span style="color:#007020;font-weight:bold">break</span>
+        }
+        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+            <span style="color:#007020;font-weight:bold">return</span> err
+        }
+
+        <span style="color:#06287e">bufferMunger</span>(buf)
+
+        <span style="color:#007020;font-weight:bold">if</span> _, err <span style="color:#666">:=</span> out.<span style="color:#06287e">Write</span>(buf); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+            <span style="color:#007020;font-weight:bold">return</span> err
+        }
+    }
+
+    <span style="color:#60a0b0;font-style:italic">// Avoids a common bug where files which are written to
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// are closed without checking the error...with async IO
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// the Close() could result in data actually making it to
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// disk which can error
+</span><span style="display:block;width:100%;background-color:#d8d8d8"><span style="color:#60a0b0;font-style:italic"></span>    outClosed = <span style="color:#007020;font-weight:bold">true</span>
+</span>    <span style="color:#007020;font-weight:bold">return</span> out.<span style="color:#06287e">Close</span>()
+}
+</code></pre></div><p>Here, <code>out</code> will be closed in a defered function. Note how I avoid closing <code>out</code> twice.</p>
+<h3 id="using-recover">Using recover</h3>
+<p>A simple mechanism would be to wrap bufferMunger so it returns an error rather than causing a panic. For example,</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">bufferMungerWrapper</span>(buf []<span style="color:#902000">byte</span>) (err <span style="color:#902000">error</span>) {
+    <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
+        <span style="color:#007020;font-weight:bold">if</span> r <span style="color:#666">:=</span> <span style="color:#007020">recover</span>(); r <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+            <span style="color:#007020;font-weight:bold">switch</span> x <span style="color:#666">:=</span> r.(<span style="color:#007020;font-weight:bold">type</span>) {
+            <span style="color:#007020;font-weight:bold">case</span> <span style="color:#902000">string</span>:
+                err = errors.<span style="color:#06287e">New</span>(x)
+            <span style="color:#007020;font-weight:bold">case</span> <span style="color:#902000">error</span>:
+                err = x
+            <span style="color:#007020;font-weight:bold">default</span>:
+                err = errors.<span style="color:#06287e">New</span>(<span style="color:#4070a0">&#34;unknown panic&#34;</span>)
+            }
+        }
+    }()
+
+    <span style="color:#007020;font-weight:bold">return</span> <span style="color:#06287e">bufferMunger</span>(buf)
+}
+</code></pre></div><h2 id="middleware">Middleware</h2>
+<p>If a quick and obvious failure after a panic is preferred to a potentially hard-to-debug resource exhaustion (hint: it is), then wrapping a handler which causes
+the program to exit is a good strategy:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang">
+<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">NewPanicHandler</span>(h http.Handler) http.Handler {
+    <span style="color:#007020;font-weight:bold">return</span>  http.<span style="color:#06287e">HandlerFunc</span>(<span style="color:#007020;font-weight:bold">func</span>(w http.RequestWriter, r <span style="color:#666">*</span>http.Request) {
+        <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
+            <span style="color:#007020;font-weight:bold">if</span> r <span style="color:#666">:=</span> <span style="color:#007020">recover</span>(); r <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+                <span style="color:#60a0b0;font-style:italic">// log.Fatalf causes the program to exit
+</span><span style="color:#60a0b0;font-style:italic"></span>                log.<span style="color:#06287e">Fatalf</span>(<span style="color:#4070a0">&#34;%s&#34;</span>, debug.<span style="color:#06287e">Stack</span>())
+            }
+        }()
+        h.<span style="color:#06287e">ServeHTTP</span>(w, r)
+    })
+}
+</code></pre></div><h1 id="conclusion">Conclusion</h1>
+<p>Using <code>recover</code> isn&rsquo;t a silver bullet. My 2¢: let panic cause a program exit. Fix logic bugs. Find them with fuzzing.</p>
+
+</main>
+
+  <footer>
+  
+  
+  <hr/>
+  © Stevie Johnstone 2017-2020 | <a href="https://github.com/stevenjohnstone">Github</a>
+  
+  </footer>
+  </body>
+</html>
+

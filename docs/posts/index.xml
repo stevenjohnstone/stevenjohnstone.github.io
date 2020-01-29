@@ -6,10 +6,21 @@
     <description>Recent content in Posts on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 12 Jan 2019 17:16:29 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 28 Jan 2020 19:16:22 +0000</lastBuildDate>
     
 	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Golang: Panicking Safely</title>
+      <link>/posts/panic/</link>
+      <pubDate>Tue, 28 Jan 2020 19:16:22 +0000</pubDate>
+      
+      <guid>/posts/panic/</guid>
+      <description>Golang code can panic, causing availability issues, maybe even a denial of service vector. Compared to C and C++, it&amp;rsquo;s pretty innocuous. Still, denial of service is a serious issue: why not just use recover in all goroutines and keep the show on the road?
+An Example Consider the following code:
+// buggy reads data from input 16 bytes at a time, munges it and then writes it to output func buggy(input, output string) error { in, err := os.</description>
+    </item>
     
     <item>
       <title>xchg rax,rax</title>
@@ -29,7 +40,7 @@ Let me spoil this for you: at the end of this program, rax will contain the smal
       
       <guid>/posts/so_reuaseaddr-golang/</guid>
       <description>A Flaky Test I was investigating a test which failed with a very low probability. It boiled down to this:
-package main import ( &amp;quot;net&amp;quot; &amp;quot;time&amp;quot; ) func main() { //port zero means let the OS choose a free port l, err := net.Listen(&amp;quot;tcp&amp;quot;, &amp;quot;127.0.0.1:0&amp;quot;) if err != nil { panic(err) } addr := l.Addr().String() go func() { for { c, err := l.Accept() if err != nil { return } c.</description>
+package main import ( &amp;#34;net&amp;#34; &amp;#34;time&amp;#34; ) func main() { //port zero means let the OS choose a free port 	l, err := net.Listen(&amp;#34;tcp&amp;#34;, &amp;#34;127.0.0.1:0&amp;#34;) if err != nil { panic(err) } addr := l.Addr().String() go func() { for { c, err := l.Accept() if err != nil { return } c.</description>
     </item>
     
     <item>
@@ -40,7 +51,7 @@ package main import ( &amp;quot;net&amp;quot; &amp;quot;time&amp;quot; ) func ma
       <guid>/posts/file-descriptor-go/</guid>
       <description>Golang, File Descriptors and Finalizers If you Open() a file in Golang and it goes out of scope, then it&amp;rsquo;ll be closed the next time the garbage collector runs as there&amp;rsquo;s a cleanup finalizer set when Open() is called.
 You can see this in action in the following program:
-package main import ( &amp;quot;fmt&amp;quot; &amp;quot;os&amp;quot; &amp;quot;runtime&amp;quot; ) func allocate() int { //use this file as our test subject _, sourceFile, _, ok := runtime.</description>
+package main import ( &amp;#34;fmt&amp;#34; &amp;#34;os&amp;#34; &amp;#34;runtime&amp;#34; ) func allocate() int { //use this file as our test subject 	_, sourceFile, _, ok := runtime.</description>
     </item>
     
     <item>

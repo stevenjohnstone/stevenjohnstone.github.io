@@ -45,6 +45,159 @@
 
 <main id="maincontent">
 
+    <h2>2020-28-01
+    Golang: Panicking Safely
+    </h2>
+    <p>Golang code can panic, causing availability issues, maybe even a denial of service vector.
+Compared to C and C++, it&rsquo;s pretty innocuous. Still, denial of service is a serious issue: why not just use <code>recover</code> in all goroutines
+and keep the show on the road?</p>
+<h1 id="an-example">An Example</h1>
+<p>Consider the following code:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#60a0b0;font-style:italic">// buggy reads data from input 16 bytes at a time, munges it and then writes it to output
+</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">buggy</span>(input, output <span style="color:#902000">string</span>) <span style="color:#902000">error</span> {
+    in, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Open</span>(input)
+    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">return</span> err
+    }
+    <span style="color:#007020;font-weight:bold">defer</span> in.<span style="color:#06287e">Close</span>() <span style="color:#60a0b0;font-style:italic">// okay to ignore errors
+</span><span style="color:#60a0b0;font-style:italic"></span>
+    out, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Create</span>(output)
+    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">return</span> err
+    }
+
+    <span style="color:#007020;font-weight:bold">var</span> buf [<span style="color:#40a070">16</span>]<span style="color:#902000">byte</span>
+
+    <span style="color:#007020;font-weight:bold">for</span> {
+        _, err <span style="color:#666">:=</span> io.<span style="color:#06287e">ReadFull</span>(in, buf)
+        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">==</span> io.EOF {
+            <span style="color:#007020;font-weight:bold">break</span>
+        }
+        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+            _ = out.<span style="color:#06287e">Close</span>()
+            <span style="color:#007020;font-weight:bold">return</span> err
+        }
+
+        <span style="color:#06287e">bufferMunger</span>(buf)
+
+        <span style="color:#007020;font-weight:bold">if</span> _, err <span style="color:#666">:=</span> out.<span style="color:#06287e">Write</span>(buf); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+            _ = out.<span style="color:#06287e">Close</span>()
+            <span style="color:#007020;font-weight:bold">return</span> err
+        }
+    }
+
+    <span style="color:#60a0b0;font-style:italic">// Avoids a common bug where files which are written to
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// are closed without checking the error...with async IO
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// the Close() could result in data actually making it to
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// disk which can error
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#007020;font-weight:bold">return</span> out.<span style="color:#06287e">Close</span>()
+}
+</code></pre></div><p>Now, suppose that this is called in a program which <em>recovers all panics and keeps rolling on</em>. If <code>bufferMunger</code> panics,
+then (at least temporarily), <code>buggy</code> will leak a file descriptor for
+<code>out</code>, as explained in an <a href="/posts/file-descriptor-go/">earlier post</a>. With a little imagination, these scenarious can be extended to leaks of</p>
+<ul>
+<li>database connections</li>
+<li>database transactions</li>
+<li>customer reservations</li>
+</ul>
+<p>etc.</p>
+<p>It could be argued that it&rsquo;d be better if the program failed hard rather than continuing on in some broken way. Nevertheless, a large chunk of Go code in the wild does keep rolling on
+because it <em>runs inside an HTTP handler</em>. It may surprise some that <strong>net/http will recover from panics in HTTP handlers</strong>.</p>
+<h1 id="http-handlers">HTTP Handlers</h1>
+<p>When writing HTTP handlers, we have a couple of strategies for avoiding strange <em>resource exhaustion</em> bugs caused by
+panics:</p>
+<ol>
+<li>make sure all code is &ldquo;panic safe&rdquo; (can be recovered)</li>
+<li>configure http middleware to turn a panic into an exit</li>
+</ol>
+<h2 id="panic-safety">Panic Safety</h2>
+<p>Let&rsquo;s make <code>buggy</code> &ldquo;panic safe&rdquo;. For the sake of argument, suppose that <code>bufferMunger</code> doesn&rsquo;t
+leak resources when it panics. If it can, it needs modifications too.</p>
+<h3 id="using-defer">Using defer</h3>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#60a0b0;font-style:italic">// buggy reads data from input 16 bytes at a time, munges it and then writes it to output
+</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">buggy</span>(input, output <span style="color:#902000">string</span>) <span style="color:#902000">error</span> {
+    in, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Open</span>(input)
+    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">return</span> err
+    }
+    <span style="color:#007020;font-weight:bold">defer</span> in.<span style="color:#06287e">Close</span>() <span style="color:#60a0b0;font-style:italic">// okay to ignore errors
+</span><span style="color:#60a0b0;font-style:italic"></span>
+
+    out, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Create</span>(output)
+    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">return</span> err
+    }
+
+<span style="display:block;width:100%;background-color:#d8d8d8">    <span style="color:#902000">bool</span> outClosed = <span style="color:#007020;font-weight:bold">false</span>
+</span><span style="display:block;width:100%;background-color:#d8d8d8">    <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
+</span><span style="display:block;width:100%;background-color:#d8d8d8">        <span style="color:#007020;font-weight:bold">if</span> !outClosed {
+</span><span style="display:block;width:100%;background-color:#d8d8d8">            _ = out.<span style="color:#06287e">Close</span>()
+</span><span style="display:block;width:100%;background-color:#d8d8d8">        }
+</span><span style="display:block;width:100%;background-color:#d8d8d8">    }
+</span>
+    <span style="color:#007020;font-weight:bold">var</span> buf [<span style="color:#40a070">16</span>]<span style="color:#902000">byte</span>
+
+    <span style="color:#007020;font-weight:bold">for</span> {
+        _, err <span style="color:#666">:=</span> io.<span style="color:#06287e">ReadFull</span>(in, buf)
+        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">==</span> io.EOF {
+            <span style="color:#007020;font-weight:bold">break</span>
+        }
+        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+            <span style="color:#007020;font-weight:bold">return</span> err
+        }
+
+        <span style="color:#06287e">bufferMunger</span>(buf)
+
+        <span style="color:#007020;font-weight:bold">if</span> _, err <span style="color:#666">:=</span> out.<span style="color:#06287e">Write</span>(buf); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+            <span style="color:#007020;font-weight:bold">return</span> err
+        }
+    }
+
+    <span style="color:#60a0b0;font-style:italic">// Avoids a common bug where files which are written to
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// are closed without checking the error...with async IO
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// the Close() could result in data actually making it to
+</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// disk which can error
+</span><span style="display:block;width:100%;background-color:#d8d8d8"><span style="color:#60a0b0;font-style:italic"></span>    outClosed = <span style="color:#007020;font-weight:bold">true</span>
+</span>    <span style="color:#007020;font-weight:bold">return</span> out.<span style="color:#06287e">Close</span>()
+}
+</code></pre></div><p>Here, <code>out</code> will be closed in a defered function. Note how I avoid closing <code>out</code> twice.</p>
+<h3 id="using-recover">Using recover</h3>
+<p>A simple mechanism would be to wrap bufferMunger so it returns an error rather than causing a panic. For example,</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">bufferMungerWrapper</span>(buf []<span style="color:#902000">byte</span>) (err <span style="color:#902000">error</span>) {
+    <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
+        <span style="color:#007020;font-weight:bold">if</span> r <span style="color:#666">:=</span> <span style="color:#007020">recover</span>(); r <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+            <span style="color:#007020;font-weight:bold">switch</span> x <span style="color:#666">:=</span> r.(<span style="color:#007020;font-weight:bold">type</span>) {
+            <span style="color:#007020;font-weight:bold">case</span> <span style="color:#902000">string</span>:
+                err = errors.<span style="color:#06287e">New</span>(x)
+            <span style="color:#007020;font-weight:bold">case</span> <span style="color:#902000">error</span>:
+                err = x
+            <span style="color:#007020;font-weight:bold">default</span>:
+                err = errors.<span style="color:#06287e">New</span>(<span style="color:#4070a0">&#34;unknown panic&#34;</span>)
+            }
+        }
+    }()
+
+    <span style="color:#007020;font-weight:bold">return</span> <span style="color:#06287e">bufferMunger</span>(buf)
+}
+</code></pre></div><h2 id="middleware">Middleware</h2>
+<p>If a quick and obvious failure after a panic is preferred to a potentially hard-to-debug resource exhaustion (hint: it is), then wrapping a handler which causes
+the program to exit is a good strategy:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang">
+<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">NewPanicHandler</span>(h http.Handler) http.Handler {
+    <span style="color:#007020;font-weight:bold">return</span>  http.<span style="color:#06287e">HandlerFunc</span>(<span style="color:#007020;font-weight:bold">func</span>(w http.RequestWriter, r <span style="color:#666">*</span>http.Request) {
+        <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
+            <span style="color:#007020;font-weight:bold">if</span> r <span style="color:#666">:=</span> <span style="color:#007020">recover</span>(); r <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+                <span style="color:#60a0b0;font-style:italic">// log.Fatalf causes the program to exit
+</span><span style="color:#60a0b0;font-style:italic"></span>                log.<span style="color:#06287e">Fatalf</span>(<span style="color:#4070a0">&#34;%s&#34;</span>, debug.<span style="color:#06287e">Stack</span>())
+            }
+        }()
+        h.<span style="color:#06287e">ServeHTTP</span>(w, r)
+    })
+}
+</code></pre></div><h1 id="conclusion">Conclusion</h1>
+<p>Using <code>recover</code> isn&rsquo;t a silver bullet. My 2¢: let panic cause a program exit. Fix logic bugs. Find them with fuzzing.</p>
+
+
     <h2>2019-12-01
     xchg rax,rax
     </h2>
@@ -114,44 +267,44 @@ the ideas touched on here come into their own.</p>
     </h2>
     <h1 id="a-flaky-test">A Flaky Test</h1>
 <p>I was investigating a test which failed with a very low probability. It boiled down to this:</p>
-<pre><code>package main
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
 
-import (
-	&quot;net&quot;
-	&quot;time&quot;
+<span style="color:#007020;font-weight:bold">import</span> (
+	<span style="color:#4070a0">&#34;net&#34;</span>
+	<span style="color:#4070a0">&#34;time&#34;</span>
 )
 
-func main() {
-	//port zero means let the OS choose a free port
-	l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)
-	if err != nil {
-		panic(err)
+<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
+	<span style="color:#60a0b0;font-style:italic">//port zero means let the OS choose a free port
+</span><span style="color:#60a0b0;font-style:italic"></span>	l, err <span style="color:#666">:=</span> net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, <span style="color:#4070a0">&#34;127.0.0.1:0&#34;</span>)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 
-	addr := l.Addr().String()
+	addr <span style="color:#666">:=</span> l.<span style="color:#06287e">Addr</span>().<span style="color:#06287e">String</span>()
 
-	go func() {
-		for {
-			c, err := l.Accept()
-			if err != nil {
-				return
+	<span style="color:#007020;font-weight:bold">go</span> <span style="color:#007020;font-weight:bold">func</span>() {
+		<span style="color:#007020;font-weight:bold">for</span> {
+			c, err <span style="color:#666">:=</span> l.<span style="color:#06287e">Accept</span>()
+			<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+				<span style="color:#007020;font-weight:bold">return</span>
 			}
-			c.Close()
+			c.<span style="color:#06287e">Close</span>()
 		}
 	}()
 
-	time.Sleep(time.Second)
-	if err := l.Close(); err != nil {
-		panic(err)
+	time.<span style="color:#06287e">Sleep</span>(time.Second)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> l.<span style="color:#06287e">Close</span>(); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 
-	//listen on the same port as before
-	l, err = net.Listen(&quot;tcp&quot;, addr)
-	if err != nil {
-		panic(err)
+	<span style="color:#60a0b0;font-style:italic">//listen on the same port as before
+</span><span style="color:#60a0b0;font-style:italic"></span>	l, err = net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, addr)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 }
-</code></pre><p>It&rsquo;s pretty standard to stop a goroutine which is blocked in Accept() by calling Close() on the listener. Passes casual inspection, linters don&rsquo;t complain etc. However, if you run the above enough times, you may see something like this:</p>
+</code></pre></div><p>It&rsquo;s pretty standard to stop a goroutine which is blocked in Accept() by calling Close() on the listener. Passes casual inspection, linters don&rsquo;t complain etc. However, if you run the above enough times, you may see something like this:</p>
 <pre><code>panic: listen tcp 127.0.0.1:37327: bind: address already in use
 </code></pre><p>Address already in use? This caused me some confusion as I know that <a href="http://man7.org/linux/man-pages/man7/socket.7.html">SO_RESUSEADDR</a> is set set by Golang in net.Listen and I&rsquo;ve been conditioned to think &ldquo;SO_RESUSEADDR&rdquo; when I see EALREADY in a situation like this.</p>
 <h1 id="root-cause">Root Cause</h1>
@@ -159,49 +312,49 @@ func main() {
 <p>The reference count on the underlying file descriptor may be non-zero because a goroutine is still in the guts of <a href="https://golang.org/src/internal/poll/fd_unix.go#L317">Accept()</a> where it has locked the file-descriptor. This explains our intermittent failure: we call Close() and then Listen() but there&rsquo;s a goroutine still in Accept() which has prevented the underlying file-descriptor from being closed.</p>
 <h1 id="the-fix">The fix</h1>
 <p>&hellip;is to ensure that the goroutine is not in Accept() when we try to listen again on the same port. For example, we can close a channel to signal that the goroutine is done:</p>
-<pre><code>package main
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
 
-import (
-	&quot;net&quot;
-	&quot;time&quot;
+<span style="color:#007020;font-weight:bold">import</span> (
+	<span style="color:#4070a0">&#34;net&#34;</span>
+	<span style="color:#4070a0">&#34;time&#34;</span>
 )
 
-func main() {
-	//port zero means let the OS choose a free port
-	l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)
-	if err != nil {
-		panic(err)
+<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
+	<span style="color:#60a0b0;font-style:italic">//port zero means let the OS choose a free port
+</span><span style="color:#60a0b0;font-style:italic"></span>	l, err <span style="color:#666">:=</span> net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, <span style="color:#4070a0">&#34;127.0.0.1:0&#34;</span>)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 
-	addr := l.Addr().String()
-	done := make(chan bool)
+	addr <span style="color:#666">:=</span> l.<span style="color:#06287e">Addr</span>().<span style="color:#06287e">String</span>()
+	done <span style="color:#666">:=</span> <span style="color:#007020">make</span>(<span style="color:#007020;font-weight:bold">chan</span> <span style="color:#902000">bool</span>)
 
-	go func() {
-		for {
-			c, err := l.Accept()
-			if err != nil {
-				close(done)
-				return
+	<span style="color:#007020;font-weight:bold">go</span> <span style="color:#007020;font-weight:bold">func</span>() {
+		<span style="color:#007020;font-weight:bold">for</span> {
+			c, err <span style="color:#666">:=</span> l.<span style="color:#06287e">Accept</span>()
+			<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+				<span style="color:#007020">close</span>(done)
+				<span style="color:#007020;font-weight:bold">return</span>
 			}
-			c.Close()
+			c.<span style="color:#06287e">Close</span>()
 		}
 	}()
 
-	time.Sleep(time.Second)
-	if err := l.Close(); err != nil {
-		panic(err)
+	time.<span style="color:#06287e">Sleep</span>(time.Second)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> l.<span style="color:#06287e">Close</span>(); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 
-	//wait for the goroutine to have left Accept()
-	&lt;-done
+	<span style="color:#60a0b0;font-style:italic">//wait for the goroutine to have left Accept()
+</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#666">&lt;-</span>done
 
-	//listen on the same port as before
-	l, err = net.Listen(&quot;tcp&quot;, addr)
-	if err != nil {
-		panic(err)
+	<span style="color:#60a0b0;font-style:italic">//listen on the same port as before
+</span><span style="color:#60a0b0;font-style:italic"></span>	l, err = net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, addr)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 }
-</code></pre><h1 id="lessons-learned">Lessons Learned</h1>
+</code></pre></div><h1 id="lessons-learned">Lessons Learned</h1>
 <ul>
 <li>when Close() of a listener returns, the underlying file descriptor may still be open</li>
 <li>any method calls for the listener must complete to be sure that the underlying file descriptor is closed</li>
@@ -214,63 +367,63 @@ func main() {
     <h1 id="golang-file-descriptors-and-finalizers">Golang, File Descriptors and Finalizers</h1>
 <p>If you <a href="https://golang.org/pkg/os/#Open">Open()</a> a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a  cleanup <em>finalizer</em> set when Open() is called.</p>
 <p>You can see this in action in the following program:</p>
-<pre><code>package main
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
 
-import (
-	&quot;fmt&quot;
-	&quot;os&quot;
-	&quot;runtime&quot;
+<span style="color:#007020;font-weight:bold">import</span> (
+	<span style="color:#4070a0">&#34;fmt&#34;</span>
+	<span style="color:#4070a0">&#34;os&#34;</span>
+	<span style="color:#4070a0">&#34;runtime&#34;</span>
 )
 
-func allocate() int {
-	//use this file as our test subject
-	_, sourceFile, _, ok := runtime.Caller(1)
-	if !ok {
-		panic(&quot;source file not found&quot;)
+<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">allocate</span>() <span style="color:#902000">int</span> {
+	<span style="color:#60a0b0;font-style:italic">//use this file as our test subject
+</span><span style="color:#60a0b0;font-style:italic"></span>	_, sourceFile, _, ok <span style="color:#666">:=</span> runtime.<span style="color:#06287e">Caller</span>(<span style="color:#40a070">1</span>)
+	<span style="color:#007020;font-weight:bold">if</span> !ok {
+		<span style="color:#007020">panic</span>(<span style="color:#4070a0">&#34;source file not found&#34;</span>)
 	}
-	counter := 0
-	var files []*os.File
-	for {
-		f, err := os.Open(sourceFile)
-		if err != nil {
-			fmt.Printf(&quot;successful opens= %d\n&quot;, counter)
-			return counter
+	counter <span style="color:#666">:=</span> <span style="color:#40a070">0</span>
+	<span style="color:#007020;font-weight:bold">var</span> files []<span style="color:#666">*</span>os.File
+	<span style="color:#007020;font-weight:bold">for</span> {
+		f, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Open</span>(sourceFile)
+		<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+			fmt.<span style="color:#06287e">Printf</span>(<span style="color:#4070a0">&#34;successful opens= %d\n&#34;</span>, counter)
+			<span style="color:#007020;font-weight:bold">return</span> counter
 		}
-		counter++
-		files = append(files, f)
+		counter<span style="color:#666">++</span>
+		files = <span style="color:#007020">append</span>(files, f)
 	}
 }
 
-func main() {
-    allocate()
-    runtime.GC()
-    allocate()
+<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
+    <span style="color:#06287e">allocate</span>()
+    runtime.<span style="color:#06287e">GC</span>()
+    <span style="color:#06287e">allocate</span>()
 }
 
-</code></pre><p>On my system, the output is</p>
+</code></pre></div><p>On my system, the output is</p>
 <pre><code>successful opens = 1020
 successful opens = 1020
 </code></pre><p>The first time allocate() is called, it manages to open the file 1020 times before returning. The call to <a href="https://golang.org/pkg/runtime/#GC">runtime.GC()</a> causes the garbage collector to run which closes the open files allowing the next allocate() to open the file 1020 times. What happens if we don&rsquo;t call the garbage collector?</p>
 <p>We modify main:</p>
-<pre><code>func main() {
-    allocate()
-    allocate()
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
+    <span style="color:#06287e">allocate</span>()
+    <span style="color:#06287e">allocate</span>()
 }
-</code></pre><p>The result is now:</p>
+</code></pre></div><p>The result is now:</p>
 <pre><code>successful opens = 1020
 successful opens = 0
 </code></pre><p>The garbage collector hasn&rsquo;t run by the time the second allocate() call happens so the available file descriptors for the process are exhausted. When would the garbage collector run?</p>
-<pre><code>func main() {
-	allocate()
-	for i := 0; ; i++ {
-		if allocate() &gt; 0 {
-			fmt.Printf(&quot;garbage collection ran after %d iterations&quot;, i)
-			return
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
+	<span style="color:#06287e">allocate</span>()
+	<span style="color:#007020;font-weight:bold">for</span> i <span style="color:#666">:=</span> <span style="color:#40a070">0</span>; ; i<span style="color:#666">++</span> {
+		<span style="color:#007020;font-weight:bold">if</span> <span style="color:#06287e">allocate</span>() &gt; <span style="color:#40a070">0</span> {
+			fmt.<span style="color:#06287e">Printf</span>(<span style="color:#4070a0">&#34;garbage collection ran after %d iterations&#34;</span>, i)
+			<span style="color:#007020;font-weight:bold">return</span>
 		}
 	}
 }
 
-</code></pre><p>With main as above, it takes ~30k iterations of allocate for the garbage collector to run on my system. This isn&rsquo;t too surprising. Exhaustion of file descriptors will not result in enough memory being used to trigger a garbage collection. The garbage collector is oblivious to the lack of system resources other than memory.</p>
+</code></pre></div><p>With main as above, it takes ~30k iterations of allocate for the garbage collector to run on my system. This isn&rsquo;t too surprising. Exhaustion of file descriptors will not result in enough memory being used to trigger a garbage collection. The garbage collector is oblivious to the lack of system resources other than memory.</p>
 <h1 id="dont-rely-on-the-garbage-collector">Don&rsquo;t Rely on the Garbage Collector</h1>
 <p>&hellip;for anything other than collecting memory resources. Tying other resource types to garbage collection is a bad idea and could lead to resource exhaustion. After all, you aren&rsquo;t guaranteed to ever have the garbage collector run for your program. Close files when you&rsquo;re finished with them; defer is your friend.</p>
 

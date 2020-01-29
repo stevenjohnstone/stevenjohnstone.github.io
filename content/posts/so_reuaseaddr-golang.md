@@ -10,7 +10,7 @@ date: 2017-10-13T13:53:00+01:00
 
 I was investigating a test which failed with a very low probability. It boiled down to this:
 
-```
+```golang
 package main
 
 import (
@@ -68,7 +68,7 @@ The reference count on the underlying file descriptor may be non-zero because a 
 
 ...is to ensure that the goroutine is not in Accept() when we try to listen again on the same port. For example, we can close a channel to signal that the goroutine is done:
 
-```
+```golang
 package main
 
 import (

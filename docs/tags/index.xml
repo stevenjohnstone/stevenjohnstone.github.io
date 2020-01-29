@@ -6,10 +6,28 @@
     <description>Recent content in Tags on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 12 Jan 2019 17:16:29 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 28 Jan 2020 19:16:22 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>bugs</title>
+      <link>/tags/bugs/</link>
+      <pubDate>Tue, 28 Jan 2020 19:16:22 +0000</pubDate>
+      
+      <guid>/tags/bugs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>panic</title>
+      <link>/tags/panic/</link>
+      <pubDate>Tue, 28 Jan 2020 19:16:22 +0000</pubDate>
+      
+      <guid>/tags/panic/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>assembly language</title>

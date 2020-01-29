@@ -11,7 +11,7 @@ If you [Open()](https://golang.org/pkg/os/#Open) a file in Golang and it goes ou
 
 You can see this in action in the following program:
 
-```
+```golang
 package main
 
 import (
@@ -58,7 +58,7 @@ The first time allocate() is called, it manages to open the file 1020 times befo
 
 We modify main:
 
-```
+```golang
 func main() {
     allocate()
     allocate()
@@ -74,7 +74,7 @@ successful opens = 0
 
 The garbage collector hasn't run by the time the second allocate() call happens so the available file descriptors for the process are exhausted. When would the garbage collector run?
 
-```
+```golang
 func main() {
 	allocate()
 	for i := 0; ; i++ {

@@ -46,44 +46,44 @@
 <main id="maincontent">
 <h1 id="a-flaky-test">A Flaky Test</h1>
 <p>I was investigating a test which failed with a very low probability. It boiled down to this:</p>
-<pre><code>package main
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
 
-import (
-	&quot;net&quot;
-	&quot;time&quot;
+<span style="color:#007020;font-weight:bold">import</span> (
+	<span style="color:#4070a0">&#34;net&#34;</span>
+	<span style="color:#4070a0">&#34;time&#34;</span>
 )
 
-func main() {
-	//port zero means let the OS choose a free port
-	l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)
-	if err != nil {
-		panic(err)
+<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
+	<span style="color:#60a0b0;font-style:italic">//port zero means let the OS choose a free port
+</span><span style="color:#60a0b0;font-style:italic"></span>	l, err <span style="color:#666">:=</span> net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, <span style="color:#4070a0">&#34;127.0.0.1:0&#34;</span>)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 
-	addr := l.Addr().String()
+	addr <span style="color:#666">:=</span> l.<span style="color:#06287e">Addr</span>().<span style="color:#06287e">String</span>()
 
-	go func() {
-		for {
-			c, err := l.Accept()
-			if err != nil {
-				return
+	<span style="color:#007020;font-weight:bold">go</span> <span style="color:#007020;font-weight:bold">func</span>() {
+		<span style="color:#007020;font-weight:bold">for</span> {
+			c, err <span style="color:#666">:=</span> l.<span style="color:#06287e">Accept</span>()
+			<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+				<span style="color:#007020;font-weight:bold">return</span>
 			}
-			c.Close()
+			c.<span style="color:#06287e">Close</span>()
 		}
 	}()
 
-	time.Sleep(time.Second)
-	if err := l.Close(); err != nil {
-		panic(err)
+	time.<span style="color:#06287e">Sleep</span>(time.Second)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> l.<span style="color:#06287e">Close</span>(); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 
-	//listen on the same port as before
-	l, err = net.Listen(&quot;tcp&quot;, addr)
-	if err != nil {
-		panic(err)
+	<span style="color:#60a0b0;font-style:italic">//listen on the same port as before
+</span><span style="color:#60a0b0;font-style:italic"></span>	l, err = net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, addr)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 }
-</code></pre><p>It&rsquo;s pretty standard to stop a goroutine which is blocked in Accept() by calling Close() on the listener. Passes casual inspection, linters don&rsquo;t complain etc. However, if you run the above enough times, you may see something like this:</p>
+</code></pre></div><p>It&rsquo;s pretty standard to stop a goroutine which is blocked in Accept() by calling Close() on the listener. Passes casual inspection, linters don&rsquo;t complain etc. However, if you run the above enough times, you may see something like this:</p>
 <pre><code>panic: listen tcp 127.0.0.1:37327: bind: address already in use
 </code></pre><p>Address already in use? This caused me some confusion as I know that <a href="http://man7.org/linux/man-pages/man7/socket.7.html">SO_RESUSEADDR</a> is set set by Golang in net.Listen and I&rsquo;ve been conditioned to think &ldquo;SO_RESUSEADDR&rdquo; when I see EALREADY in a situation like this.</p>
 <h1 id="root-cause">Root Cause</h1>
@@ -91,49 +91,49 @@ func main() {
 <p>The reference count on the underlying file descriptor may be non-zero because a goroutine is still in the guts of <a href="https://golang.org/src/internal/poll/fd_unix.go#L317">Accept()</a> where it has locked the file-descriptor. This explains our intermittent failure: we call Close() and then Listen() but there&rsquo;s a goroutine still in Accept() which has prevented the underlying file-descriptor from being closed.</p>
 <h1 id="the-fix">The fix</h1>
 <p>&hellip;is to ensure that the goroutine is not in Accept() when we try to listen again on the same port. For example, we can close a channel to signal that the goroutine is done:</p>
-<pre><code>package main
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
 
-import (
-	&quot;net&quot;
-	&quot;time&quot;
+<span style="color:#007020;font-weight:bold">import</span> (
+	<span style="color:#4070a0">&#34;net&#34;</span>
+	<span style="color:#4070a0">&#34;time&#34;</span>
 )
 
-func main() {
-	//port zero means let the OS choose a free port
-	l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)
-	if err != nil {
-		panic(err)
+<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
+	<span style="color:#60a0b0;font-style:italic">//port zero means let the OS choose a free port
+</span><span style="color:#60a0b0;font-style:italic"></span>	l, err <span style="color:#666">:=</span> net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, <span style="color:#4070a0">&#34;127.0.0.1:0&#34;</span>)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 
-	addr := l.Addr().String()
-	done := make(chan bool)
+	addr <span style="color:#666">:=</span> l.<span style="color:#06287e">Addr</span>().<span style="color:#06287e">String</span>()
+	done <span style="color:#666">:=</span> <span style="color:#007020">make</span>(<span style="color:#007020;font-weight:bold">chan</span> <span style="color:#902000">bool</span>)
 
-	go func() {
-		for {
-			c, err := l.Accept()
-			if err != nil {
-				close(done)
-				return
+	<span style="color:#007020;font-weight:bold">go</span> <span style="color:#007020;font-weight:bold">func</span>() {
+		<span style="color:#007020;font-weight:bold">for</span> {
+			c, err <span style="color:#666">:=</span> l.<span style="color:#06287e">Accept</span>()
+			<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+				<span style="color:#007020">close</span>(done)
+				<span style="color:#007020;font-weight:bold">return</span>
 			}
-			c.Close()
+			c.<span style="color:#06287e">Close</span>()
 		}
 	}()
 
-	time.Sleep(time.Second)
-	if err := l.Close(); err != nil {
-		panic(err)
+	time.<span style="color:#06287e">Sleep</span>(time.Second)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> l.<span style="color:#06287e">Close</span>(); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 
-	//wait for the goroutine to have left Accept()
-	&lt;-done
+	<span style="color:#60a0b0;font-style:italic">//wait for the goroutine to have left Accept()
+</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#666">&lt;-</span>done
 
-	//listen on the same port as before
-	l, err = net.Listen(&quot;tcp&quot;, addr)
-	if err != nil {
-		panic(err)
+	<span style="color:#60a0b0;font-style:italic">//listen on the same port as before
+</span><span style="color:#60a0b0;font-style:italic"></span>	l, err = net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, addr)
+	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+		<span style="color:#007020">panic</span>(err)
 	}
 }
-</code></pre><h1 id="lessons-learned">Lessons Learned</h1>
+</code></pre></div><h1 id="lessons-learned">Lessons Learned</h1>
 <ul>
 <li>when Close() of a listener returns, the underlying file descriptor may still be open</li>
 <li>any method calls for the listener must complete to be sure that the underlying file descriptor is closed</li>
