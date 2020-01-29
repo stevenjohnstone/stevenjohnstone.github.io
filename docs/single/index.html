@@ -106,7 +106,7 @@ and keep the show on the road?</p>
     <span style="color:#007020;font-weight:bold">var</span> buf [<span style="color:#40a070">16</span>]<span style="color:#902000">byte</span>
 
     <span style="color:#007020;font-weight:bold">for</span> {
-        _, err <span style="color:#666">:=</span> io.<span style="color:#06287e">ReadFull</span>(in, buf)
+        _, err <span style="color:#666">:=</span> io.<span style="color:#06287e">ReadFull</span>(in, buf[:])
         <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">==</span> io.EOF {
             <span style="color:#007020;font-weight:bold">break</span>
         }
@@ -115,9 +115,9 @@ and keep the show on the road?</p>
             <span style="color:#007020;font-weight:bold">return</span> err
         }
 
-        <span style="color:#06287e">bufferMunger</span>(buf)
+        <span style="color:#06287e">bufferMunger</span>(buf[:])
 
-        <span style="color:#007020;font-weight:bold">if</span> _, err <span style="color:#666">:=</span> out.<span style="color:#06287e">Write</span>(buf); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">if</span> _, err <span style="color:#666">:=</span> out.<span style="color:#06287e">Write</span>(buf[:]); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
             _ = out.<span style="color:#06287e">Close</span>()
             <span style="color:#007020;font-weight:bold">return</span> err
         }
@@ -165,17 +165,17 @@ leak resources when it panics. If it can, it needs modifications too.</p>
         <span style="color:#007020;font-weight:bold">return</span> err
     }
 
-<span style="display:block;width:100%;background-color:#d8d8d8">    <span style="color:#902000">bool</span> outClosed = <span style="color:#007020;font-weight:bold">false</span>
+<span style="display:block;width:100%;background-color:#d8d8d8">    outClosed <span style="color:#666">:=</span> <span style="color:#007020;font-weight:bold">false</span>
 </span><span style="display:block;width:100%;background-color:#d8d8d8">    <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
 </span><span style="display:block;width:100%;background-color:#d8d8d8">        <span style="color:#007020;font-weight:bold">if</span> !outClosed {
 </span><span style="display:block;width:100%;background-color:#d8d8d8">            _ = out.<span style="color:#06287e">Close</span>()
 </span><span style="display:block;width:100%;background-color:#d8d8d8">        }
-</span><span style="display:block;width:100%;background-color:#d8d8d8">    }
+</span><span style="display:block;width:100%;background-color:#d8d8d8">    }()
 </span>
     <span style="color:#007020;font-weight:bold">var</span> buf [<span style="color:#40a070">16</span>]<span style="color:#902000">byte</span>
 
     <span style="color:#007020;font-weight:bold">for</span> {
-        _, err <span style="color:#666">:=</span> io.<span style="color:#06287e">ReadFull</span>(in, buf)
+        _, err <span style="color:#666">:=</span> io.<span style="color:#06287e">ReadFull</span>(in, buf[:])
         <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">==</span> io.EOF {
             <span style="color:#007020;font-weight:bold">break</span>
         }
@@ -183,9 +183,9 @@ leak resources when it panics. If it can, it needs modifications too.</p>
             <span style="color:#007020;font-weight:bold">return</span> err
         }
 
-        <span style="color:#06287e">bufferMunger</span>(buf)
+        <span style="color:#06287e">bufferMunger</span>(buf[:])
 
-        <span style="color:#007020;font-weight:bold">if</span> _, err <span style="color:#666">:=</span> out.<span style="color:#06287e">Write</span>(buf); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">if</span> _, err <span style="color:#666">:=</span> out.<span style="color:#06287e">Write</span>(buf[:]); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
             <span style="color:#007020;font-weight:bold">return</span> err
         }
     }
@@ -214,22 +214,22 @@ leak resources when it panics. If it can, it needs modifications too.</p>
         }
     }()
 
-    <span style="color:#007020;font-weight:bold">return</span> <span style="color:#06287e">bufferMunger</span>(buf)
+    <span style="color:#06287e">bufferMunger</span>(buf)
+    <span style="color:#007020;font-weight:bold">return</span> <span style="color:#007020;font-weight:bold">nil</span>
 }
 </code></pre></div><h2 id="middleware">Middleware</h2>
 <p>If a quick and obvious failure after a panic is preferred to a potentially hard-to-debug resource exhaustion (hint: it is), then wrapping a handler which causes
 the program to exit is a good strategy:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang">
-<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">NewPanicHandler</span>(h http.Handler) http.Handler {
-    <span style="color:#007020;font-weight:bold">return</span>  http.<span style="color:#06287e">HandlerFunc</span>(<span style="color:#007020;font-weight:bold">func</span>(w http.RequestWriter, r <span style="color:#666">*</span>http.Request) {
-        <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
-            <span style="color:#007020;font-weight:bold">if</span> r <span style="color:#666">:=</span> <span style="color:#007020">recover</span>(); r <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-                <span style="color:#60a0b0;font-style:italic">// log.Fatalf causes the program to exit
-</span><span style="color:#60a0b0;font-style:italic"></span>                log.<span style="color:#06287e">Fatalf</span>(<span style="color:#4070a0">&#34;%s&#34;</span>, debug.<span style="color:#06287e">Stack</span>())
-            }
-        }()
-        h.<span style="color:#06287e">ServeHTTP</span>(w, r)
-    })
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">NewPanicHandler</span>(h http.Handler) http.Handler {
+	<span style="color:#007020;font-weight:bold">return</span> http.<span style="color:#06287e">HandlerFunc</span>(<span style="color:#007020;font-weight:bold">func</span>(w http.ResponseWriter, r <span style="color:#666">*</span>http.Request) {
+		<span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
+			<span style="color:#007020;font-weight:bold">if</span> r <span style="color:#666">:=</span> <span style="color:#007020">recover</span>(); r <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+				<span style="color:#60a0b0;font-style:italic">// log.Fatalf causes the program to exit
+</span><span style="color:#60a0b0;font-style:italic"></span>				log.<span style="color:#06287e">Fatalf</span>(<span style="color:#4070a0">&#34;%s&#34;</span>, debug.<span style="color:#06287e">Stack</span>())
+			}
+		}()
+		h.<span style="color:#06287e">ServeHTTP</span>(w, r)
+	})
 }
 </code></pre></div><h1 id="conclusion">Conclusion</h1>
 <p>Using <code>recover</code> isn&rsquo;t a silver bullet. My 2¢: let panic cause a program exit. Fix logic bugs. Find them with fuzzing.</p>

@@ -32,7 +32,7 @@ func buggy(input, output string) error {
     var buf [16]byte
 
     for {
-        _, err := io.ReadFull(in, buf)
+        _, err := io.ReadFull(in, buf[:])
         if err == io.EOF {
             break
         }
@@ -41,9 +41,9 @@ func buggy(input, output string) error {
             return err
         }
 
-        bufferMunger(buf)
+        bufferMunger(buf[:])
 
-        if _, err := out.Write(buf); err != nil {
+        if _, err := out.Write(buf[:]); err != nil {
             _ = out.Close()
             return err
         }
@@ -99,17 +99,17 @@ func buggy(input, output string) error {
         return err
     }
 
-    bool outClosed = false
+    outClosed := false
     defer func() {
         if !outClosed {
             _ = out.Close()
         }
-    }
+    }()
 
     var buf [16]byte
 
     for {
-        _, err := io.ReadFull(in, buf)
+        _, err := io.ReadFull(in, buf[:])
         if err == io.EOF {
             break
         }
@@ -117,9 +117,9 @@ func buggy(input, output string) error {
             return err
         }
 
-        bufferMunger(buf)
+        bufferMunger(buf[:])
 
-        if _, err := out.Write(buf); err != nil {
+        if _, err := out.Write(buf[:]); err != nil {
             return err
         }
     }
@@ -154,7 +154,8 @@ func bufferMungerWrapper(buf []byte) (err error) {
         }
     }()
 
-    return bufferMunger(buf)
+    bufferMunger(buf)
+    return nil
 }
 ```
 
@@ -165,17 +166,16 @@ If a quick and obvious failure after a panic is preferred to a potentially hard-
 the program to exit is a good strategy:
 
 ```golang
-
 func NewPanicHandler(h http.Handler) http.Handler {
-    return  http.HandlerFunc(func(w http.RequestWriter, r *http.Request) {
-        defer func() {
-            if r := recover(); r != nil {
-                // log.Fatalf causes the program to exit
-                log.Fatalf("%s", debug.Stack())
-            }
-        }()
-        h.ServeHTTP(w, r)
-    })
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if r := recover(); r != nil {
+				// log.Fatalf causes the program to exit
+				log.Fatalf("%s", debug.Stack())
+			}
+		}()
+		h.ServeHTTP(w, r)
+	})
 }
 ```
 
