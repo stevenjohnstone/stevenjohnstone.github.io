@@ -5,6 +5,8 @@ publishDir = "docs"
 theme = "hugo-xmin-mod"
 pygmentsStyle = "friendly"
 pygmentsCodeFences = true
+pygmentsUseClassic = false
+pygmentsUseClasses = true
 
 googleAnalytics = ""
 disqusShortname = ""

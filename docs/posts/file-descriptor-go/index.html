@@ -16,6 +16,7 @@
 
 <link rel="stylesheet" type="text/css" href="/css/style.css">
 <link rel="stylesheet" type="text/css" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/syntax/syntax.css" />
 
     
   </head>
@@ -49,61 +50,61 @@
 <h1 id="golang-file-descriptors-and-finalizers">Golang, File Descriptors and Finalizers</h1>
 <p>If you <a href="https://golang.org/pkg/os/#Open">Open()</a> a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a  cleanup <em>finalizer</em> set when Open() is called.</p>
 <p>You can see this in action in the following program:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
-<span style="color:#007020;font-weight:bold">import</span> (
-	<span style="color:#4070a0">&#34;fmt&#34;</span>
-	<span style="color:#4070a0">&#34;os&#34;</span>
-	<span style="color:#4070a0">&#34;runtime&#34;</span>
-)
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;os&#34;</span>
+	<span class="s">&#34;runtime&#34;</span>
+<span class="p">)</span>
 
-<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">allocate</span>() <span style="color:#902000">int</span> {
-	<span style="color:#60a0b0;font-style:italic">//use this file as our test subject
-</span><span style="color:#60a0b0;font-style:italic"></span>	_, sourceFile, _, ok <span style="color:#666">:=</span> runtime.<span style="color:#06287e">Caller</span>(<span style="color:#40a070">1</span>)
-	<span style="color:#007020;font-weight:bold">if</span> !ok {
-		<span style="color:#007020">panic</span>(<span style="color:#4070a0">&#34;source file not found&#34;</span>)
-	}
-	counter <span style="color:#666">:=</span> <span style="color:#40a070">0</span>
-	<span style="color:#007020;font-weight:bold">var</span> files []<span style="color:#666">*</span>os.File
-	<span style="color:#007020;font-weight:bold">for</span> {
-		f, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Open</span>(sourceFile)
-		<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-			fmt.<span style="color:#06287e">Printf</span>(<span style="color:#4070a0">&#34;successful opens= %d\n&#34;</span>, counter)
-			<span style="color:#007020;font-weight:bold">return</span> counter
-		}
-		counter<span style="color:#666">++</span>
-		files = <span style="color:#007020">append</span>(files, f)
-	}
-}
+<span class="kd">func</span> <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="c1">//use this file as our test subject
+</span><span class="c1"></span>	<span class="nx">_</span><span class="p">,</span> <span class="nx">sourceFile</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">Caller</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;source file not found&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">counter</span> <span class="o">:=</span> <span class="mi">0</span>
+	<span class="kd">var</span> <span class="nx">files</span> <span class="p">[</span><span class="p">]</span><span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">sourceFile</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;successful opens= %d\n&#34;</span><span class="p">,</span> <span class="nx">counter</span><span class="p">)</span>
+			<span class="k">return</span> <span class="nx">counter</span>
+		<span class="p">}</span>
+		<span class="nx">counter</span><span class="o">++</span>
+		<span class="nx">files</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">files</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 
-<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
-    <span style="color:#06287e">allocate</span>()
-    runtime.<span style="color:#06287e">GC</span>()
-    <span style="color:#06287e">allocate</span>()
-}
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+    <span class="nx">runtime</span><span class="p">.</span><span class="nf">GC</span><span class="p">(</span><span class="p">)</span>
+    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+<span class="p">}</span>
 
 </code></pre></div><p>On my system, the output is</p>
 <pre><code>successful opens = 1020
 successful opens = 1020
 </code></pre><p>The first time allocate() is called, it manages to open the file 1020 times before returning. The call to <a href="https://golang.org/pkg/runtime/#GC">runtime.GC()</a> causes the garbage collector to run which closes the open files allowing the next allocate() to open the file 1020 times. What happens if we don&rsquo;t call the garbage collector?</p>
 <p>We modify main:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
-    <span style="color:#06287e">allocate</span>()
-    <span style="color:#06287e">allocate</span>()
-}
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+<span class="p">}</span>
 </code></pre></div><p>The result is now:</p>
 <pre><code>successful opens = 1020
 successful opens = 0
 </code></pre><p>The garbage collector hasn&rsquo;t run by the time the second allocate() call happens so the available file descriptors for the process are exhausted. When would the garbage collector run?</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
-	<span style="color:#06287e">allocate</span>()
-	<span style="color:#007020;font-weight:bold">for</span> i <span style="color:#666">:=</span> <span style="color:#40a070">0</span>; ; i<span style="color:#666">++</span> {
-		<span style="color:#007020;font-weight:bold">if</span> <span style="color:#06287e">allocate</span>() &gt; <span style="color:#40a070">0</span> {
-			fmt.<span style="color:#06287e">Printf</span>(<span style="color:#4070a0">&#34;garbage collection ran after %d iterations&#34;</span>, i)
-			<span style="color:#007020;font-weight:bold">return</span>
-		}
-	}
-}
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;garbage collection ran after %d iterations&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+			<span class="k">return</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 
 </code></pre></div><p>With main as above, it takes ~30k iterations of allocate for the garbage collector to run on my system. This isn&rsquo;t too surprising. Exhaustion of file descriptors will not result in enough memory being used to trigger a garbage collection. The garbage collector is oblivious to the lack of system resources other than memory.</p>
 <h1 id="dont-rely-on-the-garbage-collector">Don&rsquo;t Rely on the Garbage Collector</h1>

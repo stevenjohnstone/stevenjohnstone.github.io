@@ -16,6 +16,7 @@
 
 <link rel="stylesheet" type="text/css" href="/css/style.css">
 <link rel="stylesheet" type="text/css" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/syntax/syntax.css" />
 
     
   </head>
@@ -90,45 +91,45 @@ Compared to C and C++, it&rsquo;s pretty innocuous. Still, denial of service is 
 and keep the show on the road?</p>
 <h1 id="an-example">An Example</h1>
 <p>Consider the following code:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#60a0b0;font-style:italic">// buggy reads data from input 16 bytes at a time, munges it and then writes it to output
-</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">buggy</span>(input, output <span style="color:#902000">string</span>) <span style="color:#902000">error</span> {
-    in, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Open</span>(input)
-    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-        <span style="color:#007020;font-weight:bold">return</span> err
-    }
-    <span style="color:#007020;font-weight:bold">defer</span> in.<span style="color:#06287e">Close</span>() <span style="color:#60a0b0;font-style:italic">// okay to ignore errors
-</span><span style="color:#60a0b0;font-style:italic"></span>
-    out, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Create</span>(output)
-    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-        <span style="color:#007020;font-weight:bold">return</span> err
-    }
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// buggy reads data from input 16 bytes at a time, munges it and then writes it to output
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">buggy</span><span class="p">(</span><span class="nx">input</span><span class="p">,</span> <span class="nx">output</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="nx">in</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">in</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span> <span class="c1">// okay to ignore errors
+</span><span class="c1"></span>
+    <span class="nx">out</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">output</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">err</span>
+    <span class="p">}</span>
 
-    <span style="color:#007020;font-weight:bold">var</span> buf [<span style="color:#40a070">16</span>]<span style="color:#902000">byte</span>
+    <span class="kd">var</span> <span class="nx">buf</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="kt">byte</span>
 
-    <span style="color:#007020;font-weight:bold">for</span> {
-        _, err <span style="color:#666">:=</span> io.<span style="color:#06287e">ReadFull</span>(in, buf[:])
-        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">==</span> io.EOF {
-            <span style="color:#007020;font-weight:bold">break</span>
-        }
-        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-            _ = out.<span style="color:#06287e">Close</span>()
-            <span style="color:#007020;font-weight:bold">return</span> err
-        }
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadFull</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nx">err</span>
+        <span class="p">}</span>
 
-        <span style="color:#06287e">bufferMunger</span>(buf[:])
+        <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
 
-        <span style="color:#007020;font-weight:bold">if</span> _, err <span style="color:#666">:=</span> out.<span style="color:#06287e">Write</span>(buf[:]); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-            _ = out.<span style="color:#06287e">Close</span>()
-            <span style="color:#007020;font-weight:bold">return</span> err
-        }
-    }
+        <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nx">err</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-    <span style="color:#60a0b0;font-style:italic">// Avoids a common bug where files which are written to
-</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// are closed without checking the error...with async IO
-</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// the Close() could result in data actually making it to
-</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// disk which can error
-</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#007020;font-weight:bold">return</span> out.<span style="color:#06287e">Close</span>()
-}
+    <span class="c1">// Avoids a common bug where files which are written to
+</span><span class="c1"></span>    <span class="c1">// are closed without checking the error...with async IO
+</span><span class="c1"></span>    <span class="c1">// the Close() could result in data actually making it to
+</span><span class="c1"></span>    <span class="c1">// disk which can error
+</span><span class="c1"></span>    <span class="k">return</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+<span class="p">}</span>
 </code></pre></div><p>Now, suppose that this is called in a program which <em>recovers all panics and keeps rolling on</em>. If <code>bufferMunger</code> panics,
 then (at least temporarily), <code>buggy</code> will leak a file descriptor for
 <code>out</code>, as explained in an <a href="/posts/file-descriptor-go/">earlier post</a>. With a little imagination, these scenarious can be extended to leaks of</p>
@@ -151,86 +152,86 @@ panics:</p>
 <p>Let&rsquo;s make <code>buggy</code> &ldquo;panic safe&rdquo;. For the sake of argument, suppose that <code>bufferMunger</code> doesn&rsquo;t
 leak resources when it panics. If it can, it needs modifications too.</p>
 <h3 id="using-defer">Using defer</h3>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#60a0b0;font-style:italic">// buggy reads data from input 16 bytes at a time, munges it and then writes it to output
-</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">buggy</span>(input, output <span style="color:#902000">string</span>) <span style="color:#902000">error</span> {
-    in, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Open</span>(input)
-    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-        <span style="color:#007020;font-weight:bold">return</span> err
-    }
-    <span style="color:#007020;font-weight:bold">defer</span> in.<span style="color:#06287e">Close</span>() <span style="color:#60a0b0;font-style:italic">// okay to ignore errors
-</span><span style="color:#60a0b0;font-style:italic"></span>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// buggy reads data from input 16 bytes at a time, munges it and then writes it to output
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">buggy</span><span class="p">(</span><span class="nx">input</span><span class="p">,</span> <span class="nx">output</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="nx">in</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">in</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span> <span class="c1">// okay to ignore errors
+</span><span class="c1"></span>
 
-    out, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Create</span>(output)
-    <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-        <span style="color:#007020;font-weight:bold">return</span> err
-    }
+    <span class="nx">out</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">output</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">err</span>
+    <span class="p">}</span>
 
-<span style="display:block;width:100%;background-color:#d8d8d8">    outClosed <span style="color:#666">:=</span> <span style="color:#007020;font-weight:bold">false</span>
-</span><span style="display:block;width:100%;background-color:#d8d8d8">    <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
-</span><span style="display:block;width:100%;background-color:#d8d8d8">        <span style="color:#007020;font-weight:bold">if</span> !outClosed {
-</span><span style="display:block;width:100%;background-color:#d8d8d8">            _ = out.<span style="color:#06287e">Close</span>()
-</span><span style="display:block;width:100%;background-color:#d8d8d8">        }
-</span><span style="display:block;width:100%;background-color:#d8d8d8">    }()
+<span class="hl">    <span class="nx">outClosed</span> <span class="o">:=</span> <span class="kc">false</span>
+</span><span class="hl">    <span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="hl">        <span class="k">if</span> <span class="p">!</span><span class="nx">outClosed</span> <span class="p">{</span>
+</span><span class="hl">            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+</span><span class="hl">        <span class="p">}</span>
+</span><span class="hl">    <span class="p">}</span><span class="p">(</span><span class="p">)</span>
 </span>
-    <span style="color:#007020;font-weight:bold">var</span> buf [<span style="color:#40a070">16</span>]<span style="color:#902000">byte</span>
+    <span class="kd">var</span> <span class="nx">buf</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="kt">byte</span>
 
-    <span style="color:#007020;font-weight:bold">for</span> {
-        _, err <span style="color:#666">:=</span> io.<span style="color:#06287e">ReadFull</span>(in, buf[:])
-        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">==</span> io.EOF {
-            <span style="color:#007020;font-weight:bold">break</span>
-        }
-        <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-            <span style="color:#007020;font-weight:bold">return</span> err
-        }
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadFull</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">err</span>
+        <span class="p">}</span>
 
-        <span style="color:#06287e">bufferMunger</span>(buf[:])
+        <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
 
-        <span style="color:#007020;font-weight:bold">if</span> _, err <span style="color:#666">:=</span> out.<span style="color:#06287e">Write</span>(buf[:]); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-            <span style="color:#007020;font-weight:bold">return</span> err
-        }
-    }
+        <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">err</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-    <span style="color:#60a0b0;font-style:italic">// Avoids a common bug where files which are written to
-</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// are closed without checking the error...with async IO
-</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// the Close() could result in data actually making it to
-</span><span style="color:#60a0b0;font-style:italic"></span>    <span style="color:#60a0b0;font-style:italic">// disk which can error
-</span><span style="display:block;width:100%;background-color:#d8d8d8"><span style="color:#60a0b0;font-style:italic"></span>    outClosed = <span style="color:#007020;font-weight:bold">true</span>
-</span>    <span style="color:#007020;font-weight:bold">return</span> out.<span style="color:#06287e">Close</span>()
-}
+    <span class="c1">// Avoids a common bug where files which are written to
+</span><span class="c1"></span>    <span class="c1">// are closed without checking the error...with async IO
+</span><span class="c1"></span>    <span class="c1">// the Close() could result in data actually making it to
+</span><span class="c1"></span>    <span class="c1">// disk which can error
+</span><span class="hl"><span class="c1"></span>    <span class="nx">outClosed</span> <span class="p">=</span> <span class="kc">true</span>
+</span>    <span class="k">return</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+<span class="p">}</span>
 </code></pre></div><p>Here, <code>out</code> will be closed in a defered function. Note how I avoid closing <code>out</code> twice.</p>
 <h3 id="using-recover">Using recover</h3>
 <p>A simple mechanism would be to wrap bufferMunger so it returns an error rather than causing a panic. For example,</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">bufferMungerWrapper</span>(buf []<span style="color:#902000">byte</span>) (err <span style="color:#902000">error</span>) {
-    <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
-        <span style="color:#007020;font-weight:bold">if</span> r <span style="color:#666">:=</span> <span style="color:#007020">recover</span>(); r <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-            <span style="color:#007020;font-weight:bold">switch</span> x <span style="color:#666">:=</span> r.(<span style="color:#007020;font-weight:bold">type</span>) {
-            <span style="color:#007020;font-weight:bold">case</span> <span style="color:#902000">string</span>:
-                err = errors.<span style="color:#06287e">New</span>(x)
-            <span style="color:#007020;font-weight:bold">case</span> <span style="color:#902000">error</span>:
-                err = x
-            <span style="color:#007020;font-weight:bold">default</span>:
-                err = errors.<span style="color:#06287e">New</span>(<span style="color:#4070a0">&#34;unknown panic&#34;</span>)
-            }
-        }
-    }()
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">bufferMungerWrapper</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="k">switch</span> <span class="nx">x</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="p">(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="kt">string</span><span class="p">:</span>
+                <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+            <span class="k">case</span> <span class="kt">error</span><span class="p">:</span>
+                <span class="nx">err</span> <span class="p">=</span> <span class="nx">x</span>
+            <span class="k">default</span><span class="p">:</span>
+                <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;unknown panic&#34;</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span><span class="p">(</span><span class="p">)</span>
 
-    <span style="color:#06287e">bufferMunger</span>(buf)
-    <span style="color:#007020;font-weight:bold">return</span> <span style="color:#007020;font-weight:bold">nil</span>
-}
+    <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
 </code></pre></div><h2 id="middleware">Middleware</h2>
 <p>If a quick and obvious failure after a panic is preferred to a potentially hard-to-debug resource exhaustion (hint: it is), then wrapping a handler which causes
 the program to exit is a good strategy:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">NewPanicHandler</span>(h http.Handler) http.Handler {
-	<span style="color:#007020;font-weight:bold">return</span> http.<span style="color:#06287e">HandlerFunc</span>(<span style="color:#007020;font-weight:bold">func</span>(w http.ResponseWriter, r <span style="color:#666">*</span>http.Request) {
-		<span style="color:#007020;font-weight:bold">defer</span> <span style="color:#007020;font-weight:bold">func</span>() {
-			<span style="color:#007020;font-weight:bold">if</span> r <span style="color:#666">:=</span> <span style="color:#007020">recover</span>(); r <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-				<span style="color:#60a0b0;font-style:italic">// log.Fatalf causes the program to exit
-</span><span style="color:#60a0b0;font-style:italic"></span>				log.<span style="color:#06287e">Fatalf</span>(<span style="color:#4070a0">&#34;%s&#34;</span>, debug.<span style="color:#06287e">Stack</span>())
-			}
-		}()
-		h.<span style="color:#06287e">ServeHTTP</span>(w, r)
-	})
-}
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewPanicHandler</span><span class="p">(</span><span class="nx">h</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span><span class="p">)</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">http</span><span class="p">.</span><span class="nf">HandlerFunc</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="c1">// log.Fatalf causes the program to exit
+</span><span class="c1"></span>				<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="nx">debug</span><span class="p">.</span><span class="nf">Stack</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}</span><span class="p">(</span><span class="p">)</span>
+		<span class="nx">h</span><span class="p">.</span><span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
+	<span class="p">}</span><span class="p">)</span>
+<span class="p">}</span>
 </code></pre></div><h1 id="conclusion">Conclusion</h1>
 <p>Using <code>recover</code> isn&rsquo;t a silver bullet. My 2¢: let panic cause a program exit. Fix logic bugs. Find them with fuzzing.</p>
 
@@ -245,70 +246,70 @@ than chunks of assembly language. You read the code and ponder
 its meaning. <a href="https://en.wikipedia.org/wiki/Kata">Kata</a> for the budding reverse engineer.</p>
 <h1 id="spoiler-alert">Spoiler Alert</h1>
 <p>Program 0x03 is pretty neat:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#06287e">sub</span> <span style="color:#60add5">rdx</span>,<span style="color:#60add5">rax</span>
-<span style="color:#06287e">sbb</span> <span style="color:#60add5">rcx</span>,<span style="color:#60add5">rcx</span>
-<span style="color:#06287e">and</span> <span style="color:#60add5">rcx</span>,<span style="color:#60add5">rdx</span>
-<span style="color:#06287e">add</span> <span style="color:#60add5">rax</span>,<span style="color:#60add5">rcx</span>
+<div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">sub</span> <span class="no">rdx</span><span class="p">,</span><span class="no">rax</span>
+<span class="nf">sbb</span> <span class="no">rcx</span><span class="p">,</span><span class="no">rcx</span>
+<span class="nf">and</span> <span class="no">rcx</span><span class="p">,</span><span class="no">rdx</span>
+<span class="nf">add</span> <span class="no">rax</span><span class="p">,</span><span class="no">rcx</span>
 </code></pre></div><p>Let me spoil this for you: at the end of this program, rax will contain
 the smaller of the original rax and rdx values. I know this from reading
 it. What if I couldn&rsquo;t work out what this did? What tools could I use?</p>
 <h1 id="assemble-it">Assemble It</h1>
 <p>We can embed the snippet in a C program and run it for some test cases:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#007020">#</span><span style="color:#007020">include</span> <span style="color:#007020">&lt;stdio.h&gt;</span><span style="color:#007020">
-</span><span style="color:#007020"></span>
-<span style="color:#007020;font-weight:bold">static</span> <span style="color:#902000">int</span> <span style="color:#06287e">x3</span>(<span style="color:#902000">int</span> a, <span style="color:#902000">int</span> b) {
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp">#</span><span class="cp">include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">static</span> <span class="kt">int</span> <span class="nf">x3</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
 
-    <span style="color:#902000">int</span> out;
-    <span style="color:#007020;font-weight:bold">asm</span>(
-        <span style="color:#60a0b0;font-style:italic">// it&#39;s not stated in xchg rax,rax but it&#39;s
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#60a0b0;font-style:italic">// intel syntax. Note the noprefix means we
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#60a0b0;font-style:italic">// don&#39;t need % before registers
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">.intel_syntax noprefix;</span><span style="color:#4070a0">&#34;</span>
-        <span style="color:#60a0b0;font-style:italic">// a bit of preamble to get registers
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#60a0b0;font-style:italic">// set up correctly. We&#39;re okay with just working
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#60a0b0;font-style:italic">// with int rather than long int
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">mov eax, %1;</span><span style="color:#4070a0">&#34;</span>
-        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">mov edx, %2;</span><span style="color:#4070a0">&#34;</span>
+    <span class="kt">int</span> <span class="n">out</span><span class="p">;</span>
+    <span class="k">asm</span><span class="p">(</span>
+        <span class="c1">// it&#39;s not stated in xchg rax,rax but it&#39;s
+</span><span class="c1"></span>        <span class="c1">// intel syntax. Note the noprefix means we
+</span><span class="c1"></span>        <span class="c1">// don&#39;t need % before registers
+</span><span class="c1"></span>        <span class="sa"></span><span class="s">&#34;</span><span class="s">.intel_syntax noprefix;</span><span class="s">&#34;</span>
+        <span class="c1">// a bit of preamble to get registers
+</span><span class="c1"></span>        <span class="c1">// set up correctly. We&#39;re okay with just working
+</span><span class="c1"></span>        <span class="c1">// with int rather than long int
+</span><span class="c1"></span>        <span class="sa"></span><span class="s">&#34;</span><span class="s">mov eax, %1;</span><span class="s">&#34;</span>
+        <span class="sa"></span><span class="s">&#34;</span><span class="s">mov edx, %2;</span><span class="s">&#34;</span>
 
-        <span style="color:#60a0b0;font-style:italic">// 0x03 code below
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">sub rdx, rax;</span><span style="color:#4070a0">&#34;</span>
-        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">sbb rcx,rcx;</span><span style="color:#4070a0">&#34;</span>
-        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">and rcx,rdx;</span><span style="color:#4070a0">&#34;</span>
-        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">add rax,rcx;</span><span style="color:#4070a0">&#34;</span>
+        <span class="c1">// 0x03 code below
+</span><span class="c1"></span>        <span class="sa"></span><span class="s">&#34;</span><span class="s">sub rdx, rax;</span><span class="s">&#34;</span>
+        <span class="sa"></span><span class="s">&#34;</span><span class="s">sbb rcx,rcx;</span><span class="s">&#34;</span>
+        <span class="sa"></span><span class="s">&#34;</span><span class="s">and rcx,rdx;</span><span class="s">&#34;</span>
+        <span class="sa"></span><span class="s">&#34;</span><span class="s">add rax,rcx;</span><span class="s">&#34;</span>
 
-        <span style="color:#60a0b0;font-style:italic">// put the result into out
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">mov %0, eax;</span><span style="color:#4070a0">&#34;</span>
-        <span style="color:#60a0b0;font-style:italic">// tell the compiler that out is in memory
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#666">:</span> <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">=m</span><span style="color:#4070a0">&#34;</span> (out)
-        <span style="color:#60a0b0;font-style:italic">// tell the compiler that a and b are inputs
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#666">:</span> <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">m</span><span style="color:#4070a0">&#34;</span> (a) , <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">m</span><span style="color:#4070a0">&#34;</span> (b)
-        <span style="color:#60a0b0;font-style:italic">// this is the list of registers which are clobbered
-</span><span style="color:#60a0b0;font-style:italic"></span>        <span style="color:#666">:</span> <span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">rax</span><span style="color:#4070a0">&#34;</span>,<span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">rdx</span><span style="color:#4070a0">&#34;</span>,<span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">rcx</span><span style="color:#4070a0">&#34;</span>);
-    <span style="color:#007020;font-weight:bold">return</span> out;
-}
+        <span class="c1">// put the result into out
+</span><span class="c1"></span>        <span class="sa"></span><span class="s">&#34;</span><span class="s">mov %0, eax;</span><span class="s">&#34;</span>
+        <span class="c1">// tell the compiler that out is in memory
+</span><span class="c1"></span>        <span class="o">:</span> <span class="sa"></span><span class="s">&#34;</span><span class="s">=m</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="c1">// tell the compiler that a and b are inputs
+</span><span class="c1"></span>        <span class="o">:</span> <span class="sa"></span><span class="s">&#34;</span><span class="s">m</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="p">,</span> <span class="sa"></span><span class="s">&#34;</span><span class="s">m</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="c1">// this is the list of registers which are clobbered
+</span><span class="c1"></span>        <span class="o">:</span> <span class="sa"></span><span class="s">&#34;</span><span class="s">rax</span><span class="s">&#34;</span><span class="p">,</span><span class="sa"></span><span class="s">&#34;</span><span class="s">rdx</span><span class="s">&#34;</span><span class="p">,</span><span class="sa"></span><span class="s">&#34;</span><span class="s">rcx</span><span class="s">&#34;</span><span class="p">)</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span style="color:#007020;font-weight:bold">struct</span> input {
-    <span style="color:#902000">int</span> a;
-    <span style="color:#902000">int</span> b;
-};
+<span class="k">struct</span> <span class="n">input</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">}</span><span class="p">;</span>
 
-<span style="color:#902000">int</span> <span style="color:#06287e">main</span>(<span style="color:#902000">int</span> argc, <span style="color:#007020;font-weight:bold">const</span> <span style="color:#902000">char</span> <span style="color:#666">*</span><span style="color:#666">*</span>argv) {
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="o">*</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
 
 
-    <span style="color:#007020;font-weight:bold">struct</span> input inputs[] <span style="color:#666">=</span> {
-        {<span style="color:#40a070">0x0</span>, <span style="color:#40a070">0x1</span>},
-        {<span style="color:#40a070">0x1</span>, <span style="color:#40a070">0x1</span>},
-        {<span style="color:#40a070">0xf</span>, <span style="color:#40a070">0xe</span>},
-        {<span style="color:#40a070">0xe</span>, <span style="color:#40a070">0xf</span>},
-        {<span style="color:#666">~</span><span style="color:#40a070">0</span>, <span style="color:#40a070">0x00</span>},
-    };
+    <span class="k">struct</span> <span class="n">input</span> <span class="n">inputs</span><span class="p">[</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">{</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">}</span><span class="p">,</span>
+        <span class="p">{</span><span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">}</span><span class="p">,</span>
+        <span class="p">{</span><span class="mh">0xf</span><span class="p">,</span> <span class="mh">0xe</span><span class="p">}</span><span class="p">,</span>
+        <span class="p">{</span><span class="mh">0xe</span><span class="p">,</span> <span class="mh">0xf</span><span class="p">}</span><span class="p">,</span>
+        <span class="p">{</span><span class="o">~</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">}</span><span class="p">,</span>
+    <span class="p">}</span><span class="p">;</span>
 
-    <span style="color:#007020;font-weight:bold">for</span> (<span style="color:#902000">int</span> i <span style="color:#666">=</span> <span style="color:#40a070">0</span>; i <span style="color:#666">&lt;</span> <span style="color:#007020;font-weight:bold">sizeof</span>(inputs)<span style="color:#666">/</span><span style="color:#007020;font-weight:bold">sizeof</span>(inputs[<span style="color:#40a070">0</span>]); i<span style="color:#666">+</span><span style="color:#666">+</span>) {
-        printf(<span style="color:#4070a0"></span><span style="color:#4070a0">&#34;</span><span style="color:#4070a0">%d (rax: %016x rdx %016x) -&gt;  rax: %016x</span><span style="color:#4070a0;font-weight:bold">\n</span><span style="color:#4070a0">&#34;</span>,
-                i, inputs[i].a, inputs[i].b, x3(inputs[i].a, inputs[i].b));
-    }
-   <span style="color:#007020;font-weight:bold">return</span> <span style="color:#40a070">0</span>;
-}
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span><span class="o">/</span><span class="k">sizeof</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="p">;</span> <span class="n">i</span><span class="o">+</span><span class="o">+</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;</span><span class="s">%d (rax: %016x rdx %016x) -&gt;  rax: %016x</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+                <span class="n">i</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="p">.</span><span class="n">b</span><span class="p">,</span> <span class="n">x3</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="p">)</span><span class="p">;</span>
+    <span class="p">}</span>
+   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div><p>Compile with</p>
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
@@ -327,73 +328,73 @@ program I wrote in Golang which</p>
 <li>sets up the <a href="https://www.unicorn-engine.org/">unicorn</a> emulator to run the machine code</li>
 <li>passes in a few pairs of register values and prints the value of rax at the end</li>
 </ul>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
-<span style="color:#007020;font-weight:bold">import</span> (
-	<span style="color:#4070a0">&#34;fmt&#34;</span>
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
 
-	<span style="color:#60a0b0;font-style:italic">// a branch of keystone golang bindings which builds on linux
-</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#4070a0">&#34;github.com/stevenjohnstone/keystone/bindings/go/keystone&#34;</span>
-	uc <span style="color:#4070a0">&#34;github.com/unicorn-engine/unicorn/bindings/go/unicorn&#34;</span>
-)
+	<span class="c1">// a branch of keystone golang bindings which builds on linux
+</span><span class="c1"></span>	<span class="s">&#34;github.com/stevenjohnstone/keystone/bindings/go/keystone&#34;</span>
+	<span class="nx">uc</span> <span class="s">&#34;github.com/unicorn-engine/unicorn/bindings/go/unicorn&#34;</span>
+<span class="p">)</span>
 
-<span style="color:#60a0b0;font-style:italic">// This program explores a few inputs to
-</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;font-style:italic">// problem 0x03 of xchg rax,rax:
-</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;font-style:italic">// https://www.xorpd.net/pages/xchg_rax/snip_03.html
-</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;font-style:italic">//
-</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;font-style:italic">// This is a good excuse to give keystone and unicorn
-</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;font-style:italic">// a spin in golang
-</span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
+<span class="c1">// This program explores a few inputs to
+</span><span class="c1"></span><span class="c1">// problem 0x03 of xchg rax,rax:
+</span><span class="c1"></span><span class="c1">// https://www.xorpd.net/pages/xchg_rax/snip_03.html
+</span><span class="c1"></span><span class="c1">//
+</span><span class="c1"></span><span class="c1">// This is a good excuse to give keystone and unicorn
+</span><span class="c1"></span><span class="c1">// a spin in golang
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
 
-	<span style="color:#60a0b0;font-style:italic">// first, convert the assembly language into numerical opcodes
-</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#60a0b0;font-style:italic">// (machine language)
-</span><span style="color:#60a0b0;font-style:italic"></span>	assembly <span style="color:#666">:=</span> <span style="color:#4070a0">&#34;sub rdx,rax; sbb rcx,rcx; and rcx,rdx; add rax,rcx&#34;</span>
+	<span class="c1">// first, convert the assembly language into numerical opcodes
+</span><span class="c1"></span>	<span class="c1">// (machine language)
+</span><span class="c1"></span>	<span class="nx">assembly</span> <span class="o">:=</span> <span class="s">&#34;sub rdx,rax; sbb rcx,rcx; and rcx,rdx; add rax,rcx&#34;</span>
 
-	ks, err <span style="color:#666">:=</span> keystone.<span style="color:#06287e">New</span>(keystone.ARCH_X86, keystone.MODE_64)
-	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-		<span style="color:#007020">panic</span>(err)
-	}
-	<span style="color:#007020;font-weight:bold">defer</span> ks.<span style="color:#06287e">Close</span>()
+	<span class="nx">ks</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">keystone</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">keystone</span><span class="p">.</span><span class="nx">ARCH_X86</span><span class="p">,</span> <span class="nx">keystone</span><span class="p">.</span><span class="nx">MODE_64</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">defer</span> <span class="nx">ks</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
 
-	err = ks.<span style="color:#06287e">Option</span>(keystone.OPT_SYNTAX, keystone.OPT_SYNTAX_INTEL)
-	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-		<span style="color:#007020">panic</span>(err)
-	}
+	<span class="nx">err</span> <span class="p">=</span> <span class="nx">ks</span><span class="p">.</span><span class="nf">Option</span><span class="p">(</span><span class="nx">keystone</span><span class="p">.</span><span class="nx">OPT_SYNTAX</span><span class="p">,</span> <span class="nx">keystone</span><span class="p">.</span><span class="nx">OPT_SYNTAX_INTEL</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	insn, _, ok <span style="color:#666">:=</span> ks.<span style="color:#06287e">Assemble</span>(assembly, <span style="color:#40a070">0</span>)
-	<span style="color:#007020;font-weight:bold">if</span> !ok {
-		<span style="color:#007020">panic</span>(<span style="color:#4070a0">&#34;failed to assemble&#34;</span>)
-	}
+	<span class="nx">insn</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">ks</span><span class="p">.</span><span class="nf">Assemble</span><span class="p">(</span><span class="nx">assembly</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;failed to assemble&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	<span style="color:#60a0b0;font-style:italic">// choose some initial values for rax and rdx
-</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#60a0b0;font-style:italic">// to get a feel for what the algorithm does
-</span><span style="color:#60a0b0;font-style:italic"></span>	regPairs <span style="color:#666">:=</span> []<span style="color:#007020;font-weight:bold">struct</span> {
-		rax, rdx <span style="color:#902000">uint64</span>
-	}{
-		{<span style="color:#40a070">0x0</span>, <span style="color:#40a070">0x1</span>},
-		{<span style="color:#40a070">0x1</span>, <span style="color:#40a070">0x1</span>},
-		{<span style="color:#40a070">0xf</span>, <span style="color:#40a070">0xe</span>},
-		{<span style="color:#40a070">0xe</span>, <span style="color:#40a070">0xf</span>},
-		{<span style="color:#40a070">0xffffffff</span>, <span style="color:#40a070">0x00</span>},
-	}
+	<span class="c1">// choose some initial values for rax and rdx
+</span><span class="c1"></span>	<span class="c1">// to get a feel for what the algorithm does
+</span><span class="c1"></span>	<span class="nx">regPairs</span> <span class="o">:=</span> <span class="p">[</span><span class="p">]</span><span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">rax</span><span class="p">,</span> <span class="nx">rdx</span> <span class="kt">uint64</span>
+	<span class="p">}</span><span class="p">{</span>
+		<span class="p">{</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">}</span><span class="p">,</span>
+		<span class="p">{</span><span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">}</span><span class="p">,</span>
+		<span class="p">{</span><span class="mh">0xf</span><span class="p">,</span> <span class="mh">0xe</span><span class="p">}</span><span class="p">,</span>
+		<span class="p">{</span><span class="mh">0xe</span><span class="p">,</span> <span class="mh">0xf</span><span class="p">}</span><span class="p">,</span>
+		<span class="p">{</span><span class="mh">0xffffffff</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">}</span><span class="p">,</span>
+	<span class="p">}</span>
 
-	<span style="color:#60a0b0;font-style:italic">// try each pair of initial register values with the emulator
-</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#007020;font-weight:bold">for</span> i, regPair <span style="color:#666">:=</span> <span style="color:#007020;font-weight:bold">range</span> regPairs {
-		mu, _ <span style="color:#666">:=</span> uc.<span style="color:#06287e">NewUnicorn</span>(uc.ARCH_X86, uc.MODE_64)
-		mu.<span style="color:#06287e">MemMap</span>(<span style="color:#40a070">0x1000</span>, <span style="color:#40a070">0x1000</span>)
-		mu.<span style="color:#06287e">MemWrite</span>(<span style="color:#40a070">0x1000</span>, insn)
+	<span class="c1">// try each pair of initial register values with the emulator
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">regPair</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">regPairs</span> <span class="p">{</span>
+		<span class="nx">mu</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">uc</span><span class="p">.</span><span class="nf">NewUnicorn</span><span class="p">(</span><span class="nx">uc</span><span class="p">.</span><span class="nx">ARCH_X86</span><span class="p">,</span> <span class="nx">uc</span><span class="p">.</span><span class="nx">MODE_64</span><span class="p">)</span>
+		<span class="nx">mu</span><span class="p">.</span><span class="nf">MemMap</span><span class="p">(</span><span class="mh">0x1000</span><span class="p">,</span> <span class="mh">0x1000</span><span class="p">)</span>
+		<span class="nx">mu</span><span class="p">.</span><span class="nf">MemWrite</span><span class="p">(</span><span class="mh">0x1000</span><span class="p">,</span> <span class="nx">insn</span><span class="p">)</span>
 
-		mu.<span style="color:#06287e">RegWrite</span>(uc.X86_REG_RAX, regPair.rax)
-		mu.<span style="color:#06287e">RegWrite</span>(uc.X86_REG_RDX, regPair.rdx)
+		<span class="nx">mu</span><span class="p">.</span><span class="nf">RegWrite</span><span class="p">(</span><span class="nx">uc</span><span class="p">.</span><span class="nx">X86_REG_RAX</span><span class="p">,</span> <span class="nx">regPair</span><span class="p">.</span><span class="nx">rax</span><span class="p">)</span>
+		<span class="nx">mu</span><span class="p">.</span><span class="nf">RegWrite</span><span class="p">(</span><span class="nx">uc</span><span class="p">.</span><span class="nx">X86_REG_RDX</span><span class="p">,</span> <span class="nx">regPair</span><span class="p">.</span><span class="nx">rdx</span><span class="p">)</span>
 
-		<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> mu.<span style="color:#06287e">Start</span>(<span style="color:#40a070">0x1000</span>, <span style="color:#40a070">0x1000</span><span style="color:#666">+</span><span style="color:#007020">uint64</span>(<span style="color:#007020">len</span>(insn))); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-			<span style="color:#007020">panic</span>(err)
-		}
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">mu</span><span class="p">.</span><span class="nf">Start</span><span class="p">(</span><span class="mh">0x1000</span><span class="p">,</span> <span class="mh">0x1000</span><span class="o">+</span><span class="nb">uint64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">insn</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
 
-		endRax, _ <span style="color:#666">:=</span> mu.<span style="color:#06287e">RegRead</span>(uc.X86_REG_RAX)
-		fmt.<span style="color:#06287e">Printf</span>(<span style="color:#4070a0">&#34;%d (rax: %016x rdx %016x) -&gt;  rax: %016x\n&#34;</span>, i, regPair.rax, regPair.rdx, endRax)
-	}
-}
+		<span class="nx">endRax</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">mu</span><span class="p">.</span><span class="nf">RegRead</span><span class="p">(</span><span class="nx">uc</span><span class="p">.</span><span class="nx">X86_REG_RAX</span><span class="p">)</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%d (rax: %016x rdx %016x) -&gt;  rax: %016x\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">regPair</span><span class="p">.</span><span class="nx">rax</span><span class="p">,</span> <span class="nx">regPair</span><span class="p">.</span><span class="nx">rdx</span><span class="p">,</span> <span class="nx">endRax</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div><p>Here&rsquo;s the output (just as above):</p>
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
@@ -409,70 +410,70 @@ we can use SMT solvers to prove properties of software.</p>
 <li>show that an assertion which contradicts our <em>theorem</em> leads to the model being unsatisfiable</li>
 </ul>
 <p>I&rsquo;ve opted to use <a href="http://smtlib.cs.uiowa.edu/">SMT-LIB</a> to demonstrate.</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-lisp" data-lang="lisp">(<span style="color:#bb60d5">set-logic</span> <span style="color:#bb60d5">QF_BV</span>)
+<div class="highlight"><pre class="chroma"><code class="language-lisp" data-lang="lisp"><span class="p">(</span><span class="nv">set-logic</span> <span class="nv">QF_BV</span><span class="p">)</span>
 
-<span style="color:#60a0b0;font-style:italic">; Convention here is add a label to the end of the register</span>
-<span style="color:#60a0b0;font-style:italic">; to mark a step in the program for which the value applies.</span>
-<span style="color:#60a0b0;font-style:italic">; e.g.</span>
-<span style="color:#60a0b0;font-style:italic">; rdx0 is the first value of rdx, rdx1 is the value at the</span>
-<span style="color:#60a0b0;font-style:italic">; next step of the program, rdxN is the value at the Nth</span>
-<span style="color:#60a0b0;font-style:italic">; step.</span>
-<span style="color:#60a0b0;font-style:italic">;</span>
-<span style="color:#60a0b0;font-style:italic">; Essentially, we&#39;re turning an assembly program into SSA form</span>
-(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rdx0</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
-(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rdx1</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
+<span class="c1">; Convention here is add a label to the end of the register</span>
+<span class="c1">; to mark a step in the program for which the value applies.</span>
+<span class="c1">; e.g.</span>
+<span class="c1">; rdx0 is the first value of rdx, rdx1 is the value at the</span>
+<span class="c1">; next step of the program, rdxN is the value at the Nth</span>
+<span class="c1">; step.</span>
+<span class="c1">;</span>
+<span class="c1">; Essentially, we&#39;re turning an assembly program into SSA form</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rdx0</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rdx1</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
 
-(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rcx0</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
-(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rcx1</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
-(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rcx2</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rcx0</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rcx1</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rcx2</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
 
-(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rax0</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
-(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">rax3</span> () ( <span style="color:#bb60d5">_</span> <span style="color:#bb60d5">BitVec</span> <span style="color:#40a070">64</span>))
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rax0</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rax3</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
 
-<span style="color:#60a0b0;font-style:italic">; The carry flag</span>
-(<span style="color:#bb60d5">declare-fun</span> <span style="color:#bb60d5">cf</span> () (<span style="color:#bb60d5">_</span> <span style="color:#bb60d5">Bool</span>))
+<span class="c1">; The carry flag</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">cf</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span><span class="nv">_</span> <span class="nv">Bool</span><span class="p">)</span><span class="p">)</span>
 
-<span style="color:#60a0b0;font-style:italic">; sub sets the carry flag if unsigned subtraction will result in</span>
-<span style="color:#60a0b0;font-style:italic">; an overflow i.e. rax0 &gt; rdx0</span>
-(<span style="color:#007020">assert</span> ( <span style="color:#06287e">=</span> <span style="color:#bb60d5">cf</span> (<span style="color:#bb60d5">bvult</span> <span style="color:#bb60d5">rdx0</span> <span style="color:#bb60d5">rax0</span>)))
-(<span style="color:#007020">assert</span> ( <span style="color:#06287e">=</span> <span style="color:#bb60d5">rdx1</span> (<span style="color:#bb60d5">bvsub</span> <span style="color:#bb60d5">rdx0</span> <span style="color:#bb60d5">rax0</span>)))
+<span class="c1">; sub sets the carry flag if unsigned subtraction will result in</span>
+<span class="c1">; an overflow i.e. rax0 &gt; rdx0</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">cf</span> <span class="p">(</span><span class="nv">bvult</span> <span class="nv">rdx0</span> <span class="nv">rax0</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rdx1</span> <span class="p">(</span><span class="nv">bvsub</span> <span class="nv">rdx0</span> <span class="nv">rax0</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
 
-<span style="color:#60a0b0;font-style:italic">; sbb is &#39;subtract with carry&#39;. If the carry flag is set, we take</span>
-<span style="color:#60a0b0;font-style:italic">; away one from the result of sub</span>
-(<span style="color:#007020">assert</span> ( <span style="color:#06287e">=</span> <span style="color:#bb60d5">rcx1</span>
-(<span style="color:#bb60d5">ite</span> (<span style="color:#06287e">=</span> <span style="color:#bb60d5">cf</span> <span style="color:#bb60d5">true</span>)
- (<span style="color:#bb60d5">bvsub</span> (<span style="color:#bb60d5">bvsub</span> <span style="color:#bb60d5">rcx0</span> <span style="color:#bb60d5">rcx0</span>) <span style="color:#40a070">#x0000000000000001</span>)
- (<span style="color:#bb60d5">bvsub</span> <span style="color:#bb60d5">rcx0</span> <span style="color:#bb60d5">rcx0</span>))
-))
+<span class="c1">; sbb is &#39;subtract with carry&#39;. If the carry flag is set, we take</span>
+<span class="c1">; away one from the result of sub</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rcx1</span>
+<span class="p">(</span><span class="nv">ite</span> <span class="p">(</span><span class="nf">=</span> <span class="nv">cf</span> <span class="nv">true</span><span class="p">)</span>
+ <span class="p">(</span><span class="nv">bvsub</span> <span class="p">(</span><span class="nv">bvsub</span> <span class="nv">rcx0</span> <span class="nv">rcx0</span><span class="p">)</span> <span class="mh">#x0000000000000001</span><span class="p">)</span>
+ <span class="p">(</span><span class="nv">bvsub</span> <span class="nv">rcx0</span> <span class="nv">rcx0</span><span class="p">)</span><span class="p">)</span>
+<span class="p">)</span><span class="p">)</span>
 
-<span style="color:#60a0b0;font-style:italic">; and rxc1,rdx1</span>
-(<span style="color:#007020">assert</span> ( <span style="color:#06287e">=</span> <span style="color:#bb60d5">rcx2</span> (<span style="color:#bb60d5">bvand</span> <span style="color:#bb60d5">rcx1</span> <span style="color:#bb60d5">rdx1</span>)))
-<span style="color:#60a0b0;font-style:italic">; add rax0,rcv2</span>
-(<span style="color:#007020">assert</span> ( <span style="color:#06287e">=</span> <span style="color:#bb60d5">rax3</span> (<span style="color:#bb60d5">bvadd</span> <span style="color:#bb60d5">rax0</span> <span style="color:#bb60d5">rcx2</span>)))
+<span class="c1">; and rxc1,rdx1</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rcx2</span> <span class="p">(</span><span class="nv">bvand</span> <span class="nv">rcx1</span> <span class="nv">rdx1</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+<span class="c1">; add rax0,rcv2</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rax3</span> <span class="p">(</span><span class="nv">bvadd</span> <span class="nv">rax0</span> <span class="nv">rcx2</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
 
-<span style="color:#60a0b0;font-style:italic">; assert conditions which should fail if this is indeed a minimum</span>
-<span style="color:#60a0b0;font-style:italic">; function. In the case below, we assert that rax0 &lt;= rdx0 and</span>
-<span style="color:#60a0b0;font-style:italic">; rax3 != rax0 (which we suspect is false) and so if we get &#39;unsat&#39;</span>
-<span style="color:#60a0b0;font-style:italic">; as the result, then we&#39;ve proved rax0 &lt;= rdx0 =&gt; rax3 == rax0</span>
+<span class="c1">; assert conditions which should fail if this is indeed a minimum</span>
+<span class="c1">; function. In the case below, we assert that rax0 &lt;= rdx0 and</span>
+<span class="c1">; rax3 != rax0 (which we suspect is false) and so if we get &#39;unsat&#39;</span>
+<span class="c1">; as the result, then we&#39;ve proved rax0 &lt;= rdx0 =&gt; rax3 == rax0</span>
 
-<span style="color:#60a0b0;font-style:italic">; note the use of push here. Allows us to reuse the work above by</span>
-<span style="color:#60a0b0;font-style:italic">; popping the asserts below from the stack</span>
-(<span style="color:#007020">push</span> <span style="color:#40a070">1</span>)
-    (<span style="color:#007020">assert</span> ( <span style="color:#007020">or</span> (<span style="color:#bb60d5">bvult</span> <span style="color:#bb60d5">rax0</span> <span style="color:#bb60d5">rdx0</span>) (<span style="color:#06287e">not</span> (<span style="color:#bb60d5">distinct</span> <span style="color:#bb60d5">rax0</span> <span style="color:#bb60d5">rdx0</span>))))
-        (<span style="color:#bb60d5">check-sat</span>)
-        (<span style="color:#007020">push</span> <span style="color:#40a070">1</span>)
-            (<span style="color:#007020">assert</span> ( <span style="color:#bb60d5">distinct</span> <span style="color:#bb60d5">rax3</span> <span style="color:#bb60d5">rax0</span>))
-            (<span style="color:#bb60d5">check-sat</span>)
-(<span style="color:#007020">pop</span> <span style="color:#40a070">2</span>)
+<span class="c1">; note the use of push here. Allows us to reuse the work above by</span>
+<span class="c1">; popping the asserts below from the stack</span>
+<span class="p">(</span><span class="nb">push</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nb">or</span> <span class="p">(</span><span class="nv">bvult</span> <span class="nv">rax0</span> <span class="nv">rdx0</span><span class="p">)</span> <span class="p">(</span><span class="nf">not</span> <span class="p">(</span><span class="nv">distinct</span> <span class="nv">rax0</span> <span class="nv">rdx0</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+        <span class="p">(</span><span class="nv">check-sat</span><span class="p">)</span>
+        <span class="p">(</span><span class="nb">push</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nv">distinct</span> <span class="nv">rax3</span> <span class="nv">rax0</span><span class="p">)</span><span class="p">)</span>
+            <span class="p">(</span><span class="nv">check-sat</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">pop</span> <span class="mi">2</span><span class="p">)</span>
 
-<span style="color:#60a0b0;font-style:italic">; We show here that rax0 &gt; rdx0 (along with our previous assertions) can</span>
-<span style="color:#60a0b0;font-style:italic">; can be satisfied. We then show that adding rax3 != rdx0 leads to</span>
-<span style="color:#60a0b0;font-style:italic">; unsat, which means that rax3 == rdx0</span>
-(<span style="color:#007020">assert</span> (<span style="color:#bb60d5">bvugt</span> <span style="color:#bb60d5">rax0</span> <span style="color:#bb60d5">rdx0</span>))
-(<span style="color:#bb60d5">check-sat</span>)
-(<span style="color:#007020">assert</span> ( <span style="color:#bb60d5">distinct</span> <span style="color:#bb60d5">rax3</span> <span style="color:#bb60d5">rdx0</span>))
+<span class="c1">; We show here that rax0 &gt; rdx0 (along with our previous assertions) can</span>
+<span class="c1">; can be satisfied. We then show that adding rax3 != rdx0 leads to</span>
+<span class="c1">; unsat, which means that rax3 == rdx0</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span><span class="nv">bvugt</span> <span class="nv">rax0</span> <span class="nv">rdx0</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">check-sat</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nv">distinct</span> <span class="nv">rax3</span> <span class="nv">rdx0</span><span class="p">)</span><span class="p">)</span>
 
-(<span style="color:#bb60d5">check-sat</span>)
+<span class="p">(</span><span class="nv">check-sat</span><span class="p">)</span>
 </code></pre></div><p>Running with z3 gives</p>
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
@@ -486,43 +487,43 @@ the ideas touched on here come into their own.</p>
     </h2>
     <h1 id="a-flaky-test">A Flaky Test</h1>
 <p>I was investigating a test which failed with a very low probability. It boiled down to this:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
-<span style="color:#007020;font-weight:bold">import</span> (
-	<span style="color:#4070a0">&#34;net&#34;</span>
-	<span style="color:#4070a0">&#34;time&#34;</span>
-)
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;net&#34;</span>
+	<span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
 
-<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
-	<span style="color:#60a0b0;font-style:italic">//port zero means let the OS choose a free port
-</span><span style="color:#60a0b0;font-style:italic"></span>	l, err <span style="color:#666">:=</span> net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, <span style="color:#4070a0">&#34;127.0.0.1:0&#34;</span>)
-	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-		<span style="color:#007020">panic</span>(err)
-	}
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">//port zero means let the OS choose a free port
+</span><span class="c1"></span>	<span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;127.0.0.1:0&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	addr <span style="color:#666">:=</span> l.<span style="color:#06287e">Addr</span>().<span style="color:#06287e">String</span>()
+	<span class="nx">addr</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Addr</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="p">)</span>
 
-	<span style="color:#007020;font-weight:bold">go</span> <span style="color:#007020;font-weight:bold">func</span>() {
-		<span style="color:#007020;font-weight:bold">for</span> {
-			c, err <span style="color:#666">:=</span> l.<span style="color:#06287e">Accept</span>()
-			<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-				<span style="color:#007020;font-weight:bold">return</span>
-			}
-			c.<span style="color:#06287e">Close</span>()
-		}
-	}()
+	<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="p">{</span>
+			<span class="nx">c</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Accept</span><span class="p">(</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="k">return</span>
+			<span class="p">}</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span><span class="p">(</span><span class="p">)</span>
 
-	time.<span style="color:#06287e">Sleep</span>(time.Second)
-	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> l.<span style="color:#06287e">Close</span>(); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-		<span style="color:#007020">panic</span>(err)
-	}
+	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	<span style="color:#60a0b0;font-style:italic">//listen on the same port as before
-</span><span style="color:#60a0b0;font-style:italic"></span>	l, err = net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, addr)
-	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-		<span style="color:#007020">panic</span>(err)
-	}
-}
+	<span class="c1">//listen on the same port as before
+</span><span class="c1"></span>	<span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">addr</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div><p>It&rsquo;s pretty standard to stop a goroutine which is blocked in Accept() by calling Close() on the listener. Passes casual inspection, linters don&rsquo;t complain etc. However, if you run the above enough times, you may see something like this:</p>
 <pre><code>panic: listen tcp 127.0.0.1:37327: bind: address already in use
 </code></pre><p>Address already in use? This caused me some confusion as I know that <a href="http://man7.org/linux/man-pages/man7/socket.7.html">SO_RESUSEADDR</a> is set set by Golang in net.Listen and I&rsquo;ve been conditioned to think &ldquo;SO_RESUSEADDR&rdquo; when I see EALREADY in a situation like this.</p>
@@ -531,48 +532,48 @@ the ideas touched on here come into their own.</p>
 <p>The reference count on the underlying file descriptor may be non-zero because a goroutine is still in the guts of <a href="https://golang.org/src/internal/poll/fd_unix.go#L317">Accept()</a> where it has locked the file-descriptor. This explains our intermittent failure: we call Close() and then Listen() but there&rsquo;s a goroutine still in Accept() which has prevented the underlying file-descriptor from being closed.</p>
 <h1 id="the-fix">The fix</h1>
 <p>&hellip;is to ensure that the goroutine is not in Accept() when we try to listen again on the same port. For example, we can close a channel to signal that the goroutine is done:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
-<span style="color:#007020;font-weight:bold">import</span> (
-	<span style="color:#4070a0">&#34;net&#34;</span>
-	<span style="color:#4070a0">&#34;time&#34;</span>
-)
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;net&#34;</span>
+	<span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
 
-<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
-	<span style="color:#60a0b0;font-style:italic">//port zero means let the OS choose a free port
-</span><span style="color:#60a0b0;font-style:italic"></span>	l, err <span style="color:#666">:=</span> net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, <span style="color:#4070a0">&#34;127.0.0.1:0&#34;</span>)
-	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-		<span style="color:#007020">panic</span>(err)
-	}
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">//port zero means let the OS choose a free port
+</span><span class="c1"></span>	<span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;127.0.0.1:0&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	addr <span style="color:#666">:=</span> l.<span style="color:#06287e">Addr</span>().<span style="color:#06287e">String</span>()
-	done <span style="color:#666">:=</span> <span style="color:#007020">make</span>(<span style="color:#007020;font-weight:bold">chan</span> <span style="color:#902000">bool</span>)
+	<span class="nx">addr</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Addr</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="p">)</span>
+	<span class="nx">done</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">)</span>
 
-	<span style="color:#007020;font-weight:bold">go</span> <span style="color:#007020;font-weight:bold">func</span>() {
-		<span style="color:#007020;font-weight:bold">for</span> {
-			c, err <span style="color:#666">:=</span> l.<span style="color:#06287e">Accept</span>()
-			<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-				<span style="color:#007020">close</span>(done)
-				<span style="color:#007020;font-weight:bold">return</span>
-			}
-			c.<span style="color:#06287e">Close</span>()
-		}
-	}()
+	<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="p">{</span>
+			<span class="nx">c</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Accept</span><span class="p">(</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="nb">close</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span>
+				<span class="k">return</span>
+			<span class="p">}</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span><span class="p">(</span><span class="p">)</span>
 
-	time.<span style="color:#06287e">Sleep</span>(time.Second)
-	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> l.<span style="color:#06287e">Close</span>(); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-		<span style="color:#007020">panic</span>(err)
-	}
+	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
 
-	<span style="color:#60a0b0;font-style:italic">//wait for the goroutine to have left Accept()
-</span><span style="color:#60a0b0;font-style:italic"></span>	<span style="color:#666">&lt;-</span>done
+	<span class="c1">//wait for the goroutine to have left Accept()
+</span><span class="c1"></span>	<span class="o">&lt;-</span><span class="nx">done</span>
 
-	<span style="color:#60a0b0;font-style:italic">//listen on the same port as before
-</span><span style="color:#60a0b0;font-style:italic"></span>	l, err = net.<span style="color:#06287e">Listen</span>(<span style="color:#4070a0">&#34;tcp&#34;</span>, addr)
-	<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-		<span style="color:#007020">panic</span>(err)
-	}
-}
+	<span class="c1">//listen on the same port as before
+</span><span class="c1"></span>	<span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="nx">addr</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div><h1 id="lessons-learned">Lessons Learned</h1>
 <ul>
 <li>when Close() of a listener returns, the underlying file descriptor may still be open</li>
@@ -586,61 +587,61 @@ the ideas touched on here come into their own.</p>
     <h1 id="golang-file-descriptors-and-finalizers">Golang, File Descriptors and Finalizers</h1>
 <p>If you <a href="https://golang.org/pkg/os/#Open">Open()</a> a file in Golang and it goes out of scope, then it&rsquo;ll be closed the next time the garbage collector runs as there&rsquo;s a  cleanup <em>finalizer</em> set when Open() is called.</p>
 <p>You can see this in action in the following program:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">package</span> main
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
-<span style="color:#007020;font-weight:bold">import</span> (
-	<span style="color:#4070a0">&#34;fmt&#34;</span>
-	<span style="color:#4070a0">&#34;os&#34;</span>
-	<span style="color:#4070a0">&#34;runtime&#34;</span>
-)
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;os&#34;</span>
+	<span class="s">&#34;runtime&#34;</span>
+<span class="p">)</span>
 
-<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">allocate</span>() <span style="color:#902000">int</span> {
-	<span style="color:#60a0b0;font-style:italic">//use this file as our test subject
-</span><span style="color:#60a0b0;font-style:italic"></span>	_, sourceFile, _, ok <span style="color:#666">:=</span> runtime.<span style="color:#06287e">Caller</span>(<span style="color:#40a070">1</span>)
-	<span style="color:#007020;font-weight:bold">if</span> !ok {
-		<span style="color:#007020">panic</span>(<span style="color:#4070a0">&#34;source file not found&#34;</span>)
-	}
-	counter <span style="color:#666">:=</span> <span style="color:#40a070">0</span>
-	<span style="color:#007020;font-weight:bold">var</span> files []<span style="color:#666">*</span>os.File
-	<span style="color:#007020;font-weight:bold">for</span> {
-		f, err <span style="color:#666">:=</span> os.<span style="color:#06287e">Open</span>(sourceFile)
-		<span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
-			fmt.<span style="color:#06287e">Printf</span>(<span style="color:#4070a0">&#34;successful opens= %d\n&#34;</span>, counter)
-			<span style="color:#007020;font-weight:bold">return</span> counter
-		}
-		counter<span style="color:#666">++</span>
-		files = <span style="color:#007020">append</span>(files, f)
-	}
-}
+<span class="kd">func</span> <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="c1">//use this file as our test subject
+</span><span class="c1"></span>	<span class="nx">_</span><span class="p">,</span> <span class="nx">sourceFile</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">Caller</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;source file not found&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">counter</span> <span class="o">:=</span> <span class="mi">0</span>
+	<span class="kd">var</span> <span class="nx">files</span> <span class="p">[</span><span class="p">]</span><span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">sourceFile</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;successful opens= %d\n&#34;</span><span class="p">,</span> <span class="nx">counter</span><span class="p">)</span>
+			<span class="k">return</span> <span class="nx">counter</span>
+		<span class="p">}</span>
+		<span class="nx">counter</span><span class="o">++</span>
+		<span class="nx">files</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">files</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 
-<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
-    <span style="color:#06287e">allocate</span>()
-    runtime.<span style="color:#06287e">GC</span>()
-    <span style="color:#06287e">allocate</span>()
-}
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+    <span class="nx">runtime</span><span class="p">.</span><span class="nf">GC</span><span class="p">(</span><span class="p">)</span>
+    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+<span class="p">}</span>
 
 </code></pre></div><p>On my system, the output is</p>
 <pre><code>successful opens = 1020
 successful opens = 1020
 </code></pre><p>The first time allocate() is called, it manages to open the file 1020 times before returning. The call to <a href="https://golang.org/pkg/runtime/#GC">runtime.GC()</a> causes the garbage collector to run which closes the open files allowing the next allocate() to open the file 1020 times. What happens if we don&rsquo;t call the garbage collector?</p>
 <p>We modify main:</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
-    <span style="color:#06287e">allocate</span>()
-    <span style="color:#06287e">allocate</span>()
-}
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+<span class="p">}</span>
 </code></pre></div><p>The result is now:</p>
 <pre><code>successful opens = 1020
 successful opens = 0
 </code></pre><p>The garbage collector hasn&rsquo;t run by the time the second allocate() call happens so the available file descriptors for the process are exhausted. When would the garbage collector run?</p>
-<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
-	<span style="color:#06287e">allocate</span>()
-	<span style="color:#007020;font-weight:bold">for</span> i <span style="color:#666">:=</span> <span style="color:#40a070">0</span>; ; i<span style="color:#666">++</span> {
-		<span style="color:#007020;font-weight:bold">if</span> <span style="color:#06287e">allocate</span>() &gt; <span style="color:#40a070">0</span> {
-			fmt.<span style="color:#06287e">Printf</span>(<span style="color:#4070a0">&#34;garbage collection ran after %d iterations&#34;</span>, i)
-			<span style="color:#007020;font-weight:bold">return</span>
-		}
-	}
-}
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;garbage collection ran after %d iterations&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+			<span class="k">return</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 
 </code></pre></div><p>With main as above, it takes ~30k iterations of allocate for the garbage collector to run on my system. This isn&rsquo;t too surprising. Exhaustion of file descriptors will not result in enough memory being used to trigger a garbage collection. The garbage collector is oblivious to the lack of system resources other than memory.</p>
 <h1 id="dont-rely-on-the-garbage-collector">Don&rsquo;t Rely on the Garbage Collector</h1>
