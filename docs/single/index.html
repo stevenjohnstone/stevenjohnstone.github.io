@@ -311,12 +311,14 @@ it. What if I couldn&rsquo;t work out what this did? What tools could I use?</p>
    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div><p>Compile with</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<p>and run to get</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<h1 id="emulation">Emulation</h1>
+<pre><code>gcc -masm=intel 0x3.c
+</code></pre><p>and run to get</p>
+<pre><code>0 (rax: 0000000000000000 rdx 0000000000000001) -&gt;  rax: 0000000000000000
+1 (rax: 0000000000000001 rdx 0000000000000001) -&gt;  rax: 0000000000000001
+2 (rax: 000000000000000f rdx 000000000000000e) -&gt;  rax: 000000000000000e
+3 (rax: 000000000000000e rdx 000000000000000f) -&gt;  rax: 000000000000000e
+4 (rax: 00000000ffffffff rdx 0000000000000000) -&gt;  rax: 0000000000000000
+</code></pre><h1 id="emulation">Emulation</h1>
 <p>Suppose that we aren&rsquo;t running on the target system (something without an
 x86-64 processor) or we&rsquo;re concerned about the code being malware (when we start
 to look at more complex code). Then actually running the code natively isn&rsquo;t an
@@ -396,9 +398,12 @@ program I wrote in Golang which</p>
 	<span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div><p>Here&rsquo;s the output (just as above):</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<p>It appears plausible that 0x03 gives the minimum of rax and rdx. However, this is not a proof. Let&rsquo;s take things
+<pre><code>0 (rax: 0000000000000000 rdx 0000000000000001) -&gt;  rax: 0000000000000000
+1 (rax: 0000000000000001 rdx 0000000000000001) -&gt;  rax: 0000000000000001
+2 (rax: 000000000000000f rdx 000000000000000e) -&gt;  rax: 000000000000000e
+3 (rax: 000000000000000e rdx 000000000000000f) -&gt;  rax: 000000000000000e
+4 (rax: 00000000ffffffff rdx 0000000000000000) -&gt;  rax: 0000000000000000
+</code></pre><p>It appears plausible that 0x03 gives the minimum of rax and rdx. However, this is not a proof. Let&rsquo;s take things
 further.</p>
 <h1 id="z3">Z3</h1>
 <p><a href="https://github.com/Z3Prover/z3">Z3</a>: read about it for yourself, I wouldn&rsquo;t do it justice. Suffice it to say,
@@ -475,9 +480,11 @@ we can use SMT solvers to prove properties of software.</p>
 
 <span class="p">(</span><span class="nv">check-sat</span><span class="p">)</span>
 </code></pre></div><p>Running with z3 gives</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<h1 id="why">Why?</h1>
+<pre><code>sat
+unsat
+sat
+unsat
+</code></pre><h1 id="why">Why?</h1>
 <p>This is surely overkill for such a small problem? Yes. However, as we move to more complex binary executables (e.g. malware)
 the ideas touched on here come into their own.</p>
 

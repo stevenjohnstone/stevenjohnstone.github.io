@@ -97,19 +97,19 @@ int main(int argc, const char **argv) {
 
 Compile with
 
-<pre>
+```
 gcc -masm=intel 0x3.c
-</pre>
+```
 
 and run to get
 
-<pre>
+```
 0 (rax: 0000000000000000 rdx 0000000000000001) ->  rax: 0000000000000000
 1 (rax: 0000000000000001 rdx 0000000000000001) ->  rax: 0000000000000001
 2 (rax: 000000000000000f rdx 000000000000000e) ->  rax: 000000000000000e
 3 (rax: 000000000000000e rdx 000000000000000f) ->  rax: 000000000000000e
 4 (rax: 00000000ffffffff rdx 0000000000000000) ->  rax: 0000000000000000
-</pre>
+```
 
 
 # Emulation
@@ -199,13 +199,13 @@ func main() {
 
 
 Here's the output (just as above):
-<pre>
+```
 0 (rax: 0000000000000000 rdx 0000000000000001) ->  rax: 0000000000000000
 1 (rax: 0000000000000001 rdx 0000000000000001) ->  rax: 0000000000000001
 2 (rax: 000000000000000f rdx 000000000000000e) ->  rax: 000000000000000e
 3 (rax: 000000000000000e rdx 000000000000000f) ->  rax: 000000000000000e
 4 (rax: 00000000ffffffff rdx 0000000000000000) ->  rax: 0000000000000000
-</pre>
+```
 
 It appears plausible that 0x03 gives the minimum of rax and rdx. However, this is not a proof. Let's take things
 further.
@@ -293,12 +293,12 @@ I've opted to use [SMT-LIB](http://smtlib.cs.uiowa.edu/) to demonstrate.
 
 Running with z3 gives
 
-<pre>
+```
 sat
 unsat
 sat
 unsat
-</pre>
+```
 
 
 # Why?
