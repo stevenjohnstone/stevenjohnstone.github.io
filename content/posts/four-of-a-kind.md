@@ -32,7 +32,7 @@ Third question:  On average, with a standard deck of cards, how many
 cards do we have to draw to get four of a kind?
 ```
 
-The post goes into details about [how to use simulation in Obervable](https://observablehq.com/@dmaynard/tickler-puzzle-four-of-a-kind) to solve the third question. A [closed-form solution](https://en.wikipedia.org/wiki/Closed-form_expression) isn't given and I thought it looked like a good way to brush away some probability cobwebs.
+The post goes into details about [how to use simulation in Observable](https://observablehq.com/@dmaynard/tickler-puzzle-four-of-a-kind) to solve the third question. A [closed-form solution](https://en.wikipedia.org/wiki/Closed-form_expression) isn't given and I thought it looked like a good way to brush away some probability cobwebs.
 
 ## First and Second Questions
 

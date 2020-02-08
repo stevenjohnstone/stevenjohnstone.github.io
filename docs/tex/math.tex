@@ -24,13 +24,13 @@ The triple $(\Omega, \mathcal{P}(\Omega), P )$ is a probability space.
 \clearpage
 
 \begin{tcolorbox}
-If $X: \Omega \mapsto \mathbb{N}$ is a random variable defined as
+Let $A_m(n)$ be the event that a four-of-a-kind of rank $m$ is observed in the first $n$ draws. Let
+$X: \Omega \mapsto \mathbb{N}$ be a random variable defined by
 \[
-X(\omega) = \min \{ n : \{\omega(1),\ldots,\omega(n)\} \text{ contains any four-of-a-kind}\},
+X(\omega) = \min \{ n : \omega \in A_m(n), m \in \{1, \ldots, 13\},\}.
 \]
 
-then
-
+Then the average number of draws required to observe any four-of-a-kind is given by the expectation of $X$:
 \begin{align*}
 \mathbb{E}(X) &= \sum_{n = 1}^{52} n P(X  = n)\\
 &= \sum_{n=1}^{52} n (P(X \leq n) - P(X \leq n -1)) \\
