@@ -39,7 +39,7 @@ The post goes into details about [how to use simulation in Obervable](https://ob
 David S Maynard says the first two questions are easy and he's right. If you draw 40 or more cards from the deck and try to arrange them in 13 "buckets" by rank, then at least one bucket will have at least four cards. If you draw 39 cards, then the buckets can be filled with three cards each (three-of-a-kinds) without resulting in a four-of-a-kind. Therefore,
 to guarantee that you get a four-of-a-kind, draw 40 cards.
 
-Note that the solution is independent of construction of the deck of cards (so long as it has at least 40 cards). In particular, the solution applies to drawing from a single deck or a double deck.
+Note that the solution is independent of the construction of the deck of cards (so long as it has at least 40 cards). In particular, the solution applies to drawing from a single deck or a double deck.
 
 ## Third Question
 
@@ -195,7 +195,10 @@ Approximation for 100000 samples = 25.02365 (error = 0.020772078072244682)
 Some things to note:
 
 * it's necessary to use big.Rat and big.Int as these numbers will overflow built in types
-* the inner sum of the expectation calculation runs from 4 to 40 and subtract the answer from 40 (see [above for why](#first-and-second-questions))
+* the inner sum of the expectation calculation runs from 4 to 40 (a minor optimisation) because
+  * you can't have a four-of-a-kind with less than four cards
+  * [P(X <= n) = 1 for n >= 40](#first-and-second-questions)
+* the sum is subtracted from 40 (see [above for why](#first-and-second-questions))
 
 
 

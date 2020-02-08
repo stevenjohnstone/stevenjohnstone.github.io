@@ -70,7 +70,7 @@ cards do we have to draw to get four of a kind?
 <h2 id="first-and-second-questions">First and Second Questions</h2>
 <p>David S Maynard says the first two questions are easy and he&rsquo;s right. If you draw 40 or more cards from the deck and try to arrange them in 13 &ldquo;buckets&rdquo; by rank, then at least one bucket will have at least four cards. If you draw 39 cards, then the buckets can be filled with three cards each (three-of-a-kinds) without resulting in a four-of-a-kind. Therefore,
 to guarantee that you get a four-of-a-kind, draw 40 cards.</p>
-<p>Note that the solution is independent of construction of the deck of cards (so long as it has at least 40 cards). In particular, the solution applies to drawing from a single deck or a double deck.</p>
+<p>Note that the solution is independent of the construction of the deck of cards (so long as it has at least 40 cards). In particular, the solution applies to drawing from a single deck or a double deck.</p>
 <h2 id="third-question">Third Question</h2>
 <p>Here&rsquo;s my attempt at a closed-form solution. Let&rsquo;s remind ourselves of the probability basics (I need probability formality to keep things sane in my head: probability is counter-intuitive, at least to me).</p>
 <p><img src="/images/fourok/prob-space.svg#center" alt="probability space for standard deck of cards"></p>
@@ -208,7 +208,13 @@ Approximation for 100000 samples = 25.02365 (error = 0.020772078072244682)
 </code></pre><p>Some things to note:</p>
 <ul>
 <li>it&rsquo;s necessary to use big.Rat and big.Int as these numbers will overflow built in types</li>
-<li>the inner sum of the expectation calculation runs from 4 to 40 and subtract the answer from 40 (see <a href="#first-and-second-questions">above for why</a>)</li>
+<li>the inner sum of the expectation calculation runs from 4 to 40 (a minor optimisation) because
+<ul>
+<li>you can&rsquo;t have a four-of-a-kind with less than four cards</li>
+<li><a href="#first-and-second-questions">P(X &lt;= n) = 1 for n &gt;= 40</a></li>
+</ul>
+</li>
+<li>the sum is subtracted from 40 (see <a href="#first-and-second-questions">above for why</a>)</li>
 </ul>
 
 
