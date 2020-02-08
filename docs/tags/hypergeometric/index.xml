@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hypergeometric on rm -rf /</title>
+    <link>/tags/hypergeometric/</link>
+    <description>Recent content in hypergeometric on rm -rf /</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 08 Feb 2020 18:40:13 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/hypergeometric/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Four of a Kind</title>
+      <link>/posts/four-of-a-kind/</link>
+      <pubDate>Sat, 08 Feb 2020 18:40:13 +0000</pubDate>
+      
+      <guid>/posts/four-of-a-kind/</guid>
+      <description>I stumbled across a blog from a really interesting pioneer of computing, David S Maynard. This post about a probability puzzle nerd-sniped me. The problem statement is:
+Imagine we have a deck of 52 standard playing cards. First question: How many cards do we have to draw until we can be sure that we have four of a kind? In other words: What is the minimum number of cards we must draw until we can be certain that four of those cards are the same kind?</description>
+    </item>
+    
+  </channel>
+</rss>

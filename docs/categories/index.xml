@@ -6,10 +6,37 @@
     <description>Recent content in Categories on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 28 Jan 2020 19:16:22 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 08 Feb 2020 18:40:13 +0000</lastBuildDate>
     
 	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>mathematics</title>
+      <link>/categories/mathematics/</link>
+      <pubDate>Sat, 08 Feb 2020 18:40:13 +0000</pubDate>
+      
+      <guid>/categories/mathematics/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>probability</title>
+      <link>/categories/probability/</link>
+      <pubDate>Sat, 08 Feb 2020 18:40:13 +0000</pubDate>
+      
+      <guid>/categories/probability/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>puzzles</title>
+      <link>/categories/puzzles/</link>
+      <pubDate>Sat, 08 Feb 2020 18:40:13 +0000</pubDate>
+      
+      <guid>/categories/puzzles/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>golang</title>

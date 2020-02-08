@@ -6,10 +6,55 @@
     <description>Recent content in Tags on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 28 Jan 2020 19:16:22 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 08 Feb 2020 18:40:13 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>expectation</title>
+      <link>/tags/expectation/</link>
+      <pubDate>Sat, 08 Feb 2020 18:40:13 +0000</pubDate>
+      
+      <guid>/tags/expectation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hypergeometric</title>
+      <link>/tags/hypergeometric/</link>
+      <pubDate>Sat, 08 Feb 2020 18:40:13 +0000</pubDate>
+      
+      <guid>/tags/hypergeometric/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>nerd snipe</title>
+      <link>/tags/nerd-snipe/</link>
+      <pubDate>Sat, 08 Feb 2020 18:40:13 +0000</pubDate>
+      
+      <guid>/tags/nerd-snipe/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>random variable</title>
+      <link>/tags/random-variable/</link>
+      <pubDate>Sat, 08 Feb 2020 18:40:13 +0000</pubDate>
+      
+      <guid>/tags/random-variable/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>symmetry</title>
+      <link>/tags/symmetry/</link>
+      <pubDate>Sat, 08 Feb 2020 18:40:13 +0000</pubDate>
+      
+      <guid>/tags/symmetry/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>bugs</title>

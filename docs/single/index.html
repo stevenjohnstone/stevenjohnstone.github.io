@@ -48,6 +48,170 @@
 
 <main id="maincontent">
 
+    <h2>2020-08-02
+    Four of a Kind
+    </h2>
+    <p>I stumbled across a blog from a really interesting pioneer of computing, <a href="https://www.software-artist.com/">David S Maynard</a>. <a href="https://www.software-artist.com/joy-of-coding-observable/">This post about a probability puzzle</a> nerd-sniped me. The problem statement is:</p>
+<pre><code>Imagine we have a deck of 52 standard playing cards.
+
+First question:  How many cards do we have to draw until we can be sure
+that we have four of a kind?  In other words:  What is the minimum
+number of cards we must draw until we can be certain that four of those
+cards are the same kind?
+
+Second question:  What if we started from a tall stack made of TWO decks
+of 52 standard playing cards.  How many cards do we have to draw from
+this stack until we can be sure that we have four of a kind, where it's
+OK to have two of a kind from the same suit?
+
+Third question:  On average, with a standard deck of cards, how many
+cards do we have to draw to get four of a kind?
+</code></pre><p>The post goes into details about <a href="https://observablehq.com/@dmaynard/tickler-puzzle-four-of-a-kind">how to use simulation in Obervable</a> to solve the third question. A <a href="https://en.wikipedia.org/wiki/Closed-form_expression">closed-form solution</a> isn&rsquo;t given and I thought it looked like a good way to brush away some probability cobwebs.</p>
+<h2 id="first-and-second-questions">First and Second Questions</h2>
+<p>David S Maynard says the first two questions are easy and he&rsquo;s right. If you draw 40 or more cards from the deck and try to arrange them in 13 &ldquo;buckets&rdquo; by rank, then at least one bucket will have at least four cards. If you draw 39 cards, then the buckets can be filled with three cards each (three-of-a-kinds) without resulting in a four-of-a-kind. Therefore,
+to guarantee that you get a four-of-a-kind, draw 40 cards.</p>
+<p>Note that the solution is independent of construction of the deck of cards (so long as it has at least 40 cards). In particular, the solution applies to drawing from a single deck or a double deck.</p>
+<h2 id="third-question">Third Question</h2>
+<p>Here&rsquo;s my attempt at a closed-form solution. Let&rsquo;s remind ourselves of the probability basics (I need probability formality to keep things sane in my head: probability is counter-intuitive, at least to me).</p>
+<p><img src="/images/fourok/prob-space.svg#center" alt="probability space for standard deck of cards"></p>
+<p>To model counting the number of draws, I introduce a <a href="https://en.wikipedia.org/wiki/Random_variable">random variable</a> and calculate its <a href="https://en.wikipedia.org/wiki/Expected_value">expectation</a>.</p>
+<p><img src="/images/fourok/soln.svg#center" alt="solution"></p>
+<p><img src="/images/fourok/symmetry.svg#center" alt="symmetry"></p>
+<p><img src="/images/fourok/hypergeometric.svg#center" alt="hypergeometric"></p>
+<p>I&rsquo;ll show below that the answer is 68719476736/2748462675 (25.002877921927755).</p>
+<h2 id="implementation-in-golang">Implementation in Golang</h2>
+<p>The <a href="https://play.golang.org/p/ZeYQwya_VLr">following golang program</a> evaluates the close form solution (exactly as a fraction) and approximates the solution with a Monte Carlo experiment.</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;math&#34;</span>
+	<span class="s">&#34;math/big&#34;</span>
+	<span class="s">&#34;math/rand&#34;</span>
+	<span class="s">&#34;runtime&#34;</span>
+	<span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">mul</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">{</span><span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nf">Mul</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">binomial</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">m</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">m</span> <span class="p">&gt;</span> <span class="nx">n</span> <span class="o">||</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">m</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">n</span> <span class="o">==</span> <span class="nx">m</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">{</span><span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nf">Binomial</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">m</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">choices</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nf">binomial</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">{</span><span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">fraction</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Rat</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Rat</span><span class="p">{</span><span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nf">SetFrac</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">sign</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="nx">i</span><span class="o">%</span><span class="mi">2</span><span class="p">)</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">estimate</span><span class="p">(</span><span class="nx">samples</span><span class="p">,</span> <span class="nx">channels</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">float64</span> <span class="p">{</span>
+
+	<span class="kd">type</span> <span class="nx">card</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">suit</span><span class="p">,</span> <span class="nx">rank</span> <span class="kt">int</span>
+	<span class="p">}</span>
+
+	<span class="nx">histogram</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">52</span><span class="p">)</span>
+
+	<span class="nx">draw</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(</span><span class="nx">pack</span> <span class="p">[</span><span class="p">]</span><span class="nx">card</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+		<span class="nx">set</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span><span class="p">}</span>
+		<span class="k">for</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">card</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">pack</span> <span class="p">{</span>
+			<span class="nx">set</span><span class="p">[</span><span class="nx">card</span><span class="p">.</span><span class="nx">rank</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="k">if</span> <span class="nx">set</span><span class="p">[</span><span class="nx">card</span><span class="p">.</span><span class="nx">rank</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="nx">n</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">pack</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">results</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+
+	<span class="nx">rand</span><span class="p">.</span><span class="nf">Seed</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">UnixNano</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">channels</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">r</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nf">NewSource</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">+</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">UnixNano</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+			<span class="nx">pack</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="nx">card</span><span class="p">,</span> <span class="mi">52</span><span class="p">)</span>
+
+			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">pack</span><span class="p">)</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+				<span class="nx">pack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">card</span><span class="p">{</span>
+					<span class="nx">suit</span><span class="p">:</span> <span class="nx">i</span> <span class="o">%</span> <span class="mi">4</span><span class="p">,</span>
+					<span class="nx">rank</span><span class="p">:</span> <span class="p">(</span><span class="nx">i</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span> <span class="o">%</span> <span class="mi">13</span><span class="p">,</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">samples</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+				<span class="nx">r</span><span class="p">.</span><span class="nf">Shuffle</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">pack</span><span class="p">)</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="p">,</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span><span class="p">,</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">}</span><span class="p">)</span>
+				<span class="nx">results</span> <span class="o">&lt;-</span> <span class="nf">draw</span><span class="p">(</span><span class="nx">pack</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">channels</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nx">samples</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
+			<span class="nx">n</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">results</span>
+			<span class="nx">histogram</span><span class="p">[</span><span class="nx">n</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="nx">sum</span> <span class="o">:=</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">histogram</span> <span class="p">{</span>
+		<span class="nx">sum</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="nx">v</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">sum</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">samples</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">channels</span><span class="p">)</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kd">const</span> <span class="p">(</span>
+		<span class="nx">maxDraws</span>          <span class="kt">int64</span> <span class="p">=</span> <span class="mi">40</span>
+		<span class="nx">samplesPerChannel</span>       <span class="p">=</span> <span class="mi">100000</span>
+	<span class="p">)</span>
+
+	<span class="nx">channels</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">NumCPU</span><span class="p">(</span><span class="p">)</span>
+
+	<span class="nx">expectation</span> <span class="o">:=</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewRat</span><span class="p">(</span><span class="nx">maxDraws</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="nx">n</span> <span class="o">:=</span> <span class="nb">int64</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="p">;</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="nx">maxDraws</span><span class="p">;</span> <span class="nx">n</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">sum</span> <span class="o">:=</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+		<span class="k">for</span> <span class="nx">m</span> <span class="o">:=</span> <span class="nb">int64</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="p">;</span> <span class="nx">m</span> <span class="o">&lt;=</span> <span class="mi">13</span><span class="p">;</span> <span class="nx">m</span><span class="o">++</span> <span class="p">{</span>
+			<span class="nx">tmp</span> <span class="o">:=</span> <span class="nf">mul</span><span class="p">(</span><span class="nf">mul</span><span class="p">(</span><span class="nf">sign</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span><span class="p">,</span> <span class="nf">choices</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span><span class="p">)</span><span class="p">,</span> <span class="nf">binomial</span><span class="p">(</span><span class="mi">52</span><span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="nx">m</span><span class="p">,</span> <span class="nx">n</span><span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="nx">m</span><span class="p">)</span><span class="p">)</span>
+			<span class="nx">sum</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span> <span class="nx">tmp</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">expectation</span><span class="p">.</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">expectation</span><span class="p">,</span> <span class="nf">fraction</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span> <span class="nf">binomial</span><span class="p">(</span><span class="mi">52</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    <span class="nx">expectationFloat</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">expectation</span><span class="p">.</span><span class="nf">Float64</span><span class="p">(</span><span class="p">)</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Expectation = %v (%v)\n&#34;</span><span class="p">,</span> <span class="nx">expectation</span><span class="p">,</span> <span class="nx">expectationFloat</span><span class="p">)</span>
+	<span class="nx">approximation</span> <span class="o">:=</span> <span class="nf">estimate</span><span class="p">(</span><span class="nx">samplesPerChannel</span><span class="p">,</span> <span class="nx">channels</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Approximation for %d samples = %v (error = %v)\n&#34;</span><span class="p">,</span> <span class="nx">samplesPerChannel</span><span class="o">*</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">approximation</span><span class="p">,</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Abs</span><span class="p">(</span><span class="nx">expectationFloat</span> <span class="o">-</span> <span class="nx">approximation</span><span class="p">)</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>An example run:</p>
+<pre><code>Expectation = 68719476736/2748462675 (25.002877921927755)
+Approximation for 100000 samples = 25.02365 (error = 0.020772078072244682)
+</code></pre><p>Some things to note:</p>
+<ul>
+<li>it&rsquo;s necessary to use big.Rat and big.Int as these numbers will overflow built in types</li>
+<li>the inner sum of the expectation calculation runs from 4 to 40 and subtract the answer from 40 (see <a href="#first-and-second-questions">above for why</a>)</li>
+</ul>
+
+
     <h2>2020-29-01
     I'm Stevie
     </h2>

@@ -1,0 +1,64 @@
+\documentclass[6pt]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{pifont}
+\usepackage{parskip}
+\usepackage{tcolorbox}
+\pagenumbering{gobble}
+  \begin{document}
+
+\begin{tcolorbox}[title=\text{The Standard Probability Space for Playing Cards}]
+Let $\Omega$ be the collection of all permutations of the standard set of playing cards i.e.
+  \[
+      \Omega := S(\{1\heartsuit, \ldots A\heartsuit,1\diamondsuit,\ldots A\diamondsuit, 1\clubsuit,\ldots,A\clubsuit,1\spadesuit,\ldots,A\spadesuit\})
+  \]
+Define $p: \Omega \mapsto \mathbb{R}$ by $p(\omega) = 1/(52!)$
+and a probability $P: \mathcal{P}(\Omega) \mapsto \mathbb{R}$  by
+\[
+    P(A) = \sum_{\omega \in A}p(\omega)
+\]
+
+The triple $(\Omega, \mathcal{P}(\Omega), P )$ is a probability space.
+\end{tcolorbox}
+
+\clearpage
+
+\begin{tcolorbox}
+If $X: \Omega \mapsto \mathbb{N}$ is a random variable defined as
+\[
+X(\omega) = \min \{ n : \{\omega(1),\ldots,\omega(n)\} \text{ contains any four-of-a-kind}\},
+\]
+
+then
+
+\begin{align*}
+\mathbb{E}(X) &= \sum_{n = 1}^{52} n P(X  = n)\\
+&= \sum_{n=1}^{52} n (P(X \leq n) - P(X \leq n -1)) \\
+&= 52\underbrace{P(X \leq 52)}_{= 1} - \sum_{n=1}^{51} P(X\leq n) \\
+&= 52 - \sum_{n=1}^{51} P(\bigcup_{m=1}^{13} A_m(n)) \\
+& = 52 - \sum_{n=1}^{51} \underbrace{\sum_{\emptyset \neq M \subseteq \{1,\ldots,13\}} {(-1)}^{|M| + 1} P(\bigcap_{m \in M} A_m(n))}_{\text{inclusion-exclusion}} \\
+& = 52 - \sum_{n = 1}^{51}\sum_{m = 1}^{13}  {(-1)}^{m+1}\underbrace{{13 \choose m}}_{\text{symmetry \ding{172}}} \underbrace{{52 -4m \choose n - 4m}/{52 \choose n}}_{\text{hypergeometric \ding{173}}} \\
+\end{align*}
+\end{tcolorbox}
+\clearpage
+
+\begin{tcolorbox}[title=\text{Symmetry \ding{172}}]
+All the possible choices of $M \subseteq \{1, \ldots, 13\}$ have a cardinality (number of elements) in the range $1, 2, \ldots, 13$. If we choose $M, M'$ such that $|M| = |M'|$, then
+\[
+{(-1)}^{|M| + 1} P(\bigcap_{m \in M} A_m(n)) =  {(-1)}^{|M'| + 1} P(\bigcap_{m \in M'} A_m(n))
+ \]
+by symmetry. For example, for $n$ draws, the probability of getting four aces, four queens and four kings is the same as getting four ones, four twos and four threes.
+
+For each $m \in \{1, \ldots, 13\}$, the number of sets $M$ with $|M|=m$ is ${13 \choose m}$.
+\end{tcolorbox}
+
+\clearpage
+\begin{tcolorbox}[title=\text{Hypergeometric \ding{173}}]
+We have chosen $m$ four-of-a-kinds (e.g.\ $m=3$ and we are looking for four aces, four kings and four queens) and decided on the number $n$ of draws to make. What is the probability of that particular selection of cards being chosen?
+
+Let us ``paint'' the cards we want to turn up in the draw red and the rest green. Then the problem collapses into a familiar problem of ``choosing coloured balls from an urn with replacement''. Google ``hypergeometric distribution'' for more info.
+\end{tcolorbox}
+
+\end{document}
+
+
