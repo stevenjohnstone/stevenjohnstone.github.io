@@ -190,13 +190,13 @@ to guarantee that you get a four-of-a-kind, draw 40 cards.</p>
 			<span class="nx">sum</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span> <span class="nx">tmp</span><span class="p">)</span>
 		<span class="p">}</span>
 		<span class="nx">expectation</span><span class="p">.</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">expectation</span><span class="p">,</span> <span class="nf">fraction</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span> <span class="nf">binomial</span><span class="p">(</span><span class="mi">52</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
-    <span class="p">}</span>
-    
-    <span class="nx">expectationFloat</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">expectation</span><span class="p">.</span><span class="nf">Float64</span><span class="p">(</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">expectationFloat</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">expectation</span><span class="p">.</span><span class="nf">Float64</span><span class="p">(</span><span class="p">)</span>
 
 	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Expectation = %v (%v)\n&#34;</span><span class="p">,</span> <span class="nx">expectation</span><span class="p">,</span> <span class="nx">expectationFloat</span><span class="p">)</span>
 	<span class="nx">approximation</span> <span class="o">:=</span> <span class="nf">estimate</span><span class="p">(</span><span class="nx">samplesPerChannel</span><span class="p">,</span> <span class="nx">channels</span><span class="p">)</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Approximation for %d samples = %v (error = %v)\n&#34;</span><span class="p">,</span> <span class="nx">samplesPerChannel</span><span class="o">*</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">approximation</span><span class="p">,</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Abs</span><span class="p">(</span><span class="nx">expectationFloat</span> <span class="o">-</span> <span class="nx">approximation</span><span class="p">)</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Approximation for %d samples = %v (error = %v)\n&#34;</span><span class="p">,</span> <span class="nx">samplesPerChannel</span><span class="o">*</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">approximation</span><span class="p">,</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Abs</span><span class="p">(</span><span class="nx">expectationFloat</span><span class="o">-</span><span class="nx">approximation</span><span class="p">)</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div><p>An example run:</p>
 <pre><code>Expectation = 68719476736/2748462675 (25.002877921927755)

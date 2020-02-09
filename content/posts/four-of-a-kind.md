@@ -175,13 +175,13 @@ func main() {
 			sum = add(sum, tmp)
 		}
 		expectation.Sub(expectation, fraction(sum, binomial(52, n)))
-    }
-    
-    expectationFloat, _ := expectation.Float64()
+	}
+
+	expectationFloat, _ := expectation.Float64()
 
 	fmt.Printf("Expectation = %v (%v)\n", expectation, expectationFloat)
 	approximation := estimate(samplesPerChannel, channels)
-	fmt.Printf("Approximation for %d samples = %v (error = %v)\n", samplesPerChannel*channels, approximation, math.Abs(expectationFloat - approximation))
+	fmt.Printf("Approximation for %d samples = %v (error = %v)\n", samplesPerChannel*channels, approximation, math.Abs(expectationFloat-approximation))
 }
 ```
 
