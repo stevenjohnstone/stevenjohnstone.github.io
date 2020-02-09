@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1581209756 "math.tex" "/home/stevie/steven.johnstone/static/tex/math.pdf" "math" 1581209756
+["pdflatex"] 1581209863 "math.tex" "/home/stevie/steven.johnstone/static/tex/math.pdf" "math" 1581209863
   "/etc/texmf/web2c/texmf.cnf" 1572120386 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/stevie/steven.johnstone/static/tex/math.aux" 1581209756 8 a94a2480d3289e625eea47cd1b285758 ""
+  "/home/stevie/steven.johnstone/static/tex/math.aux" 1581209863 8 a94a2480d3289e625eea47cd1b285758 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/symbol/psyr.tfm" 1136768653 1408 5937f58aa508ea2cea4901c07d10f5fe ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1136768653 1528 f853c4d1b4e0550255e02831fdc8496f ""
@@ -121,11 +121,11 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1562720991 35073 2a40cfca74fcd5e2568b569ccaadf3f1 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1581186654 4549418 4593509275c90822931a1b14bc17851e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1581186686 4263319 6e15e0ae904077fccf74b4f24ca24343 ""
-  "math.aux" 1581209756 8 a94a2480d3289e625eea47cd1b285758 "pdflatex"
-  "math.tex" 1581209744 3011 8b2572578451c25b500a137fb469ebd6 ""
+  "math.aux" 1581209863 8 a94a2480d3289e625eea47cd1b285758 "pdflatex"
+  "math.tex" 1581209858 3014 b1ecc3e07157b14dee0a81ea264680c3 ""
   (generated)
   "math.aux"
-  "/home/stevie/steven.johnstone/static/tex/math.log"
   "math.log"
   "math.pdf"
   "/home/stevie/steven.johnstone/static/tex/math.pdf"
+  "/home/stevie/steven.johnstone/static/tex/math.log"
