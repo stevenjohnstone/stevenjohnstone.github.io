@@ -200,6 +200,9 @@ Some things to note:
   * [P(X <= n) = 1 for n >= 40](#first-and-second-questions)
 * the sum is subtracted from 40 (see [above for why](#first-and-second-questions))
 
+## Wolfram Alpha is Pretty Amazing
+
+![Wolfram Alpha Solution](/images/fourok/wolfram.png#center)
 
 
 
