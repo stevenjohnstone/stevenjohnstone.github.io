@@ -6,10 +6,16 @@
     <description>Recent content in Home on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 08 Feb 2020 18:40:13 +0000</lastBuildDate>
-    
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Sat, 19 Sep 2020 22:18:02 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reporting Vulnerabilites To Snyk</title>
+      <link>/posts/snyk/</link>
+      <pubDate>Sat, 19 Sep 2020 22:18:02 +0000</pubDate>
+      
+      <guid>/posts/snyk/</guid>
+      <description>Snyk is a CNA for Golang packages (and other popular languages). When I learned that they&amp;rsquo;d accept vulnerability reports, I decided to try them out with a couple of old bugs which I&amp;rsquo;d reported but got no response from the project author.
+The turnaround on these issues was very quick (a couple of hours, on a weekend no less) and there are now two CVEs assigned: CVE-2020-7711 and CVE-2020-7731.</description>
+    </item>
     
     <item>
       <title>Four of a Kind</title>
@@ -91,8 +97,8 @@ Over the years, TLS has been an excellent source of examples for such a course.<
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/single/</guid>
-      <description>2020-08-02 Four of a Kind  I stumbled across a blog from a really interesting pioneer of computing, David S Maynard. This post about a probability puzzle nerd-sniped me. The problem statement is:
-Imagine we have a deck of 52 standard playing cards. First question: How many cards do we have to draw until we can be sure that we have four of a kind? In other words: What is the minimum number of cards we must draw until we can be certain that four of those cards are the same kind?</description>
+      <description>2020-19-09 Reporting Vulnerabilites To Snyk  Snyk is a CNA for Golang packages (and other popular languages). When I learned that they&amp;rsquo;d accept vulnerability reports, I decided to try them out with a couple of old bugs which I&amp;rsquo;d reported but got no response from the project author.
+The turnaround on these issues was very quick (a couple of hours, on a weekend no less) and there are now two CVEs assigned: CVE-2020-7711 and CVE-2020-7731.</description>
     </item>
     
   </channel>

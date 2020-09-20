@@ -48,6 +48,15 @@
 
 <main id="maincontent">
 
+    <h2>2020-19-09
+    Reporting Vulnerabilites To Snyk
+    </h2>
+    <p><a href="https://snyk.io">Snyk</a> is a CNA for Golang packages (and other popular languages). When I learned that they&rsquo;d accept vulnerability reports, I decided to
+<a href="https://snyk.io/vulnerability-disclosure/">try them</a> out with a couple of old bugs which I&rsquo;d reported but got no response from the project author.</p>
+<p>The turnaround on these issues was very quick (a couple of hours, on a weekend no less) and there are now two CVEs assigned:
+<a href="https://snyk.io/vuln/SNYK-GOLANG-GITHUBCOMRUSSELLHAERINGGOXMLDSIG-608301">CVE-2020-7711</a> and <a href="https://snyk.io/vuln/SNYK-GOLANG-GITHUBCOMRUSSELLHAERINGGOSAML2-608302">CVE-2020-7731</a>.</p>
+
+
     <h2>2020-08-02
     Four of a Kind
     </h2>
@@ -93,7 +102,7 @@ to guarantee that you get a four-of-a-kind, draw 40 cards.</p>
 <span class="p">)</span>
 
 <span class="kd">func</span> <span class="nf">mul</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">{</span><span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nf">Mul</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">{}).</span><span class="nf">Mul</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">binomial</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">m</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
@@ -104,7 +113,7 @@ to guarantee that you get a four-of-a-kind, draw 40 cards.</p>
 	<span class="k">if</span> <span class="nx">n</span> <span class="o">==</span> <span class="nx">m</span> <span class="p">{</span>
 		<span class="k">return</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 	<span class="p">}</span>
-	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">{</span><span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nf">Binomial</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">m</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">{}).</span><span class="nf">Binomial</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">m</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">choices</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
@@ -112,15 +121,15 @@ to guarantee that you get a four-of-a-kind, draw 40 cards.</p>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">{</span><span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">{}).</span><span class="nf">Add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">fraction</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Rat</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Rat</span><span class="p">{</span><span class="p">}</span><span class="p">)</span><span class="p">.</span><span class="nf">SetFrac</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">big</span><span class="p">.</span><span class="nx">Rat</span><span class="p">{}).</span><span class="nf">SetFrac</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">sign</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int64</span><span class="p">)</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="nx">i</span><span class="o">%</span><span class="mi">2</span><span class="p">)</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="nx">i</span><span class="o">%</span><span class="mi">2</span><span class="p">))</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">estimate</span><span class="p">(</span><span class="nx">samples</span><span class="p">,</span> <span class="nx">channels</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">float64</span> <span class="p">{</span>
@@ -129,10 +138,10 @@ to guarantee that you get a four-of-a-kind, draw 40 cards.</p>
 		<span class="nx">suit</span><span class="p">,</span> <span class="nx">rank</span> <span class="kt">int</span>
 	<span class="p">}</span>
 
-	<span class="nx">histogram</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">52</span><span class="p">)</span>
+	<span class="nx">histogram</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">52</span><span class="p">)</span>
 
-	<span class="nx">draw</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(</span><span class="nx">pack</span> <span class="p">[</span><span class="p">]</span><span class="nx">card</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-		<span class="nx">set</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span><span class="p">}</span>
+	<span class="nx">draw</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(</span><span class="nx">pack</span> <span class="p">[]</span><span class="nx">card</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+		<span class="nx">set</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">int</span><span class="p">{}</span>
 		<span class="k">for</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">card</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">pack</span> <span class="p">{</span>
 			<span class="nx">set</span><span class="p">[</span><span class="nx">card</span><span class="p">.</span><span class="nx">rank</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 			<span class="k">if</span> <span class="nx">set</span><span class="p">[</span><span class="nx">card</span><span class="p">.</span><span class="nx">rank</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span> <span class="p">{</span>
@@ -144,23 +153,23 @@ to guarantee that you get a four-of-a-kind, draw 40 cards.</p>
 
 	<span class="nx">results</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
 
-	<span class="nx">rand</span><span class="p">.</span><span class="nf">Seed</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">UnixNano</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
+	<span class="nx">rand</span><span class="p">.</span><span class="nf">Seed</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">UnixNano</span><span class="p">())</span>
 	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">channels</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
 		<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
-			<span class="nx">r</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nf">NewSource</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">+</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">UnixNano</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
-			<span class="nx">pack</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="p">[</span><span class="p">]</span><span class="nx">card</span><span class="p">,</span> <span class="mi">52</span><span class="p">)</span>
+			<span class="nx">r</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nf">NewSource</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">+</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">UnixNano</span><span class="p">()))</span>
+			<span class="nx">pack</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">card</span><span class="p">,</span> <span class="mi">52</span><span class="p">)</span>
 
-			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">pack</span><span class="p">)</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">pack</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
 				<span class="nx">pack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">card</span><span class="p">{</span>
 					<span class="nx">suit</span><span class="p">:</span> <span class="nx">i</span> <span class="o">%</span> <span class="mi">4</span><span class="p">,</span>
 					<span class="nx">rank</span><span class="p">:</span> <span class="p">(</span><span class="nx">i</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span> <span class="o">%</span> <span class="mi">13</span><span class="p">,</span>
 				<span class="p">}</span>
 			<span class="p">}</span>
 			<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">samples</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-				<span class="nx">r</span><span class="p">.</span><span class="nf">Shuffle</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">pack</span><span class="p">)</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="p">,</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span><span class="p">,</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">}</span><span class="p">)</span>
+				<span class="nx">r</span><span class="p">.</span><span class="nf">Shuffle</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">pack</span><span class="p">),</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">pack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">})</span>
 				<span class="nx">results</span> <span class="o">&lt;-</span> <span class="nf">draw</span><span class="p">(</span><span class="nx">pack</span><span class="p">)</span>
 			<span class="p">}</span>
-		<span class="p">}</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+		<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
 	<span class="p">}</span>
 
 	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">channels</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
@@ -174,33 +183,33 @@ to guarantee that you get a four-of-a-kind, draw 40 cards.</p>
 	<span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">histogram</span> <span class="p">{</span>
 		<span class="nx">sum</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="nx">v</span>
 	<span class="p">}</span>
-	<span class="k">return</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">sum</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">samples</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">channels</span><span class="p">)</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">sum</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">samples</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">channels</span><span class="p">))</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="kd">const</span> <span class="p">(</span>
 		<span class="nx">maxDraws</span>          <span class="kt">int64</span> <span class="p">=</span> <span class="mi">40</span>
 		<span class="nx">samplesPerChannel</span>       <span class="p">=</span> <span class="mi">100000</span>
 	<span class="p">)</span>
 
-	<span class="nx">channels</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">NumCPU</span><span class="p">(</span><span class="p">)</span>
+	<span class="nx">channels</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">NumCPU</span><span class="p">()</span>
 
 	<span class="nx">expectation</span> <span class="o">:=</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewRat</span><span class="p">(</span><span class="nx">maxDraws</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-	<span class="k">for</span> <span class="nx">n</span> <span class="o">:=</span> <span class="nb">int64</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="p">;</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="nx">maxDraws</span><span class="p">;</span> <span class="nx">n</span><span class="o">++</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="nx">n</span> <span class="o">:=</span> <span class="nb">int64</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="nx">maxDraws</span><span class="p">;</span> <span class="nx">n</span><span class="o">++</span> <span class="p">{</span>
 		<span class="nx">sum</span> <span class="o">:=</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-		<span class="k">for</span> <span class="nx">m</span> <span class="o">:=</span> <span class="nb">int64</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="p">;</span> <span class="nx">m</span> <span class="o">&lt;=</span> <span class="mi">13</span><span class="p">;</span> <span class="nx">m</span><span class="o">++</span> <span class="p">{</span>
-			<span class="nx">tmp</span> <span class="o">:=</span> <span class="nf">mul</span><span class="p">(</span><span class="nf">mul</span><span class="p">(</span><span class="nf">sign</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span><span class="p">,</span> <span class="nf">choices</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span><span class="p">)</span><span class="p">,</span> <span class="nf">binomial</span><span class="p">(</span><span class="mi">52</span><span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="nx">m</span><span class="p">,</span> <span class="nx">n</span><span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="nx">m</span><span class="p">)</span><span class="p">)</span>
+		<span class="k">for</span> <span class="nx">m</span> <span class="o">:=</span> <span class="nb">int64</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="nx">m</span> <span class="o">&lt;=</span> <span class="mi">13</span><span class="p">;</span> <span class="nx">m</span><span class="o">++</span> <span class="p">{</span>
+			<span class="nx">tmp</span> <span class="o">:=</span> <span class="nf">mul</span><span class="p">(</span><span class="nf">mul</span><span class="p">(</span><span class="nf">sign</span><span class="p">(</span><span class="nx">m</span><span class="p">),</span> <span class="nf">choices</span><span class="p">(</span><span class="nx">m</span><span class="p">)),</span> <span class="nf">binomial</span><span class="p">(</span><span class="mi">52</span><span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="nx">m</span><span class="p">,</span> <span class="nx">n</span><span class="o">-</span><span class="mi">4</span><span class="o">*</span><span class="nx">m</span><span class="p">))</span>
 			<span class="nx">sum</span> <span class="p">=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span> <span class="nx">tmp</span><span class="p">)</span>
 		<span class="p">}</span>
-		<span class="nx">expectation</span><span class="p">.</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">expectation</span><span class="p">,</span> <span class="nf">fraction</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span> <span class="nf">binomial</span><span class="p">(</span><span class="mi">52</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+		<span class="nx">expectation</span><span class="p">.</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">expectation</span><span class="p">,</span> <span class="nf">fraction</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span> <span class="nf">binomial</span><span class="p">(</span><span class="mi">52</span><span class="p">,</span> <span class="nx">n</span><span class="p">)))</span>
 	<span class="p">}</span>
 
-	<span class="nx">expectationFloat</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">expectation</span><span class="p">.</span><span class="nf">Float64</span><span class="p">(</span><span class="p">)</span>
+	<span class="nx">expectationFloat</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">expectation</span><span class="p">.</span><span class="nf">Float64</span><span class="p">()</span>
 
 	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Expectation = %v (%v)\n&#34;</span><span class="p">,</span> <span class="nx">expectation</span><span class="p">,</span> <span class="nx">expectationFloat</span><span class="p">)</span>
 	<span class="nx">approximation</span> <span class="o">:=</span> <span class="nf">estimate</span><span class="p">(</span><span class="nx">samplesPerChannel</span><span class="p">,</span> <span class="nx">channels</span><span class="p">)</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Approximation for %d samples = %v (error = %v)\n&#34;</span><span class="p">,</span> <span class="nx">samplesPerChannel</span><span class="o">*</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">approximation</span><span class="p">,</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Abs</span><span class="p">(</span><span class="nx">expectationFloat</span><span class="o">-</span><span class="nx">approximation</span><span class="p">)</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Approximation for %d samples = %v (error = %v)\n&#34;</span><span class="p">,</span> <span class="nx">samplesPerChannel</span><span class="o">*</span><span class="nx">channels</span><span class="p">,</span> <span class="nx">approximation</span><span class="p">,</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Abs</span><span class="p">(</span><span class="nx">expectationFloat</span><span class="o">-</span><span class="nx">approximation</span><span class="p">))</span>
 <span class="p">}</span>
 </code></pre></div><p>An example run:</p>
 <pre><code>Expectation = 68719476736/2748462675 (25.002877921927755)
@@ -269,7 +278,7 @@ and keep the show on the road?</p>
     <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">err</span>
     <span class="p">}</span>
-    <span class="k">defer</span> <span class="nx">in</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span> <span class="c1">// okay to ignore errors
+    <span class="k">defer</span> <span class="nx">in</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span> <span class="c1">// okay to ignore errors
 </span><span class="c1"></span>
     <span class="nx">out</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">output</span><span class="p">)</span>
     <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
@@ -279,19 +288,19 @@ and keep the show on the road?</p>
     <span class="kd">var</span> <span class="nx">buf</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="kt">byte</span>
 
     <span class="k">for</span> <span class="p">{</span>
-        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadFull</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadFull</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[:])</span>
         <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
             <span class="k">break</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
             <span class="k">return</span> <span class="nx">err</span>
         <span class="p">}</span>
 
-        <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+        <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:])</span>
 
-        <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:]);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
             <span class="k">return</span> <span class="nx">err</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -300,7 +309,7 @@ and keep the show on the road?</p>
 </span><span class="c1"></span>    <span class="c1">// are closed without checking the error...with async IO
 </span><span class="c1"></span>    <span class="c1">// the Close() could result in data actually making it to
 </span><span class="c1"></span>    <span class="c1">// disk which can error
-</span><span class="c1"></span>    <span class="k">return</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+</span><span class="c1"></span>    <span class="k">return</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 <span class="p">}</span>
 </code></pre></div><p>Now, suppose that this is called in a program which <em>recovers all panics and keeps rolling on</em>. If <code>bufferMunger</code> panics,
 then (at least temporarily), <code>buggy</code> will leak a file descriptor for
@@ -330,7 +339,7 @@ leak resources when it panics. If it can, it needs modifications too.</p>
     <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">err</span>
     <span class="p">}</span>
-    <span class="k">defer</span> <span class="nx">in</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span> <span class="c1">// okay to ignore errors
+    <span class="k">defer</span> <span class="nx">in</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span> <span class="c1">// okay to ignore errors
 </span><span class="c1"></span>
 
     <span class="nx">out</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">output</span><span class="p">)</span>
@@ -339,16 +348,16 @@ leak resources when it panics. If it can, it needs modifications too.</p>
     <span class="p">}</span>
 
 <span class="hl">    <span class="nx">outClosed</span> <span class="o">:=</span> <span class="kc">false</span>
-</span><span class="hl">    <span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="hl">    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
 </span><span class="hl">        <span class="k">if</span> <span class="p">!</span><span class="nx">outClosed</span> <span class="p">{</span>
-</span><span class="hl">            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+</span><span class="hl">            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 </span><span class="hl">        <span class="p">}</span>
-</span><span class="hl">    <span class="p">}</span><span class="p">(</span><span class="p">)</span>
+</span><span class="hl">    <span class="p">}()</span>
 </span>
     <span class="kd">var</span> <span class="nx">buf</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="kt">byte</span>
 
     <span class="k">for</span> <span class="p">{</span>
-        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadFull</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadFull</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[:])</span>
         <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
             <span class="k">break</span>
         <span class="p">}</span>
@@ -356,9 +365,9 @@ leak resources when it panics. If it can, it needs modifications too.</p>
             <span class="k">return</span> <span class="nx">err</span>
         <span class="p">}</span>
 
-        <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+        <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:])</span>
 
-        <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:]);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">err</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -368,15 +377,15 @@ leak resources when it panics. If it can, it needs modifications too.</p>
 </span><span class="c1"></span>    <span class="c1">// the Close() could result in data actually making it to
 </span><span class="c1"></span>    <span class="c1">// disk which can error
 </span><span class="hl"><span class="c1"></span>    <span class="nx">outClosed</span> <span class="p">=</span> <span class="kc">true</span>
-</span>    <span class="k">return</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+</span>    <span class="k">return</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 <span class="p">}</span>
 </code></pre></div><p>Here, <code>out</code> will be closed in a defered function. Note how I avoid closing <code>out</code> twice.</p>
 <h3 id="using-recover">Using recover</h3>
 <p>A simple mechanism would be to wrap bufferMunger so it returns an error rather than causing a panic. For example,</p>
-<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">bufferMungerWrapper</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-            <span class="k">switch</span> <span class="nx">x</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="p">(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">bufferMungerWrapper</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="k">switch</span> <span class="nx">x</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">case</span> <span class="kt">string</span><span class="p">:</span>
                 <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
             <span class="k">case</span> <span class="kt">error</span><span class="p">:</span>
@@ -385,7 +394,7 @@ leak resources when it panics. If it can, it needs modifications too.</p>
                 <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;unknown panic&#34;</span><span class="p">)</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">}</span><span class="p">(</span><span class="p">)</span>
+    <span class="p">}()</span>
 
     <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
     <span class="k">return</span> <span class="kc">nil</span>
@@ -395,14 +404,14 @@ leak resources when it panics. If it can, it needs modifications too.</p>
 the program to exit is a good strategy:</p>
 <div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewPanicHandler</span><span class="p">(</span><span class="nx">h</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span><span class="p">)</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="nx">http</span><span class="p">.</span><span class="nf">HandlerFunc</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
-			<span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 				<span class="c1">// log.Fatalf causes the program to exit
-</span><span class="c1"></span>				<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="nx">debug</span><span class="p">.</span><span class="nf">Stack</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
+</span><span class="c1"></span>				<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="nx">debug</span><span class="p">.</span><span class="nf">Stack</span><span class="p">())</span>
 			<span class="p">}</span>
-		<span class="p">}</span><span class="p">(</span><span class="p">)</span>
+		<span class="p">}()</span>
 		<span class="nx">h</span><span class="p">.</span><span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
-	<span class="p">}</span><span class="p">)</span>
+	<span class="p">})</span>
 <span class="p">}</span>
 </code></pre></div><h1 id="conclusion">Conclusion</h1>
 <p>Using <code>recover</code> isn&rsquo;t a silver bullet. My 2¢: let panic cause a program exit. Fix logic bugs. Find them with fuzzing.</p>
@@ -427,7 +436,7 @@ the smaller of the original rax and rdx values. I know this from reading
 it. What if I couldn&rsquo;t work out what this did? What tools could I use?</p>
 <h1 id="assemble-it">Assemble It</h1>
 <p>We can embed the snippet in a C program and run it for some test cases:</p>
-<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp">#</span><span class="cp">include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 </span><span class="cp"></span>
 <span class="k">static</span> <span class="kt">int</span> <span class="nf">x3</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
 
@@ -436,49 +445,49 @@ it. What if I couldn&rsquo;t work out what this did? What tools could I use?</p>
         <span class="c1">// it&#39;s not stated in xchg rax,rax but it&#39;s
 </span><span class="c1"></span>        <span class="c1">// intel syntax. Note the noprefix means we
 </span><span class="c1"></span>        <span class="c1">// don&#39;t need % before registers
-</span><span class="c1"></span>        <span class="sa"></span><span class="s">&#34;</span><span class="s">.intel_syntax noprefix;</span><span class="s">&#34;</span>
+</span><span class="c1"></span>        <span class="s">&#34;.intel_syntax noprefix;&#34;</span>
         <span class="c1">// a bit of preamble to get registers
 </span><span class="c1"></span>        <span class="c1">// set up correctly. We&#39;re okay with just working
 </span><span class="c1"></span>        <span class="c1">// with int rather than long int
-</span><span class="c1"></span>        <span class="sa"></span><span class="s">&#34;</span><span class="s">mov eax, %1;</span><span class="s">&#34;</span>
-        <span class="sa"></span><span class="s">&#34;</span><span class="s">mov edx, %2;</span><span class="s">&#34;</span>
+</span><span class="c1"></span>        <span class="s">&#34;mov eax, %1;&#34;</span>
+        <span class="s">&#34;mov edx, %2;&#34;</span>
 
         <span class="c1">// 0x03 code below
-</span><span class="c1"></span>        <span class="sa"></span><span class="s">&#34;</span><span class="s">sub rdx, rax;</span><span class="s">&#34;</span>
-        <span class="sa"></span><span class="s">&#34;</span><span class="s">sbb rcx,rcx;</span><span class="s">&#34;</span>
-        <span class="sa"></span><span class="s">&#34;</span><span class="s">and rcx,rdx;</span><span class="s">&#34;</span>
-        <span class="sa"></span><span class="s">&#34;</span><span class="s">add rax,rcx;</span><span class="s">&#34;</span>
+</span><span class="c1"></span>        <span class="s">&#34;sub rdx, rax;&#34;</span>
+        <span class="s">&#34;sbb rcx,rcx;&#34;</span>
+        <span class="s">&#34;and rcx,rdx;&#34;</span>
+        <span class="s">&#34;add rax,rcx;&#34;</span>
 
         <span class="c1">// put the result into out
-</span><span class="c1"></span>        <span class="sa"></span><span class="s">&#34;</span><span class="s">mov %0, eax;</span><span class="s">&#34;</span>
+</span><span class="c1"></span>        <span class="s">&#34;mov %0, eax;&#34;</span>
         <span class="c1">// tell the compiler that out is in memory
-</span><span class="c1"></span>        <span class="o">:</span> <span class="sa"></span><span class="s">&#34;</span><span class="s">=m</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</span><span class="c1"></span>        <span class="o">:</span> <span class="s">&#34;=m&#34;</span> <span class="p">(</span><span class="n">out</span><span class="p">)</span>
         <span class="c1">// tell the compiler that a and b are inputs
-</span><span class="c1"></span>        <span class="o">:</span> <span class="sa"></span><span class="s">&#34;</span><span class="s">m</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="p">,</span> <span class="sa"></span><span class="s">&#34;</span><span class="s">m</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</span><span class="c1"></span>        <span class="o">:</span> <span class="s">&#34;m&#34;</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="p">,</span> <span class="s">&#34;m&#34;</span> <span class="p">(</span><span class="n">b</span><span class="p">)</span>
         <span class="c1">// this is the list of registers which are clobbered
-</span><span class="c1"></span>        <span class="o">:</span> <span class="sa"></span><span class="s">&#34;</span><span class="s">rax</span><span class="s">&#34;</span><span class="p">,</span><span class="sa"></span><span class="s">&#34;</span><span class="s">rdx</span><span class="s">&#34;</span><span class="p">,</span><span class="sa"></span><span class="s">&#34;</span><span class="s">rcx</span><span class="s">&#34;</span><span class="p">)</span><span class="p">;</span>
+</span><span class="c1"></span>        <span class="o">:</span> <span class="s">&#34;rax&#34;</span><span class="p">,</span><span class="s">&#34;rdx&#34;</span><span class="p">,</span><span class="s">&#34;rcx&#34;</span><span class="p">);</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="k">struct</span> <span class="n">input</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
-<span class="p">}</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="o">*</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
 
 
-    <span class="k">struct</span> <span class="n">input</span> <span class="n">inputs</span><span class="p">[</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="p">{</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">}</span><span class="p">,</span>
-        <span class="p">{</span><span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">}</span><span class="p">,</span>
-        <span class="p">{</span><span class="mh">0xf</span><span class="p">,</span> <span class="mh">0xe</span><span class="p">}</span><span class="p">,</span>
-        <span class="p">{</span><span class="mh">0xe</span><span class="p">,</span> <span class="mh">0xf</span><span class="p">}</span><span class="p">,</span>
-        <span class="p">{</span><span class="o">~</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">}</span><span class="p">,</span>
-    <span class="p">}</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">input</span> <span class="n">inputs</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">{</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">},</span>
+        <span class="p">{</span><span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">},</span>
+        <span class="p">{</span><span class="mh">0xf</span><span class="p">,</span> <span class="mh">0xe</span><span class="p">},</span>
+        <span class="p">{</span><span class="mh">0xe</span><span class="p">,</span> <span class="mh">0xf</span><span class="p">},</span>
+        <span class="p">{</span><span class="o">~</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">},</span>
+    <span class="p">};</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span><span class="o">/</span><span class="k">sizeof</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="p">;</span> <span class="n">i</span><span class="o">+</span><span class="o">+</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;</span><span class="s">%d (rax: %016x rdx %016x) -&gt;  rax: %016x</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-                <span class="n">i</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="p">.</span><span class="n">b</span><span class="p">,</span> <span class="n">x3</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="p">.</span><span class="n">a</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="p">.</span><span class="n">b</span><span class="p">)</span><span class="p">)</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span><span class="o">/</span><span class="k">sizeof</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d (rax: %016x rdx %016x) -&gt;  rax: %016x</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+                <span class="n">i</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">a</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">b</span><span class="p">,</span> <span class="n">x3</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">a</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">b</span><span class="p">));</span>
     <span class="p">}</span>
    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
@@ -513,12 +522,12 @@ program I wrote in Golang which</p>
 <span class="p">)</span>
 
 <span class="c1">// This program explores a few inputs to
-</span><span class="c1"></span><span class="c1">// problem 0x03 of xchg rax,rax:
-</span><span class="c1"></span><span class="c1">// https://www.xorpd.net/pages/xchg_rax/snip_03.html
-</span><span class="c1"></span><span class="c1">//
-</span><span class="c1"></span><span class="c1">// This is a good excuse to give keystone and unicorn
-</span><span class="c1"></span><span class="c1">// a spin in golang
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="c1">// problem 0x03 of xchg rax,rax:
+</span><span class="c1">// https://www.xorpd.net/pages/xchg_rax/snip_03.html
+</span><span class="c1">//
+</span><span class="c1">// This is a good excuse to give keystone and unicorn
+</span><span class="c1">// a spin in golang
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 
 	<span class="c1">// first, convert the assembly language into numerical opcodes
 </span><span class="c1"></span>	<span class="c1">// (machine language)
@@ -528,7 +537,7 @@ program I wrote in Golang which</p>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
-	<span class="k">defer</span> <span class="nx">ks</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+	<span class="k">defer</span> <span class="nx">ks</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 
 	<span class="nx">err</span> <span class="p">=</span> <span class="nx">ks</span><span class="p">.</span><span class="nf">Option</span><span class="p">(</span><span class="nx">keystone</span><span class="p">.</span><span class="nx">OPT_SYNTAX</span><span class="p">,</span> <span class="nx">keystone</span><span class="p">.</span><span class="nx">OPT_SYNTAX_INTEL</span><span class="p">)</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
@@ -542,14 +551,14 @@ program I wrote in Golang which</p>
 
 	<span class="c1">// choose some initial values for rax and rdx
 </span><span class="c1"></span>	<span class="c1">// to get a feel for what the algorithm does
-</span><span class="c1"></span>	<span class="nx">regPairs</span> <span class="o">:=</span> <span class="p">[</span><span class="p">]</span><span class="kd">struct</span> <span class="p">{</span>
+</span><span class="c1"></span>	<span class="nx">regPairs</span> <span class="o">:=</span> <span class="p">[]</span><span class="kd">struct</span> <span class="p">{</span>
 		<span class="nx">rax</span><span class="p">,</span> <span class="nx">rdx</span> <span class="kt">uint64</span>
-	<span class="p">}</span><span class="p">{</span>
-		<span class="p">{</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">}</span><span class="p">,</span>
-		<span class="p">{</span><span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">}</span><span class="p">,</span>
-		<span class="p">{</span><span class="mh">0xf</span><span class="p">,</span> <span class="mh">0xe</span><span class="p">}</span><span class="p">,</span>
-		<span class="p">{</span><span class="mh">0xe</span><span class="p">,</span> <span class="mh">0xf</span><span class="p">}</span><span class="p">,</span>
-		<span class="p">{</span><span class="mh">0xffffffff</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">}</span><span class="p">,</span>
+	<span class="p">}{</span>
+		<span class="p">{</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">},</span>
+		<span class="p">{</span><span class="mh">0x1</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">},</span>
+		<span class="p">{</span><span class="mh">0xf</span><span class="p">,</span> <span class="mh">0xe</span><span class="p">},</span>
+		<span class="p">{</span><span class="mh">0xe</span><span class="p">,</span> <span class="mh">0xf</span><span class="p">},</span>
+		<span class="p">{</span><span class="mh">0xffffffff</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">},</span>
 	<span class="p">}</span>
 
 	<span class="c1">// try each pair of initial register values with the emulator
@@ -561,7 +570,7 @@ program I wrote in Golang which</p>
 		<span class="nx">mu</span><span class="p">.</span><span class="nf">RegWrite</span><span class="p">(</span><span class="nx">uc</span><span class="p">.</span><span class="nx">X86_REG_RAX</span><span class="p">,</span> <span class="nx">regPair</span><span class="p">.</span><span class="nx">rax</span><span class="p">)</span>
 		<span class="nx">mu</span><span class="p">.</span><span class="nf">RegWrite</span><span class="p">(</span><span class="nx">uc</span><span class="p">.</span><span class="nx">X86_REG_RDX</span><span class="p">,</span> <span class="nx">regPair</span><span class="p">.</span><span class="nx">rdx</span><span class="p">)</span>
 
-		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">mu</span><span class="p">.</span><span class="nf">Start</span><span class="p">(</span><span class="mh">0x1000</span><span class="p">,</span> <span class="mh">0x1000</span><span class="o">+</span><span class="nb">uint64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">insn</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">mu</span><span class="p">.</span><span class="nf">Start</span><span class="p">(</span><span class="mh">0x1000</span><span class="p">,</span> <span class="mh">0x1000</span><span class="o">+</span><span class="nb">uint64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">insn</span><span class="p">)));</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 			<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 		<span class="p">}</span>
 
@@ -597,36 +606,36 @@ we can use SMT solvers to prove properties of software.</p>
 <span class="c1">; step.</span>
 <span class="c1">;</span>
 <span class="c1">; Essentially, we&#39;re turning an assembly program into SSA form</span>
-<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rdx0</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
-<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rdx1</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rdx0</span> <span class="p">()</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">))</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rdx1</span> <span class="p">()</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">))</span>
 
-<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rcx0</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
-<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rcx1</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
-<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rcx2</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rcx0</span> <span class="p">()</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">))</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rcx1</span> <span class="p">()</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">))</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rcx2</span> <span class="p">()</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">))</span>
 
-<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rax0</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
-<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rax3</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rax0</span> <span class="p">()</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">))</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">rax3</span> <span class="p">()</span> <span class="p">(</span> <span class="nv">_</span> <span class="nv">BitVec</span> <span class="mi">64</span><span class="p">))</span>
 
 <span class="c1">; The carry flag</span>
-<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">cf</span> <span class="p">(</span><span class="p">)</span> <span class="p">(</span><span class="nv">_</span> <span class="nv">Bool</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">declare-fun</span> <span class="nv">cf</span> <span class="p">()</span> <span class="p">(</span><span class="nv">_</span> <span class="nv">Bool</span><span class="p">))</span>
 
 <span class="c1">; sub sets the carry flag if unsigned subtraction will result in</span>
 <span class="c1">; an overflow i.e. rax0 &gt; rdx0</span>
-<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">cf</span> <span class="p">(</span><span class="nv">bvult</span> <span class="nv">rdx0</span> <span class="nv">rax0</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
-<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rdx1</span> <span class="p">(</span><span class="nv">bvsub</span> <span class="nv">rdx0</span> <span class="nv">rax0</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">cf</span> <span class="p">(</span><span class="nv">bvult</span> <span class="nv">rdx0</span> <span class="nv">rax0</span><span class="p">)))</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rdx1</span> <span class="p">(</span><span class="nv">bvsub</span> <span class="nv">rdx0</span> <span class="nv">rax0</span><span class="p">)))</span>
 
 <span class="c1">; sbb is &#39;subtract with carry&#39;. If the carry flag is set, we take</span>
 <span class="c1">; away one from the result of sub</span>
 <span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rcx1</span>
 <span class="p">(</span><span class="nv">ite</span> <span class="p">(</span><span class="nf">=</span> <span class="nv">cf</span> <span class="nv">true</span><span class="p">)</span>
  <span class="p">(</span><span class="nv">bvsub</span> <span class="p">(</span><span class="nv">bvsub</span> <span class="nv">rcx0</span> <span class="nv">rcx0</span><span class="p">)</span> <span class="mh">#x0000000000000001</span><span class="p">)</span>
- <span class="p">(</span><span class="nv">bvsub</span> <span class="nv">rcx0</span> <span class="nv">rcx0</span><span class="p">)</span><span class="p">)</span>
-<span class="p">)</span><span class="p">)</span>
+ <span class="p">(</span><span class="nv">bvsub</span> <span class="nv">rcx0</span> <span class="nv">rcx0</span><span class="p">))</span>
+<span class="p">))</span>
 
 <span class="c1">; and rxc1,rdx1</span>
-<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rcx2</span> <span class="p">(</span><span class="nv">bvand</span> <span class="nv">rcx1</span> <span class="nv">rdx1</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rcx2</span> <span class="p">(</span><span class="nv">bvand</span> <span class="nv">rcx1</span> <span class="nv">rdx1</span><span class="p">)))</span>
 <span class="c1">; add rax0,rcv2</span>
-<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rax3</span> <span class="p">(</span><span class="nv">bvadd</span> <span class="nv">rax0</span> <span class="nv">rcx2</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nf">=</span> <span class="nv">rax3</span> <span class="p">(</span><span class="nv">bvadd</span> <span class="nv">rax0</span> <span class="nv">rcx2</span><span class="p">)))</span>
 
 <span class="c1">; assert conditions which should fail if this is indeed a minimum</span>
 <span class="c1">; function. In the case below, we assert that rax0 &lt;= rdx0 and</span>
@@ -636,19 +645,19 @@ we can use SMT solvers to prove properties of software.</p>
 <span class="c1">; note the use of push here. Allows us to reuse the work above by</span>
 <span class="c1">; popping the asserts below from the stack</span>
 <span class="p">(</span><span class="nb">push</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nb">or</span> <span class="p">(</span><span class="nv">bvult</span> <span class="nv">rax0</span> <span class="nv">rdx0</span><span class="p">)</span> <span class="p">(</span><span class="nf">not</span> <span class="p">(</span><span class="nv">distinct</span> <span class="nv">rax0</span> <span class="nv">rdx0</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+    <span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nb">or</span> <span class="p">(</span><span class="nv">bvult</span> <span class="nv">rax0</span> <span class="nv">rdx0</span><span class="p">)</span> <span class="p">(</span><span class="nf">not</span> <span class="p">(</span><span class="nv">distinct</span> <span class="nv">rax0</span> <span class="nv">rdx0</span><span class="p">))))</span>
         <span class="p">(</span><span class="nv">check-sat</span><span class="p">)</span>
         <span class="p">(</span><span class="nb">push</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nv">distinct</span> <span class="nv">rax3</span> <span class="nv">rax0</span><span class="p">)</span><span class="p">)</span>
+            <span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nv">distinct</span> <span class="nv">rax3</span> <span class="nv">rax0</span><span class="p">))</span>
             <span class="p">(</span><span class="nv">check-sat</span><span class="p">)</span>
 <span class="p">(</span><span class="nb">pop</span> <span class="mi">2</span><span class="p">)</span>
 
 <span class="c1">; We show here that rax0 &gt; rdx0 (along with our previous assertions) can</span>
 <span class="c1">; can be satisfied. We then show that adding rax3 != rdx0 leads to</span>
 <span class="c1">; unsat, which means that rax3 == rdx0</span>
-<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span><span class="nv">bvugt</span> <span class="nv">rax0</span> <span class="nv">rdx0</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span><span class="nv">bvugt</span> <span class="nv">rax0</span> <span class="nv">rdx0</span><span class="p">))</span>
 <span class="p">(</span><span class="nv">check-sat</span><span class="p">)</span>
-<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nv">distinct</span> <span class="nv">rax3</span> <span class="nv">rdx0</span><span class="p">)</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">assert</span> <span class="p">(</span> <span class="nv">distinct</span> <span class="nv">rax3</span> <span class="nv">rdx0</span><span class="p">))</span>
 
 <span class="p">(</span><span class="nv">check-sat</span><span class="p">)</span>
 </code></pre></div><p>Running with z3 gives</p>
@@ -673,27 +682,27 @@ the ideas touched on here come into their own.</p>
 	<span class="s">&#34;time&#34;</span>
 <span class="p">)</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="c1">//port zero means let the OS choose a free port
 </span><span class="c1"></span>	<span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;127.0.0.1:0&#34;</span><span class="p">)</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
 
-	<span class="nx">addr</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Addr</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="p">)</span>
+	<span class="nx">addr</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Addr</span><span class="p">().</span><span class="nf">String</span><span class="p">()</span>
 
-	<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
 		<span class="k">for</span> <span class="p">{</span>
-			<span class="nx">c</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Accept</span><span class="p">(</span><span class="p">)</span>
+			<span class="nx">c</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
 			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 				<span class="k">return</span>
 			<span class="p">}</span>
-			<span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 		<span class="p">}</span>
-	<span class="p">}</span><span class="p">(</span><span class="p">)</span>
+	<span class="p">}()</span>
 
 	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Close</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
 
@@ -718,29 +727,29 @@ the ideas touched on here come into their own.</p>
 	<span class="s">&#34;time&#34;</span>
 <span class="p">)</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="c1">//port zero means let the OS choose a free port
 </span><span class="c1"></span>	<span class="nx">l</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;127.0.0.1:0&#34;</span><span class="p">)</span>
 	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
 
-	<span class="nx">addr</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Addr</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="nf">String</span><span class="p">(</span><span class="p">)</span>
+	<span class="nx">addr</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Addr</span><span class="p">().</span><span class="nf">String</span><span class="p">()</span>
 	<span class="nx">done</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">)</span>
 
-	<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
 		<span class="k">for</span> <span class="p">{</span>
-			<span class="nx">c</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Accept</span><span class="p">(</span><span class="p">)</span>
+			<span class="nx">c</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Accept</span><span class="p">()</span>
 			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 				<span class="nb">close</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span>
 				<span class="k">return</span>
 			<span class="p">}</span>
-			<span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+			<span class="nx">c</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 		<span class="p">}</span>
-	<span class="p">}</span><span class="p">(</span><span class="p">)</span>
+	<span class="p">}()</span>
 
 	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
-	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Close</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
 	<span class="p">}</span>
 
@@ -774,14 +783,14 @@ the ideas touched on here come into their own.</p>
 	<span class="s">&#34;runtime&#34;</span>
 <span class="p">)</span>
 
-<span class="kd">func</span> <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+<span class="kd">func</span> <span class="nf">allocate</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
 	<span class="c1">//use this file as our test subject
 </span><span class="c1"></span>	<span class="nx">_</span><span class="p">,</span> <span class="nx">sourceFile</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">Caller</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 	<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
 		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;source file not found&#34;</span><span class="p">)</span>
 	<span class="p">}</span>
 	<span class="nx">counter</span> <span class="o">:=</span> <span class="mi">0</span>
-	<span class="kd">var</span> <span class="nx">files</span> <span class="p">[</span><span class="p">]</span><span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
+	<span class="kd">var</span> <span class="nx">files</span> <span class="p">[]</span><span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
 	<span class="k">for</span> <span class="p">{</span>
 		<span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">sourceFile</span><span class="p">)</span>
 		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
@@ -793,10 +802,10 @@ the ideas touched on here come into their own.</p>
 	<span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
-    <span class="nx">runtime</span><span class="p">.</span><span class="nf">GC</span><span class="p">(</span><span class="p">)</span>
-    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">allocate</span><span class="p">()</span>
+    <span class="nx">runtime</span><span class="p">.</span><span class="nf">GC</span><span class="p">()</span>
+    <span class="nf">allocate</span><span class="p">()</span>
 <span class="p">}</span>
 
 </code></pre></div><p>On my system, the output is</p>
@@ -804,18 +813,18 @@ the ideas touched on here come into their own.</p>
 successful opens = 1020
 </code></pre><p>The first time allocate() is called, it manages to open the file 1020 times before returning. The call to <a href="https://golang.org/pkg/runtime/#GC">runtime.GC()</a> causes the garbage collector to run which closes the open files allowing the next allocate() to open the file 1020 times. What happens if we don&rsquo;t call the garbage collector?</p>
 <p>We modify main:</p>
-<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
-    <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">allocate</span><span class="p">()</span>
+    <span class="nf">allocate</span><span class="p">()</span>
 <span class="p">}</span>
 </code></pre></div><p>The result is now:</p>
 <pre><code>successful opens = 1020
 successful opens = 0
 </code></pre><p>The garbage collector hasn&rsquo;t run by the time the second allocate() call happens so the available file descriptors for the process are exhausted. When would the garbage collector run?</p>
-<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nf">allocate</span><span class="p">(</span><span class="p">)</span>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nf">allocate</span><span class="p">()</span>
 	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="nf">allocate</span><span class="p">(</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nf">allocate</span><span class="p">()</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
 			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;garbage collection ran after %d iterations&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
 			<span class="k">return</span>
 		<span class="p">}</span>

@@ -58,7 +58,7 @@ and keep the show on the road?</p>
     <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">err</span>
     <span class="p">}</span>
-    <span class="k">defer</span> <span class="nx">in</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span> <span class="c1">// okay to ignore errors
+    <span class="k">defer</span> <span class="nx">in</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span> <span class="c1">// okay to ignore errors
 </span><span class="c1"></span>
     <span class="nx">out</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">output</span><span class="p">)</span>
     <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
@@ -68,19 +68,19 @@ and keep the show on the road?</p>
     <span class="kd">var</span> <span class="nx">buf</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="kt">byte</span>
 
     <span class="k">for</span> <span class="p">{</span>
-        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadFull</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadFull</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[:])</span>
         <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
             <span class="k">break</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
             <span class="k">return</span> <span class="nx">err</span>
         <span class="p">}</span>
 
-        <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+        <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:])</span>
 
-        <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:]);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
             <span class="k">return</span> <span class="nx">err</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -89,7 +89,7 @@ and keep the show on the road?</p>
 </span><span class="c1"></span>    <span class="c1">// are closed without checking the error...with async IO
 </span><span class="c1"></span>    <span class="c1">// the Close() could result in data actually making it to
 </span><span class="c1"></span>    <span class="c1">// disk which can error
-</span><span class="c1"></span>    <span class="k">return</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+</span><span class="c1"></span>    <span class="k">return</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 <span class="p">}</span>
 </code></pre></div><p>Now, suppose that this is called in a program which <em>recovers all panics and keeps rolling on</em>. If <code>bufferMunger</code> panics,
 then (at least temporarily), <code>buggy</code> will leak a file descriptor for
@@ -119,7 +119,7 @@ leak resources when it panics. If it can, it needs modifications too.</p>
     <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">err</span>
     <span class="p">}</span>
-    <span class="k">defer</span> <span class="nx">in</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span> <span class="c1">// okay to ignore errors
+    <span class="k">defer</span> <span class="nx">in</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span> <span class="c1">// okay to ignore errors
 </span><span class="c1"></span>
 
     <span class="nx">out</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">output</span><span class="p">)</span>
@@ -128,16 +128,16 @@ leak resources when it panics. If it can, it needs modifications too.</p>
     <span class="p">}</span>
 
 <span class="hl">    <span class="nx">outClosed</span> <span class="o">:=</span> <span class="kc">false</span>
-</span><span class="hl">    <span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="hl">    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
 </span><span class="hl">        <span class="k">if</span> <span class="p">!</span><span class="nx">outClosed</span> <span class="p">{</span>
-</span><span class="hl">            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+</span><span class="hl">            <span class="nx">_</span> <span class="p">=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 </span><span class="hl">        <span class="p">}</span>
-</span><span class="hl">    <span class="p">}</span><span class="p">(</span><span class="p">)</span>
+</span><span class="hl">    <span class="p">}()</span>
 </span>
     <span class="kd">var</span> <span class="nx">buf</span> <span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="kt">byte</span>
 
     <span class="k">for</span> <span class="p">{</span>
-        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadFull</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">ReadFull</span><span class="p">(</span><span class="nx">in</span><span class="p">,</span> <span class="nx">buf</span><span class="p">[:])</span>
         <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
             <span class="k">break</span>
         <span class="p">}</span>
@@ -145,9 +145,9 @@ leak resources when it panics. If it can, it needs modifications too.</p>
             <span class="k">return</span> <span class="nx">err</span>
         <span class="p">}</span>
 
-        <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span>
+        <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:])</span>
 
-        <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="p">:</span><span class="p">]</span><span class="p">)</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:]);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">err</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -157,15 +157,15 @@ leak resources when it panics. If it can, it needs modifications too.</p>
 </span><span class="c1"></span>    <span class="c1">// the Close() could result in data actually making it to
 </span><span class="c1"></span>    <span class="c1">// disk which can error
 </span><span class="hl"><span class="c1"></span>    <span class="nx">outClosed</span> <span class="p">=</span> <span class="kc">true</span>
-</span>    <span class="k">return</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">(</span><span class="p">)</span>
+</span>    <span class="k">return</span> <span class="nx">out</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
 <span class="p">}</span>
 </code></pre></div><p>Here, <code>out</code> will be closed in a defered function. Note how I avoid closing <code>out</code> twice.</p>
 <h3 id="using-recover">Using recover</h3>
 <p>A simple mechanism would be to wrap bufferMunger so it returns an error rather than causing a panic. For example,</p>
-<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">bufferMungerWrapper</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[</span><span class="p">]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-            <span class="k">switch</span> <span class="nx">x</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="p">(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">bufferMungerWrapper</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="k">switch</span> <span class="nx">x</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">case</span> <span class="kt">string</span><span class="p">:</span>
                 <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
             <span class="k">case</span> <span class="kt">error</span><span class="p">:</span>
@@ -174,7 +174,7 @@ leak resources when it panics. If it can, it needs modifications too.</p>
                 <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;unknown panic&#34;</span><span class="p">)</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">}</span><span class="p">(</span><span class="p">)</span>
+    <span class="p">}()</span>
 
     <span class="nf">bufferMunger</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
     <span class="k">return</span> <span class="kc">nil</span>
@@ -184,14 +184,14 @@ leak resources when it panics. If it can, it needs modifications too.</p>
 the program to exit is a good strategy:</p>
 <div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">NewPanicHandler</span><span class="p">(</span><span class="nx">h</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span><span class="p">)</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Handler</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="nx">http</span><span class="p">.</span><span class="nf">HandlerFunc</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="p">)</span> <span class="p">{</span>
-			<span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">(</span><span class="p">)</span><span class="p">;</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 				<span class="c1">// log.Fatalf causes the program to exit
-</span><span class="c1"></span>				<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="nx">debug</span><span class="p">.</span><span class="nf">Stack</span><span class="p">(</span><span class="p">)</span><span class="p">)</span>
+</span><span class="c1"></span>				<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="nx">debug</span><span class="p">.</span><span class="nf">Stack</span><span class="p">())</span>
 			<span class="p">}</span>
-		<span class="p">}</span><span class="p">(</span><span class="p">)</span>
+		<span class="p">}()</span>
 		<span class="nx">h</span><span class="p">.</span><span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
-	<span class="p">}</span><span class="p">)</span>
+	<span class="p">})</span>
 <span class="p">}</span>
 </code></pre></div><h1 id="conclusion">Conclusion</h1>
 <p>Using <code>recover</code> isn&rsquo;t a silver bullet. My 2¢: let panic cause a program exit. Fix logic bugs. Find them with fuzzing.</p>
