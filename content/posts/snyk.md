@@ -1,5 +1,5 @@
 ---
-title: "Reporting Vulnerabilites To Snyk"
+title: "Reporting Vulnerabilities To Snyk"
 date: 2020-09-19T22:18:02Z
 categories:
     - security

@@ -8,7 +8,7 @@
     <language>en-us</language>
     <lastBuildDate>Sat, 19 Sep 2020 22:18:02 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Reporting Vulnerabilites To Snyk</title>
+      <title>Reporting Vulnerabilities To Snyk</title>
       <link>/posts/snyk/</link>
       <pubDate>Sat, 19 Sep 2020 22:18:02 +0000</pubDate>
       
@@ -97,7 +97,7 @@ Over the years, TLS has been an excellent source of examples for such a course.<
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/single/</guid>
-      <description>2020-19-09 Reporting Vulnerabilites To Snyk  Snyk is a CNA for Golang packages (and other popular languages). When I learned that they&amp;rsquo;d accept vulnerability reports, I decided to try them out with a couple of old bugs which I&amp;rsquo;d reported but got no response from the project author.
+      <description>2020-19-09 Reporting Vulnerabilities To Snyk  Snyk is a CNA for Golang packages (and other popular languages). When I learned that they&amp;rsquo;d accept vulnerability reports, I decided to try them out with a couple of old bugs which I&amp;rsquo;d reported but got no response from the project author.
 The turnaround on these issues was very quick (a couple of hours, on a weekend no less) and there are now two CVEs assigned: CVE-2020-7711 and CVE-2020-7731.</description>
     </item>
     
