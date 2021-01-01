@@ -49,14 +49,59 @@
 <main id="maincontent">
 
     <h2>2021-01-01
-    Golang Types and Secrets
+    Golang Types and Secrets: Part 1
     </h2>
-    <h2 id="tldr">TL;DR</h2>
-<p>Don&rsquo;t pass around secrets as strings or byte slices. Make a type for secrets to prevent timing attacks through insecure comparisons and leakage through logs.
-In addition, using a bespoke type to represent secrets makes it easier to spot that a secret is, well, a secret when reading code.</p>
-<h2 id="an-example">An Example</h2>
-<h2 id="insecure-comparisons-timing-attacks">Insecure Comparisons: Timing Attacks</h2>
-<h2 id="leaking-secrets-in-logs">Leaking Secrets in Logs</h2>
+    <h2 id="a-toy-authentication-system">A Toy Authentication System</h2>
+<p>Suspend disbelief and consider the following toy authentication system:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">allowAccess</span><span class="p">(</span><span class="nx">secret</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">secret</span> <span class="o">==</span> <span class="s">&#34;foo&#34;</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">secret</span> <span class="o">:=</span> <span class="s">&#34;foo&#34;</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Access: %v, Secret: %s&#34;</span><span class="p">,</span> <span class="nf">allowAccess</span><span class="p">(</span><span class="nx">secret</span><span class="p">),</span> <span class="nx">secret</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>Try this at the Golang <a href="https://play.golang.org/p/zYFWdgh-5vF">playground</a>.</p>
+<h2 id="whats-wrong-with-this-code">What&rsquo;s wrong with this code?</h2>
+<p>In my work auditing Golang codebases, I often see secrets being passed around as strings or byte slices. While these are reasonable representations of the
+actual data, it&rsquo;d be better to use the type system to represent the <em>concept of a secret</em> and leverage type <em>methods</em> to make code safer.</p>
+<p>Consider the output of the above program:</p>
+<pre><code>Access: true, Secret: foo
+</code></pre><p>The secret &ldquo;foo&rdquo; is leaked. Generally speaking, secrets should not end up in logs but if this code were running in a container the secret would, most likely,  end up in the docker logs.</p>
+<p>Let&rsquo;s use a type to make the situation a little better:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Secret</span> <span class="kt">string</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">Secret</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="s">&#34;REDACTED&#34;</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">allowAccess</span><span class="p">(</span><span class="nx">secret</span> <span class="nx">Secret</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">secret</span> <span class="o">==</span> <span class="s">&#34;foo&#34;</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">secret</span> <span class="nx">Secret</span> <span class="p">=</span> <span class="s">&#34;foo&#34;</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Access: %v, Secret: %s&#34;</span><span class="p">,</span> <span class="nf">allowAccess</span><span class="p">(</span><span class="nx">secret</span><span class="p">),</span> <span class="nx">secret</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>Running <a href="https://play.golang.org/p/Z92vfBVOTiB">this code at the playground</a> gives</p>
+<pre><code>Access: true, Secret: REDACTED
+</code></pre><p>What&rsquo;s been gained here?</p>
+<ol>
+<li>The code is now clearer about what is a secret and what is just a plain old string</li>
+<li>It&rsquo;s hard to accidentally send the secret to program output, logs etc.</li>
+</ol>
 
 
     <h2>2020-19-09
