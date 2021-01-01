@@ -6,7 +6,17 @@
     <description>Recent content in Home on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 19 Sep 2020 22:18:02 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 01 Jan 2021 19:36:58 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Golang Types and Secrets</title>
+      <link>/posts/types/</link>
+      <pubDate>Fri, 01 Jan 2021 19:36:58 +0000</pubDate>
+      
+      <guid>/posts/types/</guid>
+      <description>TL;DR Don&amp;rsquo;t pass around secrets as strings or byte slices. Make a type for secrets to prevent timing attacks through insecure comparisons and leakage through logs. In addition, using a bespoke type to represent secrets makes it easier to spot that a secret is, well, a secret when reading code.
+An Example Insecure Comparisons: Timing Attacks Leaking Secrets in Logs </description>
+    </item>
+    
     <item>
       <title>Reporting Vulnerabilities To Snyk</title>
       <link>/posts/snyk/</link>
@@ -97,8 +107,8 @@ Over the years, TLS has been an excellent source of examples for such a course.<
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/single/</guid>
-      <description>2020-19-09 Reporting Vulnerabilities To Snyk  Snyk is a CNA for Golang packages (and other popular languages). When I learned that they&amp;rsquo;d accept vulnerability reports, I decided to try them out with a couple of old bugs which I&amp;rsquo;d reported but got no response from the project author.
-The turnaround on these issues was very quick (a couple of hours, on a weekend no less) and there are now two CVEs assigned: CVE-2020-7711 and CVE-2020-7731.</description>
+      <description>2021-01-01 Golang Types and Secrets  TL;DR Don&amp;rsquo;t pass around secrets as strings or byte slices. Make a type for secrets to prevent timing attacks through insecure comparisons and leakage through logs. In addition, using a bespoke type to represent secrets makes it easier to spot that a secret is, well, a secret when reading code.
+An Example Insecure Comparisons: Timing Attacks Leaking Secrets in Logs 2020-19-09 Reporting Vulnerabilities To Snyk  Snyk is a CNA for Golang packages (and other popular languages).</description>
     </item>
     
   </channel>

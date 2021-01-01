@@ -48,6 +48,17 @@
 
 <main id="maincontent">
 
+    <h2>2021-01-01
+    Golang Types and Secrets
+    </h2>
+    <h2 id="tldr">TL;DR</h2>
+<p>Don&rsquo;t pass around secrets as strings or byte slices. Make a type for secrets to prevent timing attacks through insecure comparisons and leakage through logs.
+In addition, using a bespoke type to represent secrets makes it easier to spot that a secret is, well, a secret when reading code.</p>
+<h2 id="an-example">An Example</h2>
+<h2 id="insecure-comparisons-timing-attacks">Insecure Comparisons: Timing Attacks</h2>
+<h2 id="leaking-secrets-in-logs">Leaking Secrets in Logs</h2>
+
+
     <h2>2020-19-09
     Reporting Vulnerabilities To Snyk
     </h2>

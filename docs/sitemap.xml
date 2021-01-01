@@ -3,6 +3,21 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/posts/types/</loc>
+    <lastmod>2021-01-01T19:36:58+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2021-01-01T19:36:58+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/posts/</loc>
+    <lastmod>2021-01-01T19:36:58+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/categories/</loc>
     <lastmod>2020-09-19T22:18:02+00:00</lastmod>
   </url>
@@ -19,16 +34,6 @@
   
   <url>
     <loc>/categories/golang/</loc>
-    <lastmod>2020-09-19T22:18:02+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/</loc>
-    <lastmod>2020-09-19T22:18:02+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/posts/</loc>
     <lastmod>2020-09-19T22:18:02+00:00</lastmod>
   </url>
   
