@@ -1,6 +1,6 @@
 ---
 title: "Golang Types and Secrets: Part 2"
-date: 2021-01-01T20:37:42Z
+date: 2021-01-02T19:37:42Z
 ---
 
 The [previous post](/posts/types), described how a simple toy authentication system could be improved by using a type definition to redact secrets when they are passed to fmt.Printf, logging functions etc. In this post, hiding the complexity of defending against timing attacks is outlined.
