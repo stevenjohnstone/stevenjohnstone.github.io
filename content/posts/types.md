@@ -23,22 +23,23 @@ func main() {
 	fmt.Printf("Access: %v, Secret: %s", allowAccess(secret), secret)
 }
 ```
+
 Try this at the Golang [playground](https://play.golang.org/p/zYFWdgh-5vF).
 
 ## What's wrong with this code?
 
 In my work auditing Golang codebases, I often see secrets being passed around as strings or byte slices. While these are reasonable representations of the
-actual data, it'd be better to use the type system to represent the *concept of a secret* and leverage type *methods* to make code safer.
+actual data, it'd be better to use the type system to represent the *concept of a secret* and leverage type *operations* to make code safer.
 
 Consider the output of the above program:
 
-```
+```shell
 Access: true, Secret: foo
 ```
 
 The secret "foo" is leaked. Generally speaking, secrets should not end up in logs but if this code were running in a container the secret would, most likely,  end up in the docker logs.
 
-Let's use a type to make the situation a little better:
+Let's use a type definition to make the situation a little better:
 
 ```golang
 package main
@@ -62,9 +63,10 @@ func main() {
 	fmt.Printf("Access: %v, Secret: %s", allowAccess(secret), secret)
 }
 ```
-Running [this code at the playground](https://play.golang.org/p/Z92vfBVOTiB) gives
 
-```
+The type *Secret* has the underlying type *string* with all of string's useful operations. Crucially, when a Secret is passed to fmt.Printf the method *String()* is called to get a string representation and this is simply the string "REDACTED". Running [this code at the playground](https://play.golang.org/p/Z92vfBVOTiB) gives
+
+```shell
 Access: true, Secret: REDACTED
 ```
 

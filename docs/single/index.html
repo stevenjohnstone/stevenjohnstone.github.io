@@ -49,6 +49,55 @@
 <main id="maincontent">
 
     <h2>2021-01-01
+    Golang Types and Secrets: Part 2
+    </h2>
+    <p>The <a href="/posts/types">previous post</a>, described how a simple toy authentication system could be improved by using a type definition to redact secrets when they are passed to fmt.Printf, logging functions etc. In this post, hiding the complexity of defending against timing attacks is outlined.</p>
+<p>Let&rsquo;s frame the discussion with a simple scenario: you run an online store with user accounts, you store usernames and you want to avoid <a href="https://blog.rapid7.com/2017/06/15/about-user-enumeration/">user enumeration</a>. You may not have user enumeration in your threat-model but if you care about GDPR, you should probably add it. In the <a href="/posts/types">previous post</a>, I outlined how to stop a secret ending up in a log message. Stopping personally identifiable information ending up in a log unintentionally could help avoid a hefty fine. So it makes sense to define a type to carry around usernames so they don&rsquo;t accidentally leak
+into log messages and the approach outlined previously is one way to go about it.</p>
+<p>Be warned: the code in the <a href="/posts/types">previous post</a> is vulnerable to timing attacks due to the comparison of the secret against a string using &ldquo;==&rdquo;. You can google plenty of <a href="https://www.cs.rice.edu/~dwallach/pub/crosby-timing2009.pdf">references</a> on timing attacks. The thing a developer needs to remember is:</p>
+<p><strong>If you have a secret and need to compare it to
+something, you need to use <a href="https://golang.org/pkg/crypto/subtle/">timing-independent comparison functions</a></strong>.</p>
+<p>Here&rsquo;s some code which shows how to ensure that
+comparisons are done safely for our hypothetical usernames with our previous &ldquo;log redaction&rdquo; folded in.</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;crypto/subtle&#34;</span>
+	<span class="s">&#34;fmt&#34;</span>
+<span class="p">)</span>
+
+<span class="c1">// Secret hides its data from the programmer so that unsafe comparisons are
+</span><span class="c1">// forbidden (or would require sneaky use of reflection)
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Secret</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span>
+<span class="p">}</span>
+
+<span class="c1">// String returns something suitable for logs
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">Secret</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="s">&#34;REDACTED&#34;</span>
+<span class="p">}</span>
+
+<span class="c1">// Equals is timing safe
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">Secret</span><span class="p">)</span> <span class="nf">Equals</span><span class="p">(</span><span class="nx">secret</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="mi">1</span> <span class="o">==</span> <span class="nx">subtle</span><span class="p">.</span><span class="nf">ConstantTimeCompare</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">secret</span><span class="p">))</span>
+<span class="p">}</span>
+
+
+<span class="c1">// Username is an alias of Secret to avoid user enumeration problems
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Username</span> <span class="p">=</span> <span class="nx">Secret</span>
+
+<span class="kd">func</span> <span class="nf">NewUsername</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="o">*</span><span class="nx">Username</span> <span class="p">{</span>
+	<span class="c1">// would be wise to consider unicode normalization here
+</span><span class="c1"></span>	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">Username</span><span class="p">{</span> <span class="nx">data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">username</span> <span class="o">:=</span> <span class="nf">NewUsername</span><span class="p">(</span><span class="s">&#34;stevie&#34;</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;username: %s, known: %v\n&#34;</span><span class="p">,</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">username</span><span class="p">.</span><span class="nf">Equals</span><span class="p">(</span><span class="s">&#34;stevie&#34;</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div>
+
+    <h2>2021-01-01
     Golang Types and Secrets: Part 1
     </h2>
     <h2 id="a-toy-authentication-system">A Toy Authentication System</h2>
@@ -70,11 +119,11 @@
 </code></pre></div><p>Try this at the Golang <a href="https://play.golang.org/p/zYFWdgh-5vF">playground</a>.</p>
 <h2 id="whats-wrong-with-this-code">What&rsquo;s wrong with this code?</h2>
 <p>In my work auditing Golang codebases, I often see secrets being passed around as strings or byte slices. While these are reasonable representations of the
-actual data, it&rsquo;d be better to use the type system to represent the <em>concept of a secret</em> and leverage type <em>methods</em> to make code safer.</p>
+actual data, it&rsquo;d be better to use the type system to represent the <em>concept of a secret</em> and leverage type <em>operations</em> to make code safer.</p>
 <p>Consider the output of the above program:</p>
-<pre><code>Access: true, Secret: foo
-</code></pre><p>The secret &ldquo;foo&rdquo; is leaked. Generally speaking, secrets should not end up in logs but if this code were running in a container the secret would, most likely,  end up in the docker logs.</p>
-<p>Let&rsquo;s use a type to make the situation a little better:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Access: true, Secret: foo
+</code></pre></div><p>The secret &ldquo;foo&rdquo; is leaked. Generally speaking, secrets should not end up in logs but if this code were running in a container the secret would, most likely,  end up in the docker logs.</p>
+<p>Let&rsquo;s use a type definition to make the situation a little better:</p>
 <div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
@@ -95,9 +144,9 @@ actual data, it&rsquo;d be better to use the type system to represent the <em>co
 	<span class="kd">var</span> <span class="nx">secret</span> <span class="nx">Secret</span> <span class="p">=</span> <span class="s">&#34;foo&#34;</span>
 	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Access: %v, Secret: %s&#34;</span><span class="p">,</span> <span class="nf">allowAccess</span><span class="p">(</span><span class="nx">secret</span><span class="p">),</span> <span class="nx">secret</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></div><p>Running <a href="https://play.golang.org/p/Z92vfBVOTiB">this code at the playground</a> gives</p>
-<pre><code>Access: true, Secret: REDACTED
-</code></pre><p>What&rsquo;s been gained here?</p>
+</code></pre></div><p>The type <em>Secret</em> has the underlying type <em>string</em> with all of string&rsquo;s useful operations. Crucially, when a Secret is passed to fmt.Printf the method <em>String()</em> is called to get a string representation and this is simply the string &ldquo;REDACTED&rdquo;. Running <a href="https://play.golang.org/p/Z92vfBVOTiB">this code at the playground</a> gives</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Access: true, Secret: REDACTED
+</code></pre></div><p>What&rsquo;s been gained here?</p>
 <ol>
 <li>The code is now clearer about what is a secret and what is just a plain old string</li>
 <li>It&rsquo;s hard to accidentally send the secret to program output, logs etc.</li>

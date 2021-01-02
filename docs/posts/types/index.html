@@ -66,11 +66,11 @@
 </code></pre></div><p>Try this at the Golang <a href="https://play.golang.org/p/zYFWdgh-5vF">playground</a>.</p>
 <h2 id="whats-wrong-with-this-code">What&rsquo;s wrong with this code?</h2>
 <p>In my work auditing Golang codebases, I often see secrets being passed around as strings or byte slices. While these are reasonable representations of the
-actual data, it&rsquo;d be better to use the type system to represent the <em>concept of a secret</em> and leverage type <em>methods</em> to make code safer.</p>
+actual data, it&rsquo;d be better to use the type system to represent the <em>concept of a secret</em> and leverage type <em>operations</em> to make code safer.</p>
 <p>Consider the output of the above program:</p>
-<pre><code>Access: true, Secret: foo
-</code></pre><p>The secret &ldquo;foo&rdquo; is leaked. Generally speaking, secrets should not end up in logs but if this code were running in a container the secret would, most likely,  end up in the docker logs.</p>
-<p>Let&rsquo;s use a type to make the situation a little better:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Access: true, Secret: foo
+</code></pre></div><p>The secret &ldquo;foo&rdquo; is leaked. Generally speaking, secrets should not end up in logs but if this code were running in a container the secret would, most likely,  end up in the docker logs.</p>
+<p>Let&rsquo;s use a type definition to make the situation a little better:</p>
 <div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
@@ -91,9 +91,9 @@ actual data, it&rsquo;d be better to use the type system to represent the <em>co
 	<span class="kd">var</span> <span class="nx">secret</span> <span class="nx">Secret</span> <span class="p">=</span> <span class="s">&#34;foo&#34;</span>
 	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;Access: %v, Secret: %s&#34;</span><span class="p">,</span> <span class="nf">allowAccess</span><span class="p">(</span><span class="nx">secret</span><span class="p">),</span> <span class="nx">secret</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></div><p>Running <a href="https://play.golang.org/p/Z92vfBVOTiB">this code at the playground</a> gives</p>
-<pre><code>Access: true, Secret: REDACTED
-</code></pre><p>What&rsquo;s been gained here?</p>
+</code></pre></div><p>The type <em>Secret</em> has the underlying type <em>string</em> with all of string&rsquo;s useful operations. Crucially, when a Secret is passed to fmt.Printf the method <em>String()</em> is called to get a string representation and this is simply the string &ldquo;REDACTED&rdquo;. Running <a href="https://play.golang.org/p/Z92vfBVOTiB">this code at the playground</a> gives</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Access: true, Secret: REDACTED
+</code></pre></div><p>What&rsquo;s been gained here?</p>
 <ol>
 <li>The code is now clearer about what is a secret and what is just a plain old string</li>
 <li>It&rsquo;s hard to accidentally send the secret to program output, logs etc.</li>
