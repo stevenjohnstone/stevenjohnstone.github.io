@@ -7,7 +7,7 @@ I am/have been
 
 * a [mathematician](https://www.gla.ac.uk/research/az/cmals/)
 * a [Codian](https://en.wikipedia.org/wiki/Codian), [Tandberg](https://en.wikipedia.org/wiki/Tandberg), [Cisco](https://cisco.com), [Acano](https://www.acano.com/) and [Jazz Networks](https://jazznetworks.com) alum
-* an automation engineer, embedded systems engineer, security specialist, [CSO](https://en.wikipedia.org/wiki/Chief_security_officer). 
+* an automation engineer, embedded systems engineer, security specialist, [CSO](https://en.wikipedia.org/wiki/Chief_security_officer).
 
 Apart from brief periods after acquisition, my entire professional life has been in startups. I've done a wide variety of things to build these companies:
 

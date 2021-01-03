@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>startups on rm -rf /</title>
+    <link>/categories/startups/</link>
+    <description>Recent content in startups on rm -rf /</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 03 Jan 2021 20:13:07 +0000</lastBuildDate><atom:link href="/categories/startups/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Startups: Codian</title>
+      <link>/posts/codian1/</link>
+      <pubDate>Sun, 03 Jan 2021 20:13:07 +0000</pubDate>
+      
+      <guid>/posts/codian1/</guid>
+      <description>Introduction I&amp;rsquo;ve spent most of my career in startups which would go on to be acquired by Cisco (twice). As a cheap form of therapy, I&amp;rsquo;m collecting some of my &amp;ldquo;learnings&amp;rdquo; here.
+Ancient History I joined Codian in the summer of 2006. I was nearing completion of my PhD, had a one-year old child and far too much student debt. I&amp;rsquo;d decided that I didn&amp;rsquo;t want to follow an academic career.</description>
+    </item>
+    
+  </channel>
+</rss>
