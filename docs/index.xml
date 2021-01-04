@@ -6,7 +6,17 @@
     <description>Recent content in Home on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 03 Jan 2021 20:13:07 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 04 Jan 2021 19:28:33 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TIS-100</title>
+      <link>/posts/tis-100/</link>
+      <pubDate>Mon, 04 Jan 2021 19:28:33 +0000</pubDate>
+      
+      <guid>/posts/tis-100/</guid>
+      <description>TIS-100 is nerd-heaven. Competing against friends on Steam had me fall into a vortex for a few days over Christmas. So far, I&amp;rsquo;ve avoided spoilers and solutions on the internets and don&amp;rsquo;t want to add any. The fun really is in finding your own solutions.
+I&amp;rsquo;ve thought up a couple of TIS-100 hobby projects to try when I have the time and inspiration. Maybe someone has done it already but that&amp;rsquo;s not really the point.</description>
+    </item>
+    
     <item>
       <title>Startups: Codian</title>
       <link>/posts/codian1/</link>
@@ -128,8 +138,8 @@ Over the years, TLS has been an excellent source of examples for such a course.<
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/single/</guid>
-      <description>2021-03-01 Startups: Codian  Introduction I&amp;rsquo;ve spent most of my career in startups which would go on to be acquired by Cisco (twice). As a cheap form of therapy, I&amp;rsquo;m collecting some of my &amp;ldquo;learnings&amp;rdquo; here.
-Ancient History I joined Codian in the summer of 2006. I was nearing completion of my PhD, had a one-year old child and far too much student debt. I&amp;rsquo;d decided that I didn&amp;rsquo;t want to follow an academic career.</description>
+      <description>2021-04-01 TIS-100  TIS-100 is nerd-heaven. Competing against friends on Steam had me fall into a vortex for a few days over Christmas. So far, I&amp;rsquo;ve avoided spoilers and solutions on the internets and don&amp;rsquo;t want to add any. The fun really is in finding your own solutions.
+I&amp;rsquo;ve thought up a couple of TIS-100 hobby projects to try when I have the time and inspiration. Maybe someone has done it already but that&amp;rsquo;s not really the point.</description>
     </item>
     
   </channel>
