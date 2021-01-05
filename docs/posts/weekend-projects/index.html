@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Weaponised Autism">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Weekend Projects" />
+    <meta property="og:url" content="/posts/weekend-projects/" />
+    
+   <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+    <title>Weekend Projects | rm -rf /</title>
+   
+
+<link rel="stylesheet" type="text/css" href="/css/style.css">
+<link rel="stylesheet" type="text/css" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/syntax/syntax.css" />
+
+    
+  </head>
+
+  <body>
+    <a class="skip-link" href="#maincontent">Skip to main</a>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+      <li><a href="/categories/">Categories</a></li>
+      
+      <li><a href="/tags/">Tags</a></li>
+      
+      <li><a href="/index.xml">Subscribe</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Weekend Projects</span></h1>
+
+<h2 class="date">2021/01/05</h2>
+</div>
+
+<main id="maincontent">
+<p>Brain dump of potential weekend/lockdown projects.</p>
+<h2 id="threat-modelling-tool">Threat Modelling Tool</h2>
+<p>When I make a threat model, I draw ascii art, do doodles, write descriptions but it&rsquo;d be nicer to have
+some tools which allowed me to</p>
+<ol>
+<li>specify a threat model in a near natural language</li>
+<li>generate diagrams from the threat models</li>
+</ol>
+<h3 id="threat-modelling-language">Threat Modelling Language</h3>
+<p>The language would be as close to English as possible. Simple sentences along the lines of</p>
+<pre><code>The loadbalancer has a certificate
+The certificate expires next month
+The loadbalancer has 6 backend servers
+</code></pre><p>Lexical analysis tools would allow this to be converted into a graph representation of the system. Nodes would be nouns, edges verbs and
+there&rsquo;d be rudimentary understanding of number. Tools which understand the nouns and verbs could be build on top of this to, for example,
+suggest OWASP rules to check.</p>
+<h3 id="graphical-representation">Graphical Representation</h3>
+<p>One such tool built on the graph representation could render a nice graphical representation of the system. Output like <a href="https://github.com/mingrammer/diagrams">this tool</a> creates but with more icons for threats would be just the thing.</p>
+<p>Integrations with Hugo (for blogging) and vscode would allow developers to quickly describe a system and threats and generate diagrams.</p>
+<h2 id="ijon-for-golang">IJON for Golang</h2>
+<p>I&rsquo;ve <a href="https://github.com/stevenjohnstone/afl-lua#51-annotations">experimented</a> a bit with creating a fuzzer for Lua with some advanced features like <a href="https://github.com/RUB-SysSec/ijon">IJON</a>. I&rsquo;d like to add similar functionality to <a href="https://github.com/dvyukov/go-fuzz">go-fuzz</a>.</p>
+<h2 id="fuzzers-with-novel-guidance-schemes">Fuzzers with Novel Guidance Schemes</h2>
+<p>I&rsquo;d like to experiment with fuzzing by using signals other than code coverage. It&rsquo;d be useful when studying black box embedded systems to be able to
+detect new coverage by</p>
+<ul>
+<li>power draw</li>
+<li>EM radiation/noise</li>
+<li>temperature changes</li>
+</ul>
+<p>In systems running on personal computers, signals like</p>
+<ul>
+<li>cache statistics</li>
+<li>memory usage</li>
+<li>stack size</li>
+<li>heap statistics</li>
+<li>file descriptor usage</li>
+</ul>
+<p>may be of interest.</p>
+
+</main>
+
+  <footer>
+  
+  
+  <hr/>
+  © Stevie Johnstone 2017-2020 | <a href="https://github.com/stevenjohnstone">Github</a>
+  
+  </footer>
+  </body>
+</html>
+

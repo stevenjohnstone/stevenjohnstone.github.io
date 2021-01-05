@@ -6,7 +6,18 @@
     <description>Recent content in Posts on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 04 Jan 2021 19:28:33 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 05 Jan 2021 23:27:23 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Weekend Projects</title>
+      <link>/posts/weekend-projects/</link>
+      <pubDate>Tue, 05 Jan 2021 23:27:23 +0000</pubDate>
+      
+      <guid>/posts/weekend-projects/</guid>
+      <description>Brain dump of potential weekend/lockdown projects.
+Threat Modelling Tool When I make a threat model, I draw ascii art, do doodles, write descriptions but it&amp;rsquo;d be nicer to have some tools which allowed me to
+ specify a threat model in a near natural language generate diagrams from the threat models  Threat Modelling Language The language would be as close to English as possible. Simple sentences along the lines of</description>
+    </item>
+    
     <item>
       <title>TIS-100</title>
       <link>/posts/tis-100/</link>
