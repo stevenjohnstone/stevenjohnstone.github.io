@@ -69,14 +69,15 @@ Imagine we have a deck of 52 standard playing cards. First question: How many ca
     </item>
     
     <item>
-      <title>I&#39;m Stevie</title>
+      <title>CV</title>
       <link>/about/</link>
       <pubDate>Wed, 29 Jan 2020 10:40:48 +0000</pubDate>
       
       <guid>/about/</guid>
-      <description>I am/have been
+      <description>See my LinkedIn profile for chronological details.
+I am/have been
  a mathematician a Codian, Tandberg, Cisco, Acano and Jazz Networks alum an automation engineer, embedded systems engineer, security specialist, CSO.  Apart from brief periods after acquisition, my entire professional life has been in startups. I&amp;rsquo;ve done a wide variety of things to build these companies:
- automated production line tests wrote processor bootstrap code for embedded systems ported operating systems rolled custom linux distributions wrote kernel drivers tinkered with FPGAs optimised network stacks tracked down silicon bugs hunted security flaws built auth systems ran PSIRTs  I know how to program in</description>
+ automated production line tests wrote processor bootstrap code for embedded systems ported operating systems rolled custom linux distributions wrote kernel drivers tinkered with FPGAs optimised network stacks created and ran build systems tracked down silicon bugs hunted security flaws built auth systems ran PSIRTs implemented ISO 27001 navigated the US Federal government certification processes (JITC etc)  I know how to program in</description>
     </item>
     
     <item>

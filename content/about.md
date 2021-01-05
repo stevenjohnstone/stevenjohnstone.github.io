@@ -1,7 +1,9 @@
 ---
-title: "I'm Stevie"
+title: "CV"
 date: 2020-01-29T10:40:48Z
 ---
+
+See my [LinkedIn](https://www.linkedin.com/in/steven-james-johnstone/) profile for chronological details.
 
 I am/have been
 
@@ -18,10 +20,13 @@ Apart from brief periods after acquisition, my entire professional life has been
 * wrote kernel drivers
 * tinkered with FPGAs
 * optimised network stacks
+* created and ran build systems
 * tracked down silicon bugs
 * hunted security flaws
 * built auth systems
 * ran [PSIRTs](https://www.first.org/education/FIRST_PSIRT_Service_Framework_v1.0)
+* implemented ISO 27001
+* navigated the US Federal government certification processes (JITC etc)
 
 I know how to program in
 
@@ -30,7 +35,3 @@ I know how to program in
 * C++
 * x86-64 assembler
 * Ruby
-
-After years of suffering C++ as a systems/platform language, I switched to Golang in 2015 and never looked back.
-
-I know some weird stuff and think some of it is worth recording, if only for me.
