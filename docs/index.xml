@@ -6,7 +6,19 @@
     <description>Recent content in Home on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 05 Jan 2021 23:27:23 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 06 Jan 2021 14:03:52 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Golang Testing</title>
+      <link>/posts/golang-testing/</link>
+      <pubDate>Wed, 06 Jan 2021 14:03:52 +0000</pubDate>
+      
+      <guid>/posts/golang-testing/</guid>
+      <description>My (very opinionated) checklist/cheatsheet for Golang testing. Nothing particularly original here.
+Tactics Tactic: Testable Example Start with a testable example, if you can. This is invaluable documentation and will tell you if the code has a usable interface, has too-many moving parts etc.
+Tactic: Table-Driven Tests Dave Chaney makes the case for table-driven tests.
+Tactic: Network Testing Avoid hard coding listener port numbers. Overcome the problems of port and address allocations by letting the operating system choose the port.</description>
+    </item>
+    
     <item>
       <title>Weekend Projects</title>
       <link>/posts/weekend-projects/</link>
@@ -150,9 +162,10 @@ Over the years, TLS has been an excellent source of examples for such a course.<
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/single/</guid>
-      <description>2021-05-01 Weekend Projects  Brain dump of potential weekend/lockdown projects.
-Threat Modelling Tool When I make a threat model, I draw ascii art, do doodles, write descriptions but it&amp;rsquo;d be nicer to have some tools which allowed me to
- specify a threat model in a near natural language generate diagrams from the threat models  Threat Modelling Language The language would be as close to English as possible. Simple sentences along the lines of</description>
+      <description>2021-06-01 Golang Testing  My (very opinionated) checklist/cheatsheet for Golang testing. Nothing particularly original here.
+Tactics Tactic: Testable Example Start with a testable example, if you can. This is invaluable documentation and will tell you if the code has a usable interface, has too-many moving parts etc.
+Tactic: Table-Driven Tests Dave Chaney makes the case for table-driven tests.
+Tactic: Network Testing Avoid hard coding listener port numbers. Overcome the problems of port and address allocations by letting the operating system choose the port.</description>
     </item>
     
   </channel>
