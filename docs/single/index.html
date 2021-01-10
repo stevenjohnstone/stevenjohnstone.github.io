@@ -123,7 +123,7 @@ which is nothing special by modern standards.</p>
 </code></pre></div><p>Sadly, that&rsquo;s exactly what we don&rsquo;t want: an <em>absolute URL</em>. The URL may look a bit odd without a scheme but browsers will accept it and work out the scheme from the
 context. There&rsquo;s clearly a problem with inputs whose path starts have a double forward slash. That&rsquo;s reassuring as that&rsquo;s exactly what the <a href="https://github.com/sourcegraph/sourcegraph/pull/10167">fix</a> addresses.
 Even better, when the fix is applied to the fuzzing code, a few minutes of fuzzing results in no issues being found.</p>
-<p>What should stand out here is that you don&rsquo;t need to know that much about URL parsing to find issues with the fuzzer. You need to know the basic standard library functions but the fuzzer can find the corner cases by trying to cover as much of that library code as possible. You can explore the coverage <a href="/pages/coverage.html">here</a></p>
+<p>What should stand out here is that you don&rsquo;t need to know that much about URL parsing to find issues with the fuzzer. You need to know the basic standard library functions but the fuzzer can find the corner cases by trying to cover as much of that library code as possible. You can explore the coverage <a href="/pages/coverage.html">here</a>.</p>
 <h2 id="a-few-minutes-of-fuzzing">A Few Minutes of Fuzzing</h2>
 <p>That&rsquo;s a bit of a throwaway line. How long should we fuzz for exactly? That&rsquo;s not really known. This puts this kind of testing outside of what usually runs
 in Continuous Integration as tests which are quick and deterministic are required.</p>
