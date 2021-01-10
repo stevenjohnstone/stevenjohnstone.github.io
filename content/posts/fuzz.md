@@ -108,7 +108,7 @@ What should stand out here is that you don't need to know that much about URL pa
 ## A Few Minutes of Fuzzing
 
 That's a bit of a throwaway line. How long should we fuzz for exactly? That's not really known. This puts this kind of testing outside of what usually runs
-in Continuous Integration as tests quick, largely deterministic are required.
+in Continuous Integration as tests which are quick and deterministic are required.
 
 ## Barriers to Adoption of Fuzzing
 

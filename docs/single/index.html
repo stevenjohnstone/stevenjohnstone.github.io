@@ -126,7 +126,7 @@ Even better, when the fix is applied to the fuzzing code, a few minutes of fuzzi
 <p>What should stand out here is that you don&rsquo;t need to know that much about URL parsing to find issues with the fuzzer. You need to know the basic standard library functions but the fuzzer can find the corner cases by trying to cover as much of that library code as possible.</p>
 <h2 id="a-few-minutes-of-fuzzing">A Few Minutes of Fuzzing</h2>
 <p>That&rsquo;s a bit of a throwaway line. How long should we fuzz for exactly? That&rsquo;s not really known. This puts this kind of testing outside of what usually runs
-in Continuous Integration as tests quick, largely deterministic are required.</p>
+in Continuous Integration as tests which are quick and deterministic are required.</p>
 <h2 id="barriers-to-adoption-of-fuzzing">Barriers to Adoption of Fuzzing</h2>
 <ul>
 <li>Friction: It&rsquo;s not yet a <a href="https://go.googlesource.com/proposal/+/master/design/draft-fuzzing.md#:~:text=The%20goal%20is%20to%20make%20fuzzing%20a%20first-class,the%20basis%20for%20experiments%20with%20different%20mutation%20engines.">first class language feature of Go</a></li>
