@@ -48,6 +48,93 @@
 
 <main id="maincontent">
 
+    <h2>2021-10-01
+    Go-Fuzz
+    </h2>
+    <p>I&rsquo;ve found plenty of &ldquo;crashers&rdquo; using <a href="https://github.com/dvyukov/go-fuzz">go-fuzz</a>. If you browse the <a href="https://github.com/dvyukov/go-fuzz#trophies">trophy cabinet</a>, you&rsquo;ll notice that I added a few. With Golang being a memory-safe language, the impact
+of these bugs is reduced to denial of service vectors. I&rsquo;d like to point out here that fuzzing can be used for so much more than shaking out off-by-one
+errors: if we know invariants or properties that our function outputs must satisfy, then we can build fuzz tests to check for violations.</p>
+<h2 id="captain-hindsighthttpssouthparkfandomcomwikicaptain_hindsight"><a href="https://southpark.fandom.com/wiki/Captain_Hindsight">Captain Hindsight</a></h2>
+<p>There are examples of how <a href="https://google.github.io/clusterfuzz/setting-up-fuzzing/heartbleed-example/">fuzzing</a>, <a href="https://blog.trailofbits.com/2014/04/27/using-static-analysis-and-clang-to-find-heartbleed/">static analysis</a> and even <a href="https://blog.trailofbits.com/2018/04/04/vulnerability-modeling-with-binary-ninja/">symbolic execution</a> <em>could have been</em> used to find the famous <a href="https://en.wikipedia.org/wiki/Heartbleed">heartbleed</a> bug.
+It&rsquo;s all lovely stuff but it&rsquo;s easy to take a known bug and show how your favourite toys can perform. Hindsight is a wonderful thing.</p>
+<p>I&rsquo;m going to do something similar here and show how, with the benefit of hindsight, fuzzing could
+have found a security issue. Where I hope I depart from other examples of this kind of potentially annoying retrospect is in showing that there are plenty of places where
+fuzzing can be applied in golang without doing major code surgery, learning a fancy new tool or taking a deep dive into the science of SAT solvers etc.
+At the end of this ramble, I give my hot-take on why fuzzing isn&rsquo;t more pervasive in golang code.</p>
+<p>In this <a href="https://github.com/sourcegraph/sourcegraph/security/advisories/GHSA-mx43-r985-5h4m">issue with Sourcegraph</a>,
+the function <em>SafeRedirectURL</em> was found to have a corner case which could lead to an <a href="https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html">open-redirect</a>.</p>
+<p>I think this is a great example of where fuzzing is straight-forward to apply</p>
+<ul>
+<li><em>SafeRedirectURL</em> is a pure function (not necessary but makes life easier)</li>
+<li>it takes only one unstructured argument</li>
+<li>the security requirements for the function can be expressed concisely in code</li>
+</ul>
+<p>Let&rsquo;s consider the last point. <em>SafeRedirectURL</em> should only return relative URLs. A necessary condition for this is that the string returned by SafeRedirectURL, when parsed into a URL, has no host component. In golang,</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="nx">u</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="nf">SafeRedirectURL</span><span class="p">(</span><span class="nx">urlString</span><span class="p">))</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="c1">// should this ever happen?
+</span><span class="c1"></span><span class="p">}</span>
+<span class="k">if</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Host</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+    <span class="nb">panic</span><span class="p">(</span><span class="s">&#34;oops, something has went wrong&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>Concretely, here&rsquo;s how you could fuzz SafeRedirectURL (from before the fix):</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">sourcegraph</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;net/url&#34;</span>
+	<span class="s">&#34;strings&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">SafeRedirectURL</span><span class="p">(</span><span class="nx">urlStr</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="nx">u</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">urlStr</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="p">!</span><span class="nx">strings</span><span class="p">.</span><span class="nf">HasPrefix</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Path</span><span class="p">,</span> <span class="s">&#34;/&#34;</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="s">&#34;/&#34;</span>
+	<span class="p">}</span>
+
+	<span class="c1">// Only take certain known-safe fields.
+</span><span class="c1"></span>	<span class="nx">u</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">url</span><span class="p">.</span><span class="nx">URL</span><span class="p">{</span><span class="nx">Path</span><span class="p">:</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Path</span><span class="p">,</span> <span class="nx">RawQuery</span><span class="p">:</span> <span class="nx">u</span><span class="p">.</span><span class="nx">RawQuery</span><span class="p">}</span>
+	<span class="k">return</span> <span class="nx">u</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Fuzz</span><span class="p">(</span><span class="nx">input</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="nx">s</span> <span class="o">:=</span> <span class="nf">SafeRedirectURL</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">input</span><span class="p">))</span>
+	<span class="nx">u</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span>
+	<span class="p">}</span>
+
+	<span class="c1">// if u.Host is non-empty then this is definitely not a relative URL
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Host</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Host</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">1</span>
+<span class="p">}</span>
+</code></pre></div><p>The fuzzer will input byte slices which are chosen to increase code coverage. When inputs are found which violate our condition on <em>u.Host</em>, <em>Fuzz</em> will panic
+and the fuzzer will  register this as a <em>crasher</em>.</p>
+<p>I tried this to see how long it&rsquo;d take to find a bug and it was pretty much
+(from a human point of view) instantaneous. I have a mid-range Ryzen laptop
+which is nothing special by modern standards.</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ go-fuzz
+2021/01/10 19:13:21 workers: 8, corpus: <span class="m">155</span> <span class="o">(</span>0s ago<span class="o">)</span>, crashers: 65, restarts: 1/0, execs: <span class="m">0</span> <span class="o">(</span>0/sec<span class="o">)</span>, cover: 0, uptime: 3s
+</code></pre></div><p>That is, 65 inputs were found in 3 seconds which violate our expectation of <em>SafeRedirectURL</em>. What did these look like? Here&rsquo;s a representative example input</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">//0//k0
+</code></pre></div><p>with output from <em>SafeRedirectURL</em> of</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">//k0
+</code></pre></div><p>Sadly, that&rsquo;s exactly what we don&rsquo;t want: an <em>absolute URL</em>. The URL may look a bit odd without a scheme but browsers will accept it and work out the scheme from the
+context. There&rsquo;s clearly a problem with inputs whose path starts have a double forward slash. That&rsquo;s reassuring as that&rsquo;s exactly what the <a href="https://github.com/sourcegraph/sourcegraph/pull/10167">fix</a> addresses.
+Even better, when the fix is applied to the fuzzing code, a few minutes of fuzzing results in no issues being found.</p>
+<p>What should stand out here is that you don&rsquo;t need to know that much about URL parsing to find issues with the fuzzer. You need to know the basic standard library functions but the fuzzer can find the corner cases by trying to cover as much of that library code as possible.</p>
+<h2 id="a-few-minutes-of-fuzzing">A Few Minutes of Fuzzing</h2>
+<p>That&rsquo;s a bit of a throwaway line. How long should we fuzz for exactly? That&rsquo;s not really known. This puts this kind of testing outside of what usually runs
+in Continuous Integration as tests quick, largely deterministic are required.</p>
+<h2 id="barriers-to-adoption-of-fuzzing">Barriers to Adoption of Fuzzing</h2>
+<ul>
+<li>Friction: It&rsquo;s not yet a <a href="https://go.googlesource.com/proposal/+/master/design/draft-fuzzing.md#:~:text=The%20goal%20is%20to%20make%20fuzzing%20a%20first-class,the%20basis%20for%20experiments%20with%20different%20mutation%20engines.">first class language feature of Go</a></li>
+<li>CI: it can take an unknown time to get good coverage</li>
+<li>Misconceptions: it appears to be about finding illegal array accesses etc</li>
+</ul>
+
+
     <h2>2021-06-01
     Golang Testing
     </h2>
