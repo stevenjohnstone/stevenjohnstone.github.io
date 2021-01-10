@@ -103,7 +103,7 @@ Sadly, that's exactly what we don't want: an _absolute URL_. The URL may look a 
 context. There's clearly a problem with inputs whose path starts have a double forward slash. That's reassuring as that's exactly what the [fix](https://github.com/sourcegraph/sourcegraph/pull/10167) addresses.
 Even better, when the fix is applied to the fuzzing code, a few minutes of fuzzing results in no issues being found.
 
-What should stand out here is that you don't need to know that much about URL parsing to find issues with the fuzzer. You need to know the basic standard library functions but the fuzzer can find the corner cases by trying to cover as much of that library code as possible.
+What should stand out here is that you don't need to know that much about URL parsing to find issues with the fuzzer. You need to know the basic standard library functions but the fuzzer can find the corner cases by trying to cover as much of that library code as possible. You can explore the coverage [here](/pages/coverage.html).
 
 ## A Few Minutes of Fuzzing
 
