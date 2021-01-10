@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Weaponised Autism">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Golang Testing" />
+    <meta property="og:url" content="/posts/golang-testing/" />
+    
+   <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+    <title>Golang Testing | rm -rf /</title>
+   
+
+<link rel="stylesheet" type="text/css" href="/css/style.css">
+<link rel="stylesheet" type="text/css" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/syntax/syntax.css" />
+
+    
+  </head>
+
+  <body>
+    <a class="skip-link" href="#maincontent">Skip to main</a>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+      <li><a href="/categories/">Categories</a></li>
+      
+      <li><a href="/tags/">Tags</a></li>
+      
+      <li><a href="/index.xml">Subscribe</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Golang Testing</span></h1>
+
+<h2 class="date">2021/01/06</h2>
+</div>
+
+<main id="maincontent">
+<p>My (very opinionated) checklist/cheatsheet for Golang testing. Nothing particularly original here.</p>
+<h2 id="tactics">Tactics</h2>
+<h3 id="tactic-testable-example">Tactic: Testable Example</h3>
+<p>Start with a <a href="https://blog.golang.org/examples">testable example</a>, if you can. This is invaluable documentation and will tell you if the
+code has a usable interface, has too-many moving parts etc.</p>
+<h3 id="tactic-table-driven-tests">Tactic: Table-Driven Tests</h3>
+<p><a href="https://dave.cheney.net/2019/05/07/prefer-table-driven-tests">Dave Chaney</a> makes the case for table-driven tests.</p>
+<h3 id="tactic-network-testing">Tactic: Network Testing</h3>
+<p>Avoid hard coding listener port numbers. Overcome the problems of port and address allocations by letting the operating system choose the port.
+Every (Go) programmer should know the following trick:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// allocate a loopback listener with a port chosen by the operating system
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">newLoopbackListener</span><span class="p">()</span> <span class="p">(</span><span class="nx">net</span><span class="p">.</span><span class="nx">Listener</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;127.0.0.1:0&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>Here, a net.Listener is created without hard coding the port. This allows us to run many tests in parallel without port conflicts.
+If you run out of ports, then you could always move to the other loopback addresses: 127.0.0.n for n=2,3,&hellip;</p>
+<p>Say we write a server implementing the following minimal interface:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">Server</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="c1">// Start the server processing requests
+</span><span class="c1"></span>    <span class="nf">Start</span><span class="p">()</span> <span class="kt">error</span>
+    <span class="c1">// Stop the server and return
+</span><span class="c1"></span>    <span class="nf">Stop</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div><p>Then we can imagine testing its client as follows:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">TestServer</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lis</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">newLoopbackListener</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">t</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">server</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">NewServer</span><span class="p">(</span><span class="nx">l</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">t</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">go</span> <span class="nx">server</span><span class="p">.</span><span class="nf">Start</span><span class="p">()</span>
+    <span class="k">defer</span> <span class="nx">server</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
+
+    <span class="nx">client</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">NewClient</span><span class="p">(</span><span class="nx">lis</span><span class="p">.</span><span class="nf">Addr</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">t</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">// do testing stuff
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>This removes the need to mock listeners, client connections etc.</p>
+<h3 id="tactic-golden-files">Tactic: Golden Files</h3>
+<p>Hashicorp uses this <a href="https://github.com/hashicorp/consul/blob/87f6617eecd23a64add1e79eb3cd8dc3da9e649e/agent/xds/golden_test.go#L36">trick</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// golden reads and optionally writes the expected data to the golden file,
+</span><span class="c1">// returning the contents as a string.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">golden</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">subname</span><span class="p">,</span> <span class="nx">got</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="nx">t</span><span class="p">.</span><span class="nf">Helper</span><span class="p">()</span>
+
+	<span class="nx">suffix</span> <span class="o">:=</span> <span class="s">&#34;.golden&#34;</span>
+	<span class="k">if</span> <span class="nx">subname</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+		<span class="nx">suffix</span> <span class="p">=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;.%s.golden&#34;</span><span class="p">,</span> <span class="nx">subname</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">golden</span> <span class="o">:=</span> <span class="nx">filepath</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="s">&#34;testdata&#34;</span><span class="p">,</span> <span class="nx">name</span><span class="o">+</span><span class="nx">suffix</span><span class="p">)</span>
+	<span class="k">if</span> <span class="o">*</span><span class="nx">update</span> <span class="o">&amp;&amp;</span> <span class="nx">got</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+		<span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">WriteFile</span><span class="p">(</span><span class="nx">golden</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">got</span><span class="p">),</span> <span class="mo">0644</span><span class="p">)</span>
+		<span class="nx">require</span><span class="p">.</span><span class="nf">NoError</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="nx">expected</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">ReadFile</span><span class="p">(</span><span class="nx">golden</span><span class="p">)</span>
+	<span class="nx">require</span><span class="p">.</span><span class="nf">NoError</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="nb">string</span><span class="p">(</span><span class="nx">expected</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>Golden test data can be used for outputs that you don&rsquo;t know in precise detail up front but can inspect for correctness once you have them. You run your tests
+with the &ldquo;update&rdquo; flag first, then inspect the golden file to see if it is correct and then finally commit the golden file to your repository.
+Subsequent tests will use this data as the <em>gold standard</em>.</p>
+<h3 id="tactic-metamorphic-testing">Tactic: Metamorphic Testing</h3>
+<p>Wayne Hillel give an excellent overview of metamorphic testing <a href="https://www.hillelwayne.com/post/metamorphic-testing/">here</a>. If <em>f</em> is the function
+under test, <em>x</em> is some golden test data and <em>T</em> is some transformation of the data, then we should test that the relationship between <em>f(x)</em> and <em>f(Tx)</em>
+is as we expect. The skill here is thinking up interesting transforms <em>T</em>. A good place to start is with those for which <em>f</em> is <em>invariant</em>. That is, <em>T</em> such that <em>f(Tx) = f(x)</em>. Other important cases are idempotent functions and round-trip guarantees e.g. <em>Decode(Encode(x)) == x</em></p>
+<h3 id="tactic-fuzz">Tactic: Fuzz</h3>
+<p>Fuzzing is really a subject unto itself. However, it&rsquo;s not hard to add the green shoots of fuzz testing. A good start is to simply fuzz a function and see if it crashes e.g. <a href="https://github.com/trustelem/zxcvbn/commit/c2422dd63cdfab8ebc99174ce967424ab9088624">https://github.com/trustelem/zxcvbn/commit/c2422dd63cdfab8ebc99174ce967424ab9088624</a>.</p>
+<p>Fuzzing can be combined with metamorphic testing to cover more code.</p>
+<h2 id="use-abstraction-but-not-too-much">Use Abstraction but Not Too Much</h2>
+<p>Try to decouple code from OS resources (sockets, file handles etc) by judicious use of abstraction. For example, this</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">Foo</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Result</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+    <span class="c1">// Do amazing customer pleasing stuff here
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>can be refactored to</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">FooReader</span><span class="p">(</span><span class="nx">r</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Result</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Do amazing customer pleasing stuff here
+</span><span class="c1"></span><span class="p">}</span>
+<span class="kd">func</span> <span class="nf">Foo</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Result</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nf">FooReader</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>Now we can test the function <em>FooReader</em> without creating files:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">func</span> <span class="nf">TestFooReader</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">testReader</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="s">&#34;some test data&#34;</span><span class="p">)</span>
+    <span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">FooReader</span><span class="p">(</span><span class="nx">testReader</span><span class="p">)</span>
+    <span class="c1">// do some checking here based on expectations
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>Mocking resources such as databases can be very useful but care should be taken not to try to mock too much. There&rsquo;s a point where you&rsquo;re better off
+doing integration tests or end-to-end tests.</p>
+<p>Where mocking shines is testing error handling paths. There&rsquo;s some <a href="https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-yuan.pdf">evidence</a> to suggest that many of the critical failures observed in distributed systems occur in (presumably) untested error handling paths. In our example, we could <a href="https://talks.golang.org/2012/10things.slide#8">mock
+the filesystem</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">var</span> <span class="nx">fs</span> <span class="nx">fileSystem</span> <span class="p">=</span> <span class="nx">osFS</span><span class="p">{}</span>
+
+<span class="kd">type</span> <span class="nx">fileSystem</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nf">Open</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+    <span class="nf">Stat</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">FileInfo</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">file</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">Closer</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">ReaderAt</span>
+    <span class="nx">io</span><span class="p">.</span><span class="nx">Seeker</span>
+    <span class="nf">Stat</span><span class="p">()</span> <span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">FileInfo</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// osFS implements fileSystem using the local disk.
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">osFS</span> <span class="kd">struct</span><span class="p">{}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">osFS</span><span class="p">)</span> <span class="nf">Open</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>        <span class="p">{</span> <span class="k">return</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">}</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">osFS</span><span class="p">)</span> <span class="nf">Stat</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">FileInfo</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Stat</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">foo</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">fs</span> <span class="nx">filesystem</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Result</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">fs</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    <span class="c1">// Do amazing customer pleasing stuff here
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Foo</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Result</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nf">foo</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">fs</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>When testing, we can create a <em>filesystem</em> implementation which injects errors. Something along the lines of this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kd">type</span> <span class="nx">faultFS</span> <span class="kd">struct</span><span class="p">{}</span>
+<span class="kd">type</span> <span class="nx">faultFile</span> <span class="kd">struct</span><span class="p">{}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">faultFile</span><span class="p">)</span> <span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;close failed&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// Exercise for the interested reader to provide Read, ReadAt, Write, Close, Seeker and Stat for faultFile
+</span><span class="c1"></span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">faultFS</span><span class="p">)</span> <span class="nf">Open</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">faultFile</span><span class="p">{}</span> <span class="p">}</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">faultFS</span><span class="p">)</span> <span class="nf">Stat</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">FileInfo</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;not supported&#34;</span><span class="p">)}</span>
+
+<span class="kd">func</span> <span class="nf">TestFoo</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">foo</span><span class="p">(</span><span class="s">&#34;foo&#34;</span><span class="p">,</span> <span class="nx">faultFS</span><span class="p">{})</span>
+    <span class="c1">// check the results
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>IMHO, mocking doesn&rsquo;t work well when imitating complex systems like databases. I prefer to use container technology to spin up an actual instance of the database and test against that. If you need quite sophisticated fault injection, then it&rsquo;d pay to write a library for this. How much effort you put
+into this is a value judgement.</p>
+<h2 id="integration-tests-vs-unit-tests">Integration Tests vs Unit Tests</h2>
+<p>Instead of mocking a complex sub-system, consider making an integration test which uses an instance of the real service in a container. For example, starting
+a docker container from golang is pretty <a href="https://golang.testcontainers.org/">straight-forward</a>. Such tests can be resource intensive so can be hidden behind <a href="https://golang.org/pkg/go/build/#hdr-Build_Constraints">build tags</a> or <a href="https://golang.org/pkg/testing/#hdr-Skipping">skipped</a> when the short flag is used.</p>
+<p>The challenge here is in avoiding flaky tests caused by having to wait for the service to come online (port open, accepting requests etc). That said, if errors returned by the code don&rsquo;t allow for graceful retries, the client fails to timeout in a reasonable way etc, then that&rsquo;s a worthwhile finding in itself.</p>
+
+</main>
+
+  <footer>
+  
+  
+  <hr/>
+  © Stevie Johnstone 2017-2020 | <a href="https://github.com/stevenjohnstone">Github</a>
+  
+  </footer>
+  </body>
+</html>
+
