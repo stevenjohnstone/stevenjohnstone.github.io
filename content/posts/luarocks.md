@@ -87,7 +87,7 @@ man-in-the-middle. There are many ways this can happen: compromise of a local DN
 compromise of the DNS registrar account for luarocks.org etc. Attackers can get quite creative about chaining together exploits to make something
 greater than the sum of the parts.
 
-## LuaRock Response
+## LuaRock's Response
 
 I've been on the receiving end of bug reports when running
 a [PSIRT](https://www.first.org/standards/frameworks/psirts/psirt_services_framework_v1.1). I've also reported my fair share
