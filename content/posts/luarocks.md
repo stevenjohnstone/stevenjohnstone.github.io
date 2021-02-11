@@ -99,7 +99,7 @@ mature product. Let's start with the basics.
 The project doesn't have a prominent set of instructions for
 reporting security bugs. If the bug finder doesn't know who
 to report to, then coordinated responses are difficult. In this
-case I asked on the projects gitter and was told to create a
+case I asked on the project's gitter and was told to create a
 public issue on github.
 
 A simple change LuaRocks could make is to create a [security policy](https://github.com/luarocks/luarocks/security/policy) on github. They could also add a [security.txt](https://securitytxt.org/) to luarocks.org to point security researchers to their policy.
