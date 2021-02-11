@@ -52,8 +52,8 @@
 clears up a lot of confusion.</p>
 <p>gofuzz (note the lack of hyphen) creates Go objects from random
 sources. go-fuzz does coverage guided mutation fuzzing with
-some <a href="https://github.com/stevenjohnstone/toughfuzzer">extra tricks</a>. gofuzz provides functionality to use go-fuzz to
-create objects from input from go-fuzz (are you keeping up with the hyphens?) e.g. from the gofuzz <a href="https://github.com/google/gofuzz/blob/master/README.md">README</a></p>
+some <a href="https://github.com/stevenjohnstone/toughfuzzer">extra tricks</a>. gofuzz provides functionality to use go-fuzz
+as its source of &ldquo;randomness&rdquo; (are you keeping up with the hyphens?) e.g. from the gofuzz <a href="https://github.com/google/gofuzz/blob/master/README.md">README</a></p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// +build gofuzz
 </span><span class="c1"></span><span class="kn">package</span> <span class="nx">mypackage</span>
 
@@ -65,7 +65,10 @@ create objects from input from go-fuzz (are you keeping up with the hyphens?) e.
         <span class="nf">MyFunc</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">0</span>
 <span class="p">}</span>
-</code></pre></div><p>The claim is that you can do &ldquo;easier go-fuzzing&rdquo; in this way. I don&rsquo;t dispute the easy part but is it effective? That&rsquo;s what this post and some follow ups will test.</p>
+</code></pre></div><p>In theory, this allows us to fuzz functions which take objects
+other than byte slices (or objects like strings which are
+trivially derived from byte slices) as arguments.</p>
+<p>The claim by the gofuzz project is that you can do &ldquo;easier go-fuzzing&rdquo; in this way. I don&rsquo;t dispute the easy part but is it effective? That&rsquo;s what this post and some follow ups will test.</p>
 <h2 id="why-though">Why Though?</h2>
 <p>Fuzzing functions which take objects as input is an important
 problem to solve. A good solution would, I believe, reduce the barrier to
@@ -136,7 +139,7 @@ those run out, the random number generator is used.</p>
 the inputs it passes to <em>Fuzz</em> will be less then eight bytes and lost as
 inputs to a random number generator. Eventually, go-fuzz will
 move away from trying these encodings and their mutations.</p>
-<h2 id="can-we-fix-it-yes-we-can">Can We Fix It? Yes We Can!</h2>
+<h2 id="can-we-fix-it-yes-we-can">Can We Fix It? Yes We Can</h2>
 <p>Kinda. There&rsquo;s going to me more broken stuff later.</p>
 <p>Applying this patch:</p>
 <div class="highlight"><pre class="chroma"><code class="language-diff" data-lang="diff"><span class="gh">diff --git a/bytesource/bytesource.go b/bytesource/bytesource.go

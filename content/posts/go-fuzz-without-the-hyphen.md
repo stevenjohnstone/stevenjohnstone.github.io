@@ -11,8 +11,8 @@ clears up a lot of confusion.
 
 gofuzz (note the lack of hyphen) creates Go objects from random
 sources. go-fuzz does coverage guided mutation fuzzing with
-some [extra tricks](https://github.com/stevenjohnstone/toughfuzzer). gofuzz provides functionality to use go-fuzz to
-create objects from input from go-fuzz (are you keeping up with the hyphens?) e.g. from the gofuzz [README](https://github.com/google/gofuzz/blob/master/README.md)
+some [extra tricks](https://github.com/stevenjohnstone/toughfuzzer). gofuzz provides functionality to use go-fuzz
+as its source of "randomness" (are you keeping up with the hyphens?) e.g. from the gofuzz [README](https://github.com/google/gofuzz/blob/master/README.md)
 
 ```go
 // +build gofuzz
@@ -28,7 +28,11 @@ func Fuzz(data []byte) int {
 }
 ```
 
-The claim is that you can do "easier go-fuzzing" in this way. I don't dispute the easy part but is it effective? That's what this post and some follow ups will test.
+In theory, this allows us to fuzz functions which take objects
+other than byte slices (or objects like strings which are
+trivially derived from byte slices) as arguments.
+
+The claim by the gofuzz project is that you can do "easier go-fuzzing" in this way. I don't dispute the easy part but is it effective? That's what this post and some follow ups will test.
 
 ## Why Though?
 
@@ -116,7 +120,7 @@ the inputs it passes to *Fuzz* will be less then eight bytes and lost as
 inputs to a random number generator. Eventually, go-fuzz will
 move away from trying these encodings and their mutations.
 
-## Can We Fix It? Yes We Can!
+## Can We Fix It? Yes We Can
 
 Kinda. There's going to me more broken stuff later.
 

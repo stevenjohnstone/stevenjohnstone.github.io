@@ -14,7 +14,7 @@
       
       <guid>/posts/go-fuzz-without-the-hyphen/</guid>
       <description>Hyphens There are two different go fuzzing &amp;ldquo;things&amp;rdquo;: go-fuzz and gofuzz. Both are authored by Google employees. The naming is unfortunate but once you know the difference it clears up a lot of confusion.
-gofuzz (note the lack of hyphen) creates Go objects from random sources. go-fuzz does coverage guided mutation fuzzing with some extra tricks. gofuzz provides functionality to use go-fuzz to create objects from input from go-fuzz (are you keeping up with the hyphens?</description>
+gofuzz (note the lack of hyphen) creates Go objects from random sources. go-fuzz does coverage guided mutation fuzzing with some extra tricks. gofuzz provides functionality to use go-fuzz as its source of &amp;ldquo;randomness&amp;rdquo; (are you keeping up with the hyphens?</description>
     </item>
     
     <item>
@@ -192,7 +192,7 @@ Over the years, TLS has been an excellent source of examples for such a course.<
       
       <guid>/single/</guid>
       <description>2021-11-02 Gofuzz (Without the Hyphen)  Hyphens There are two different go fuzzing &amp;ldquo;things&amp;rdquo;: go-fuzz and gofuzz. Both are authored by Google employees. The naming is unfortunate but once you know the difference it clears up a lot of confusion.
-gofuzz (note the lack of hyphen) creates Go objects from random sources. go-fuzz does coverage guided mutation fuzzing with some extra tricks. gofuzz provides functionality to use go-fuzz to create objects from input from go-fuzz (are you keeping up with the hyphens?</description>
+gofuzz (note the lack of hyphen) creates Go objects from random sources. go-fuzz does coverage guided mutation fuzzing with some extra tricks. gofuzz provides functionality to use go-fuzz as its source of &amp;ldquo;randomness&amp;rdquo; (are you keeping up with the hyphens?</description>
     </item>
     
   </channel>
