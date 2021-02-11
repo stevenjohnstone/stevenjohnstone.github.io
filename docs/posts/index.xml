@@ -6,7 +6,17 @@
     <description>Recent content in Posts on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Feb 2021 13:32:36 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 11 Feb 2021 16:55:20 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Gofuzz (Without the Hyphen)</title>
+      <link>/posts/go-fuzz-without-the-hyphen/</link>
+      <pubDate>Thu, 11 Feb 2021 16:55:20 +0000</pubDate>
+      
+      <guid>/posts/go-fuzz-without-the-hyphen/</guid>
+      <description>Hyphens There are two different go fuzzing &amp;ldquo;things&amp;rdquo;: go-fuzz and gofuzz. Both are authored by Google employees. The naming is unfortunate but once you know the difference it clears up a lot of confusion.
+gofuzz (note the lack of hyphen) creates Go objects from random sources. go-fuzz does coverage guided mutation fuzzing with some extra tricks. gofuzz provides functionality to use go-fuzz to create objects from input from go-fuzz (are you keeping up with the hyphens?</description>
+    </item>
+    
     <item>
       <title>Luarocks MITM</title>
       <link>/posts/luarocks/</link>

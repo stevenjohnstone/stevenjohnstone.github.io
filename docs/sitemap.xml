@@ -3,12 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/categories/</loc>
-    <lastmod>2021-02-11T13:32:36+00:00</lastmod>
+    <loc>/posts/go-fuzz-without-the-hyphen/</loc>
+    <lastmod>2021-02-11T16:55:20+00:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
+    <lastmod>2021-02-11T16:55:20+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/posts/</loc>
+    <lastmod>2021-02-11T16:55:20+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
     <lastmod>2021-02-11T13:32:36+00:00</lastmod>
   </url>
   
@@ -19,11 +29,6 @@
   
   <url>
     <loc>/posts/luarocks/</loc>
-    <lastmod>2021-02-11T13:32:36+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/posts/</loc>
     <lastmod>2021-02-11T13:32:36+00:00</lastmod>
   </url>
   

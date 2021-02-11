@@ -6,7 +6,17 @@
     <description>Recent content in Home on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Feb 2021 13:32:36 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 11 Feb 2021 16:55:20 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Gofuzz (Without the Hyphen)</title>
+      <link>/posts/go-fuzz-without-the-hyphen/</link>
+      <pubDate>Thu, 11 Feb 2021 16:55:20 +0000</pubDate>
+      
+      <guid>/posts/go-fuzz-without-the-hyphen/</guid>
+      <description>Hyphens There are two different go fuzzing &amp;ldquo;things&amp;rdquo;: go-fuzz and gofuzz. Both are authored by Google employees. The naming is unfortunate but once you know the difference it clears up a lot of confusion.
+gofuzz (note the lack of hyphen) creates Go objects from random sources. go-fuzz does coverage guided mutation fuzzing with some extra tricks. gofuzz provides functionality to use go-fuzz to create objects from input from go-fuzz (are you keeping up with the hyphens?</description>
+    </item>
+    
     <item>
       <title>Luarocks MITM</title>
       <link>/posts/luarocks/</link>
@@ -181,8 +191,8 @@ Over the years, TLS has been an excellent source of examples for such a course.<
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/single/</guid>
-      <description>2021-11-02 Luarocks MITM  Background LuaRocks is a package manager for Lua. The executable &amp;ldquo;luarocks&amp;rdquo; allows users to
- download Lua packages and dependencies from luarocks.org (the default) upload packages to luarocks.org  Several months ago I found a man-in-the-middle vulnerability and reported it to the LuaRocks project via Gitter. I was directed to create a public issue on github. At the time of writing, there&amp;rsquo;s no CVE assigned by the project or github security notification.</description>
+      <description>2021-11-02 Gofuzz (Without the Hyphen)  Hyphens There are two different go fuzzing &amp;ldquo;things&amp;rdquo;: go-fuzz and gofuzz. Both are authored by Google employees. The naming is unfortunate but once you know the difference it clears up a lot of confusion.
+gofuzz (note the lack of hyphen) creates Go objects from random sources. go-fuzz does coverage guided mutation fuzzing with some extra tricks. gofuzz provides functionality to use go-fuzz to create objects from input from go-fuzz (are you keeping up with the hyphens?</description>
     </item>
     
   </channel>

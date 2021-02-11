@@ -49,6 +49,127 @@
 <main id="maincontent">
 
     <h2>2021-11-02
+    Gofuzz (Without the Hyphen)
+    </h2>
+    <h2 id="hyphens">Hyphens</h2>
+<p>There are two different go fuzzing &ldquo;things&rdquo;: <a href="https://github.com/dvyukov/go-fuzz">go-fuzz</a> and <a href="https://github.com/google/gofuzz">gofuzz</a>. Both are authored by Google employees. The naming is unfortunate but once you know the difference it
+clears up a lot of confusion.</p>
+<p>gofuzz (note the lack of hyphen) creates Go objects from random
+sources. go-fuzz does coverage guided mutation fuzzing with
+some <a href="https://github.com/stevenjohnstone/toughfuzzer">extra tricks</a>. gofuzz provides functionality to use go-fuzz to
+create objects from input from go-fuzz (are you keeping up with the hyphens?) e.g. from the gofuzz <a href="https://github.com/google/gofuzz/blob/master/README.md">README</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// +build gofuzz
+</span><span class="c1"></span><span class="kn">package</span> <span class="nx">mypackage</span>
+
+<span class="kn">import</span> <span class="nx">fuzz</span> <span class="s">&#34;github.com/google/gofuzz&#34;</span>
+
+<span class="kd">func</span> <span class="nf">Fuzz</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
+        <span class="nx">fuzz</span><span class="p">.</span><span class="nf">NewFromGoFuzz</span><span class="p">(</span><span class="nx">data</span><span class="p">).</span><span class="nf">Fuzz</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">)</span>
+        <span class="nf">MyFunc</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+<span class="p">}</span>
+</code></pre></div><p>The claim is that you can do &ldquo;easier go-fuzzing&rdquo; in this way. I don&rsquo;t dispute the easy part but is it effective? That&rsquo;s what this post and some follow ups will test.</p>
+<h2 id="why-though">Why Though?</h2>
+<p>Fuzzing functions which take objects as input is an important
+problem to solve. A good solution would, I believe, reduce the barrier to
+entry for fuzzing significantly. A good solution must work well
+with go-fuzz and not break its mutational guided fuzzing, sonar or versifier. That is, it shouldn&rsquo;t break the magic of go-fuzz.</p>
+<h2 id="does-the-readme-example-work">Does the README example work?</h2>
+<p>Let&rsquo;s fill out the example with  &ldquo;MyFunc&rdquo;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// +build gofuzz
+</span><span class="c1"></span><span class="kn">package</span> <span class="nx">mypackage</span>
+
+<span class="kn">import</span> <span class="nx">fuzz</span> <span class="s">&#34;github.com/google/gofuzz&#34;</span>
+
+<span class="kd">func</span> <span class="nf">MyFunc</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">i</span> <span class="o">==</span> <span class="mi">1337</span> <span class="p">{</span>
+        <span class="nb">panic</span><span class="p">(</span><span class="s">&#34;found correct i&#34;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Fuzz</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
+        <span class="nx">fuzz</span><span class="p">.</span><span class="nf">NewFromGoFuzz</span><span class="p">(</span><span class="nx">data</span><span class="p">).</span><span class="nf">Fuzz</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">)</span>
+        <span class="nf">MyFunc</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+<span class="p">}</span>
+</code></pre></div><p>Here, <em>MyFunc</em> will crash if the input is 1337. It&rsquo;s very artificial but represents a key feature of software: some paths
+are taken based on constants in the program and those paths
+may be buggy.</p>
+<p>What are the chances of finding this by feeding <em>MyFunc</em> with random <em>int</em> values? I&rsquo;d expect to have to try 2^63 values before finding the magic 1337. Luckily, go-fuzz isn&rsquo;t feeding
+just random values. It knows about program constants and it gets
+updated when comparisons are made by its <em>sonar</em>. So go-fuzz has
+knowledge of 1337 and will feed it to as inputs in various forms:</p>
+<ul>
+<li>big-endian</li>
+<li>little-endian</li>
+<li>decimal encoded ASCII</li>
+<li>hex encoded ASCII</li>
+</ul>
+<p>That said, will go-fuzz be able to discover the path to a panic
+with <em>NewFromGoFuzz</em> doing its thing? I gave it a try, running it for about an hour seeing no crashes (so the value 1337 wasn&rsquo;t found). This doesn&rsquo;t sound like a long time until you consider that this fuzzer without NewFromGoFuzz in the way finds the value nearly instantly:</p>
+<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="c1">// +build gofuzz
+</span><span class="c1"></span>
+<span class="kn">package</span> <span class="nx">mypackage</span>
+
+<span class="kn">import</span> <span class="s">&#34;encoding/binary&#34;</span>
+
+<span class="kd">func</span> <span class="nf">MyFunc</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">i</span> <span class="o">==</span> <span class="mi">1337</span> <span class="p">{</span>
+        <span class="nb">panic</span><span class="p">(</span><span class="s">&#34;found correct i&#34;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Fuzz</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+    <span class="nx">i</span> <span class="o">:=</span> <span class="nx">binary</span><span class="p">.</span><span class="nx">BigEndian</span><span class="p">.</span><span class="nf">Uint64</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="nf">MyFunc</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+    <span class="k">return</span> <span class="mi">0</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="what-goes-wrong">What Goes Wrong?</h2>
+<p>Let&rsquo;s breakdown how an <em>int</em> is constructed from go-fuzz (remember the hyphen) by gofuzz.</p>
+<p>In <em>NewFromGoFuzz</em>, <a href="https://github.com/google/gofuzz/blob/master/bytesource/bytesource.go#L43">eight bytes</a> are
+taken from <em>data</em> (with zeroes if data is too short).
+These eight bytes are used to seed a random number generator.
+The random number generator is used once the data provided by
+go-fuzz is used up.
+Any remaining bytes are used to construct the <em>int</em> but once
+those run out, the random number generator is used.</p>
+<p>As go-fuzz tries the various encodings of 1337, it&rsquo;s likely that
+the inputs it <em>Fuzz</em> will be less then eight bytes and lost as
+inputs to a random number generator. Eventually, go-fuzz will
+move away from trying these encodings and their mutations.</p>
+<h2 id="can-we-fix-it-yes-we-can">Can We Fix It? Yes We Can</h2>
+<p>Kinda. There&rsquo;s going to me more broken stuff later.</p>
+<p>Applying this patch:</p>
+<div class="highlight"><pre class="chroma"><code class="language-patch" data-lang="patch"><span class="gh">diff --git a/bytesource/bytesource.go b/bytesource/bytesource.go
+</span><span class="gh">index 5bb3659..efd6a65 100644
+</span><span class="gh"></span><span class="gd">--- a/bytesource/bytesource.go
+</span><span class="gd"></span><span class="gi">+++ b/bytesource/bytesource.go
+</span><span class="gi"></span><span class="gu">@@ -40,7 +40,9 @@ func New(input []byte) *ByteSource {
+</span><span class="gu"></span>                fallback: rand.NewSource(0),
+        }
+        if len(input) &gt; 0 {
+<span class="gd">-               s.fallback = rand.NewSource(int64(s.consumeUint64()))
+</span><span class="gd"></span><span class="gi">+               seed := make([]byte, 8)
+</span><span class="gi">+               copy(seed, input)
+</span><span class="gi">+               s.fallback = rand.NewSource(int64(binary.BigEndian.Uint64(seed)))
+</span><span class="gi"></span>        }
+        return s
+ }
+</code></pre></div><p>to gofuzz allows go-fuzz to find a crasher for <em>MyFunc</em> above
+almost instantaneously.</p>
+<p>The improvement here is to keep the bytes used to seed the
+random number generator for use as material to build objects.</p>
+<h2 id="conclusions">Conclusions</h2>
+<p>Gofuzz&rsquo;s (no hyphen) <em>NewFromGoFuzz</em> can break some of the clever
+tricks go-fuzz has to increase code coverage. In particular, it
+appears to break literal and sonar feedback.</p>
+<p>A simple patch can be applied to work around this but, as we&rsquo;ll
+see in later posts, there are more issues to contend with.</p>
+
+
+    <h2>2021-11-02
     Luarocks MITM
     </h2>
     <h2 id="background">Background</h2>
