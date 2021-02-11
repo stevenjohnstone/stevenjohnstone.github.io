@@ -96,7 +96,8 @@ may be buggy.</p>
 <p>What are the chances of finding this by feeding <em>MyFunc</em> with random <em>int</em> values? I&rsquo;d expect to have to try 2^63 values before finding the magic 1337. Luckily, go-fuzz isn&rsquo;t feeding
 just random values. It knows about program constants and it gets
 updated when comparisons are made by its <em>sonar</em>. So go-fuzz has
-knowledge of 1337 and will feed it to as inputs in various forms:</p>
+knowledge of 1337 and will use it as input with various
+encodings:</p>
 <ul>
 <li>big-endian</li>
 <li>little-endian</li>
@@ -125,20 +126,20 @@ with <em>NewFromGoFuzz</em> doing its thing? I gave it a try, running it for abo
 </code></pre></div><h2 id="what-goes-wrong">What Goes Wrong?</h2>
 <p>Let&rsquo;s breakdown how an <em>int</em> is constructed from go-fuzz (remember the hyphen) by gofuzz.</p>
 <p>In <em>NewFromGoFuzz</em>, <a href="https://github.com/google/gofuzz/blob/master/bytesource/bytesource.go#L43">eight bytes</a> are
-taken from <em>data</em> (with zeroes if data is too short).
+taken from <em>data</em> (with zeroes if <em>data</em> is too short).
 These eight bytes are used to seed a random number generator.
 The random number generator is used once the data provided by
 go-fuzz is used up.
 Any remaining bytes are used to construct the <em>int</em> but once
 those run out, the random number generator is used.</p>
 <p>As go-fuzz tries the various encodings of 1337, it&rsquo;s likely that
-the inputs it <em>Fuzz</em> will be less then eight bytes and lost as
+the inputs it passes to <em>Fuzz</em> will be less then eight bytes and lost as
 inputs to a random number generator. Eventually, go-fuzz will
 move away from trying these encodings and their mutations.</p>
-<h2 id="can-we-fix-it-yes-we-can">Can We Fix It? Yes We Can</h2>
+<h2 id="can-we-fix-it-yes-we-can">Can We Fix It? Yes We Can!</h2>
 <p>Kinda. There&rsquo;s going to me more broken stuff later.</p>
 <p>Applying this patch:</p>
-<div class="highlight"><pre class="chroma"><code class="language-patch" data-lang="patch"><span class="gh">diff --git a/bytesource/bytesource.go b/bytesource/bytesource.go
+<div class="highlight"><pre class="chroma"><code class="language-diff" data-lang="diff"><span class="gh">diff --git a/bytesource/bytesource.go b/bytesource/bytesource.go
 </span><span class="gh">index 5bb3659..efd6a65 100644
 </span><span class="gh"></span><span class="gd">--- a/bytesource/bytesource.go
 </span><span class="gd"></span><span class="gi">+++ b/bytesource/bytesource.go
@@ -153,7 +154,7 @@ move away from trying these encodings and their mutations.</p>
 </span><span class="gi"></span>        }
         return s
  }
-</code></pre></div><p>to gofuzz allows go-fuzz to find a crasher for <em>MyFunc</em> above
+</code></pre></div><p>to gofuzz allows go-fuzz to find a crasher (1337) for <em>MyFunc</em>
 almost instantaneously.</p>
 <p>The improvement here is to keep the bytes used to seed the
 random number generator for use as material to build objects.</p>

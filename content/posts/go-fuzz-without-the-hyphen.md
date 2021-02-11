@@ -68,7 +68,8 @@ may be buggy.
 What are the chances of finding this by feeding *MyFunc* with random *int* values? I'd expect to have to try 2^63 values before finding the magic 1337. Luckily, go-fuzz isn't feeding
 just random values. It knows about program constants and it gets
 updated when comparisons are made by its *sonar*. So go-fuzz has
-knowledge of 1337 and will feed it to as inputs in various forms:
+knowledge of 1337 and will use it as input with various
+encodings:
 
 * big-endian
 * little-endian
@@ -103,7 +104,7 @@ func Fuzz(data []byte) int {
 Let's breakdown how an *int* is constructed from go-fuzz (remember the hyphen) by gofuzz.
 
 In *NewFromGoFuzz*, [eight bytes](https://github.com/google/gofuzz/blob/master/bytesource/bytesource.go#L43) are
-taken from *data* (with zeroes if data is too short).
+taken from *data* (with zeroes if *data* is too short).
 These eight bytes are used to seed a random number generator.
 The random number generator is used once the data provided by
 go-fuzz is used up.
@@ -111,17 +112,17 @@ Any remaining bytes are used to construct the *int* but once
 those run out, the random number generator is used.
 
 As go-fuzz tries the various encodings of 1337, it's likely that
-the inputs it *Fuzz* will be less then eight bytes and lost as
+the inputs it passes to *Fuzz* will be less then eight bytes and lost as
 inputs to a random number generator. Eventually, go-fuzz will
 move away from trying these encodings and their mutations.
 
-## Can We Fix It? Yes We Can
+## Can We Fix It? Yes We Can!
 
 Kinda. There's going to me more broken stuff later.
 
 Applying this patch:
 
-```patch
+```diff
 diff --git a/bytesource/bytesource.go b/bytesource/bytesource.go
 index 5bb3659..efd6a65 100644
 --- a/bytesource/bytesource.go
@@ -139,7 +140,7 @@ index 5bb3659..efd6a65 100644
  }
  ```
 
-to gofuzz allows go-fuzz to find a crasher for *MyFunc* above
+to gofuzz allows go-fuzz to find a crasher (1337) for *MyFunc*
 almost instantaneously.
 
 The improvement here is to keep the bytes used to seed the
