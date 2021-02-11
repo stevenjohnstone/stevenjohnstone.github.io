@@ -48,6 +48,95 @@
 
 <main id="maincontent">
 
+    <h2>2021-11-02
+    Luarocks MITM
+    </h2>
+    <h2 id="background">Background</h2>
+<p><a href="https://luarocks.org/">LuaRocks</a> is a package manager for <a href="https://www.lua.org/">Lua</a>. The executable &ldquo;luarocks&rdquo; allows users to</p>
+<ul>
+<li>download Lua packages and dependencies from luarocks.org (the default)</li>
+<li>upload packages to luarocks.org</li>
+</ul>
+<p>Several months ago <a href="https://github.com/luarocks/luarocks/issues/1215">I found a man-in-the-middle vulnerability</a> and reported it to the
+LuaRocks project via Gitter. I was directed to create a public issue on github. At the time of writing, there&rsquo;s no CVE assigned by the project or github security
+notification.</p>
+<p>The bug is that while TLS is used to make connections to luarocks.org, then certificate returned by the site is not checked. This step is crucial in establishing the identity of
+luarocks.org and without it, an attacker who can intercept and
+modify traffic can impersonate the LuaRocks server.</p>
+<h2 id="severity">Severity</h2>
+<p>To give an indication of the severity of the bug, let&rsquo;s breakdown all the opportunities it presents to an attacker.</p>
+<h3 id="scenario-1-victim-is-a-consumer-of-luarocks">Scenario #1: Victim is a consumer of LuaRocks</h3>
+<p>Our victim uses LuaRocks to install packages. If an attacker can be a man-in-the-middle anywhere between the victim and luarocks.org, then
+requested packages can be replaced with malicious versions which can do some pretty nasty stuff. For example, luarocks will run
+arbitrary commands specified in a <a href="https://github.com/luarocks/luarocks/wiki/Rockspec-format">rockspec</a> file. Here&rsquo;s an example of luarocks deleting a directory:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">➜  foo git:<span class="o">(</span>master<span class="o">)</span> ✗ cat foo-scm-1.rockspec 
+<span class="nv">package</span> <span class="o">=</span> <span class="s2">&#34;foo&#34;</span>
+<span class="nv">version</span> <span class="o">=</span> <span class="s2">&#34;scm-1&#34;</span>
+<span class="nb">source</span> <span class="o">=</span> <span class="o">{</span>
+   <span class="nv">url</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
+<span class="o">}</span>
+<span class="nv">description</span> <span class="o">=</span> <span class="o">{</span>
+   <span class="nv">license</span> <span class="o">=</span> <span class="s2">&#34;*** please specify a license ***&#34;</span>
+<span class="o">}</span>
+<span class="nv">dependencies</span> <span class="o">=</span> <span class="o">{}</span>
+<span class="nv">build</span> <span class="o">=</span> <span class="o">{</span>
+   <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;command&#34;</span>,
+   <span class="nv">modules</span> <span class="o">=</span> <span class="o">{}</span>,
+   <span class="nv">build_command</span> <span class="o">=</span> <span class="s2">&#34;rm -rf bar&#34;</span>
+<span class="o">}</span>
+➜  foo git:<span class="o">(</span>master<span class="o">)</span> ✗ ls
+foo-scm-1.rockspec
+➜  foo git:<span class="o">(</span>master<span class="o">)</span> ✗ mkdir bar <span class="c1">#this will get deleted</span>
+➜  foo git:<span class="o">(</span>master<span class="o">)</span> ✗ luarocks make --local        
+rm -rf bar
+foo scm-1 is now installed in /home/vscode/.luarocks <span class="o">(</span>license: *** please specify a license ***<span class="o">)</span>
+
+➜  foo git:<span class="o">(</span>master<span class="o">)</span> ✗ ls
+foo-scm-1.rockspec
+</code></pre></div><p>You&rsquo;re only limited by your imagination and the linux permissions available (which may be root, the &ldquo;&ndash;local&rdquo; flag is not the default).
+My imagination suggests stealing ssh keys, installing backdoors etc.</p>
+<p>If the victim is in the business of creating software and uses LuaRocks as part of a software supply chain, then things get really interesting. It&rsquo;s possible to use this vulnerability to inject malicious code into software products turning this vulnerability for our
+hapless victim into a security problem for their customers, constituents, patients, students etc (not all software is written for corporations).</p>
+<h3 id="scenario-2-victim-is-a-lua-package-maintainer">Scenario #2: Victim is a Lua package maintainer</h3>
+<p>As a man-in-the-middle, the attacker can</p>
+<ul>
+<li>steal the victim&rsquo;s luarocks API key</li>
+<li>modify package uploads in-flight</li>
+</ul>
+<p>This would allow an attacker to attack all the consumers of the
+victim&rsquo;s packages.</p>
+<h2 id="can-this-really-be-exploited">Can This Really Be Exploited?</h2>
+<p>TLS and certificate checking exist for a reason. It&rsquo;s not just about encryption for privacy; <a href="https://docs.google.com/document/pub?id=1roBIeSJsYq3Ntpf6N0PIeeAAvu4ddn7mGo6Qb7aL7ew">it&rsquo;s about establishing the identity of the
+remote party</a>. There are many points where an attacker could redirect your traffic to a malicious server (be a MITM). Any party on the path
+between the victim and the server can act as a man-in-the-middle: I&rsquo;d suggest thinking twice about using an open wifi network with LuaRocks
+before this is fixed. An attacker who can influence DNS responses for luarocks.org can redirect a victim without needing to be a traditional
+man-in-the-middle. There are many ways this can happen: compromise of a local DNS resolver, DNS cache poisoning, DNS misconfiguration,
+compromise of the DNS registrar account for luarocks.org etc. Attackers can get quite creative about chaining together exploits to make something
+greater than the sum of the parts.</p>
+<h2 id="luarock-response">LuaRock Response</h2>
+<p>I&rsquo;ve been on the receiving end of bug reports when running
+a <a href="https://www.first.org/standards/frameworks/psirts/psirt_services_framework_v1.1">PSIRT</a>. I&rsquo;ve also reported my fair share
+of bugs to vendors so I have a good idea of indicators of a
+mature product. Let&rsquo;s start with the basics.</p>
+<blockquote>
+<p>Who do I contact if I find a security issue?</p>
+</blockquote>
+<p>The project doesn&rsquo;t have a prominent set of instructions for
+reporting security bugs. If the bug finder doesn&rsquo;t know who
+to report to, then coordinated responses are difficult. In this
+case I asked on the projects gitter and was told to create a
+public issue on github.</p>
+<p>A simple change LuaRocks could make is to create a <a href="https://github.com/luarocks/luarocks/security/policy">security policy</a> on github. They could also add a <a href="https://securitytxt.org/">security.txt</a> to luarocks.org to point security researchers to their policy.</p>
+<blockquote>
+<p>What should the policy be?</p>
+</blockquote>
+<p>I have strong opinions on that but they aren&rsquo;t really relevant.
+The project is run by volunteers and they can do whatever they
+like: they are free to just shrug off serious vulnerabilities. If
+that&rsquo;s the case, then it&rsquo;s probably best to state that clearly so
+users can choose their own risk.</p>
+
+
     <h2>2021-10-01
     Go-Fuzz
     </h2>

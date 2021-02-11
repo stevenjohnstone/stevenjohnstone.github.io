@@ -6,7 +6,34 @@
     <description>Recent content in Categories on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 03 Jan 2021 20:13:07 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 11 Feb 2021 13:32:36 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>lua</title>
+      <link>/categories/lua/</link>
+      <pubDate>Thu, 11 Feb 2021 13:32:36 +0000</pubDate>
+      
+      <guid>/categories/lua/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>security</title>
+      <link>/categories/security/</link>
+      <pubDate>Thu, 11 Feb 2021 13:32:36 +0000</pubDate>
+      
+      <guid>/categories/security/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>supply chains</title>
+      <link>/categories/supply-chains/</link>
+      <pubDate>Thu, 11 Feb 2021 13:32:36 +0000</pubDate>
+      
+      <guid>/categories/supply-chains/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>startups</title>
       <link>/categories/startups/</link>
@@ -22,15 +49,6 @@
       <pubDate>Sat, 19 Sep 2020 22:18:02 +0000</pubDate>
       
       <guid>/categories/golang/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>security</title>
-      <link>/categories/security/</link>
-      <pubDate>Sat, 19 Sep 2020 22:18:02 +0000</pubDate>
-      
-      <guid>/categories/security/</guid>
       <description></description>
     </item>
     

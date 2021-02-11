@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>supply chains on rm -rf /</title>
+    <link>/categories/supply-chains/</link>
+    <description>Recent content in supply chains on rm -rf /</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 11 Feb 2021 13:32:36 +0000</lastBuildDate><atom:link href="/categories/supply-chains/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Luarocks MITM</title>
+      <link>/posts/luarocks/</link>
+      <pubDate>Thu, 11 Feb 2021 13:32:36 +0000</pubDate>
+      
+      <guid>/posts/luarocks/</guid>
+      <description>Background LuaRocks is a package manager for Lua. The executable &amp;ldquo;luarocks&amp;rdquo; allows users to
+ download Lua packages and dependencies from luarocks.org (the default) upload packages to luarocks.org  Several months ago I found a man-in-the-middle vulnerability and reported it to the LuaRocks project via Gitter. I was directed to create a public issue on github. At the time of writing, there&amp;rsquo;s no CVE assigned by the project or github security notification.</description>
+    </item>
+    
+  </channel>
+</rss>
