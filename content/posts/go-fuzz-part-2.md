@@ -41,7 +41,7 @@ following reads from the data provided by go-fuzz:
 * r.Intn(20) requires at least eight bytes
 * ur.choose(r) calls r.Int63n(), which requires eight bytes
 
-In total, at least n*8 + 1 bytes will be used of the data from go-fuzz
+In total, at least 8*(n + 1) bytes will be used of the data from go-fuzz
 to construct a string. None of the data will survive as
 recognisable fragments.
 For example,
