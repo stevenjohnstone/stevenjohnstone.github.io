@@ -1,6 +1,8 @@
 ---
 title: "Go-Fuzz"
 date: 2021-01-10T20:55:53Z
+categories:
+    - fuzzing
 ---
 
 I've found plenty of "crashers" using [go-fuzz](https://github.com/dvyukov/go-fuzz). If you browse the [trophy cabinet](https://github.com/dvyukov/go-fuzz#trophies), you'll notice that I added a few. With Golang being a memory-safe language, the impact
@@ -40,38 +42,37 @@ if u.Host != "" {
 
 Concretely, here's how you could fuzz SafeRedirectURL (from before the fix):
 
-
 ```golang
 package sourcegraph
 
 import (
-	"net/url"
-	"strings"
+    "net/url"
+    "strings"
 )
 
 func SafeRedirectURL(urlStr string) string {
-	u, err := url.Parse(urlStr)
-	if err != nil || !strings.HasPrefix(u.Path, "/") {
-		return "/"
-	}
+    u, err := url.Parse(urlStr)
+    if err != nil || !strings.HasPrefix(u.Path, "/") {
+        return "/"
+    }
 
-	// Only take certain known-safe fields.
-	u = &url.URL{Path: u.Path, RawQuery: u.RawQuery}
-	return u.String()
+    // Only take certain known-safe fields.
+    u = &url.URL{Path: u.Path, RawQuery: u.RawQuery}
+    return u.String()
 }
 
 func Fuzz(input []byte) int {
-	s := SafeRedirectURL(string(input))
-	u, err := url.Parse(s)
-	if err != nil {
-		return 0
-	}
+    s := SafeRedirectURL(string(input))
+    u, err := url.Parse(s)
+    if err != nil {
+        return 0
+    }
 
-	// if u.Host is non-empty then this is definitely not a relative URL
-	if u.Host != "" {
-		panic(u.Host)
-	}
-	return 1
+    // if u.Host is non-empty then this is definitely not a relative URL
+    if u.Host != "" {
+        panic(u.Host)
+    }
+    return 1
 }
 ```
 

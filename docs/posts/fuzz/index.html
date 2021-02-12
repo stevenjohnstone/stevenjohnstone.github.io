@@ -77,33 +77,33 @@ the function <em>SafeRedirectURL</em> was found to have a corner case which coul
 <div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">sourcegraph</span>
 
 <span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;net/url&#34;</span>
-	<span class="s">&#34;strings&#34;</span>
+    <span class="s">&#34;net/url&#34;</span>
+    <span class="s">&#34;strings&#34;</span>
 <span class="p">)</span>
 
 <span class="kd">func</span> <span class="nf">SafeRedirectURL</span><span class="p">(</span><span class="nx">urlStr</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
-	<span class="nx">u</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">urlStr</span><span class="p">)</span>
-	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="p">!</span><span class="nx">strings</span><span class="p">.</span><span class="nf">HasPrefix</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Path</span><span class="p">,</span> <span class="s">&#34;/&#34;</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">return</span> <span class="s">&#34;/&#34;</span>
-	<span class="p">}</span>
+    <span class="nx">u</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">urlStr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="p">!</span><span class="nx">strings</span><span class="p">.</span><span class="nf">HasPrefix</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Path</span><span class="p">,</span> <span class="s">&#34;/&#34;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&#34;/&#34;</span>
+    <span class="p">}</span>
 
-	<span class="c1">// Only take certain known-safe fields.
-</span><span class="c1"></span>	<span class="nx">u</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">url</span><span class="p">.</span><span class="nx">URL</span><span class="p">{</span><span class="nx">Path</span><span class="p">:</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Path</span><span class="p">,</span> <span class="nx">RawQuery</span><span class="p">:</span> <span class="nx">u</span><span class="p">.</span><span class="nx">RawQuery</span><span class="p">}</span>
-	<span class="k">return</span> <span class="nx">u</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span>
+    <span class="c1">// Only take certain known-safe fields.
+</span><span class="c1"></span>    <span class="nx">u</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">url</span><span class="p">.</span><span class="nx">URL</span><span class="p">{</span><span class="nx">Path</span><span class="p">:</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Path</span><span class="p">,</span> <span class="nx">RawQuery</span><span class="p">:</span> <span class="nx">u</span><span class="p">.</span><span class="nx">RawQuery</span><span class="p">}</span>
+    <span class="k">return</span> <span class="nx">u</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span>
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">Fuzz</span><span class="p">(</span><span class="nx">input</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-	<span class="nx">s</span> <span class="o">:=</span> <span class="nf">SafeRedirectURL</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">input</span><span class="p">))</span>
-	<span class="nx">u</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
-	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-		<span class="k">return</span> <span class="mi">0</span>
-	<span class="p">}</span>
+    <span class="nx">s</span> <span class="o">:=</span> <span class="nf">SafeRedirectURL</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">input</span><span class="p">))</span>
+    <span class="nx">u</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nf">Parse</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="p">}</span>
 
-	<span class="c1">// if u.Host is non-empty then this is definitely not a relative URL
-</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Host</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
-		<span class="nb">panic</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Host</span><span class="p">)</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="mi">1</span>
+    <span class="c1">// if u.Host is non-empty then this is definitely not a relative URL
+</span><span class="c1"></span>    <span class="k">if</span> <span class="nx">u</span><span class="p">.</span><span class="nx">Host</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+        <span class="nb">panic</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Host</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">1</span>
 <span class="p">}</span>
 </code></pre></div><p>The fuzzer will input byte slices which are chosen to increase code coverage. When inputs are found which violate our condition on <em>u.Host</em>, <em>Fuzz</em> will panic
 and the fuzzer will  register this as a <em>crasher</em>.</p>

@@ -6,7 +6,17 @@
     <description>Recent content in Posts on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Feb 2021 16:55:20 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 12 Feb 2021 13:21:22 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Gofuzz Part 2: Strings</title>
+      <link>/posts/go-fuzz-part-2/</link>
+      <pubDate>Fri, 12 Feb 2021 13:21:22 +0000</pubDate>
+      
+      <guid>/posts/go-fuzz-part-2/</guid>
+      <description>In this post, I&amp;rsquo;ll continue going into far too much detail about how NewFromGoFuzz in gofuzz doesn&amp;rsquo;t play nicely with go-fuzz (note the hyphen).
+Strings  It&amp;rsquo;s important to state right up front that a string holds arbitrary bytes. It is not required to hold Unicode text, UTF-8 text, or any other predefined format. As far as the content of a string is concerned, it is exactly equivalent to a slice of bytes.</description>
+    </item>
+    
     <item>
       <title>Gofuzz (Without the Hyphen)</title>
       <link>/posts/go-fuzz-without-the-hyphen/</link>

@@ -6,7 +6,16 @@
     <description>Recent content in Categories on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Feb 2021 13:32:36 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 12 Feb 2021 13:21:22 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>fuzzing</title>
+      <link>/categories/fuzzing/</link>
+      <pubDate>Fri, 12 Feb 2021 13:21:22 +0000</pubDate>
+      
+      <guid>/categories/fuzzing/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>lua</title>
       <link>/categories/lua/</link>

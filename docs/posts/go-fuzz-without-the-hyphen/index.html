@@ -60,10 +60,10 @@ as its source of &ldquo;randomness&rdquo; (are you keeping up with the hyphens?)
 <span class="kn">import</span> <span class="nx">fuzz</span> <span class="s">&#34;github.com/google/gofuzz&#34;</span>
 
 <span class="kd">func</span> <span class="nf">Fuzz</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
-        <span class="nx">fuzz</span><span class="p">.</span><span class="nf">NewFromGoFuzz</span><span class="p">(</span><span class="nx">data</span><span class="p">).</span><span class="nf">Fuzz</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">)</span>
-        <span class="nf">MyFunc</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">0</span>
+    <span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
+    <span class="nx">fuzz</span><span class="p">.</span><span class="nf">NewFromGoFuzz</span><span class="p">(</span><span class="nx">data</span><span class="p">).</span><span class="nf">Fuzz</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">)</span>
+    <span class="nf">MyFunc</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">0</span>
 <span class="p">}</span>
 </code></pre></div><p>In theory, this allows us to fuzz functions which take objects
 other than byte slices (or objects like strings which are
@@ -88,10 +88,10 @@ with go-fuzz and not break its mutational guided fuzzing, sonar or versifier. Th
 <span class="p">}</span>
 
 <span class="kd">func</span> <span class="nf">Fuzz</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
-        <span class="nx">fuzz</span><span class="p">.</span><span class="nf">NewFromGoFuzz</span><span class="p">(</span><span class="nx">data</span><span class="p">).</span><span class="nf">Fuzz</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">)</span>
-        <span class="nf">MyFunc</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">0</span>
+    <span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
+    <span class="nx">fuzz</span><span class="p">.</span><span class="nf">NewFromGoFuzz</span><span class="p">(</span><span class="nx">data</span><span class="p">).</span><span class="nf">Fuzz</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">)</span>
+    <span class="nf">MyFunc</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">0</span>
 <span class="p">}</span>
 </code></pre></div><p>Here, <em>MyFunc</em> will crash if the input is 1337. It&rsquo;s very artificial but represents a key feature of software: some paths
 are taken based on constants in the program and those paths

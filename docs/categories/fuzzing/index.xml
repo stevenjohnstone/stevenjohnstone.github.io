@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>fuzzing on rm -rf /</title>
+    <link>/categories/fuzzing/</link>
+    <description>Recent content in fuzzing on rm -rf /</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 12 Feb 2021 13:21:22 +0000</lastBuildDate><atom:link href="/categories/fuzzing/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Gofuzz Part 2: Strings</title>
+      <link>/posts/go-fuzz-part-2/</link>
+      <pubDate>Fri, 12 Feb 2021 13:21:22 +0000</pubDate>
+      
+      <guid>/posts/go-fuzz-part-2/</guid>
+      <description>In this post, I&amp;rsquo;ll continue going into far too much detail about how NewFromGoFuzz in gofuzz doesn&amp;rsquo;t play nicely with go-fuzz (note the hyphen).
+Strings  It&amp;rsquo;s important to state right up front that a string holds arbitrary bytes. It is not required to hold Unicode text, UTF-8 text, or any other predefined format. As far as the content of a string is concerned, it is exactly equivalent to a slice of bytes.</description>
+    </item>
+    
+    <item>
+      <title>Gofuzz (Without the Hyphen)</title>
+      <link>/posts/go-fuzz-without-the-hyphen/</link>
+      <pubDate>Thu, 11 Feb 2021 16:55:20 +0000</pubDate>
+      
+      <guid>/posts/go-fuzz-without-the-hyphen/</guid>
+      <description>Hyphens There are two different go fuzzing &amp;ldquo;things&amp;rdquo;: go-fuzz and gofuzz. Both are authored by Google employees. The naming is unfortunate but once you know the difference it clears up a lot of confusion.
+gofuzz (note the lack of hyphen) creates Go objects from random sources. go-fuzz does coverage guided mutation fuzzing with some extra tricks. gofuzz provides functionality to use go-fuzz as its source of &amp;ldquo;randomness&amp;rdquo; (are you keeping up with the hyphens?</description>
+    </item>
+    
+    <item>
+      <title>Go-Fuzz</title>
+      <link>/posts/fuzz/</link>
+      <pubDate>Sun, 10 Jan 2021 20:55:53 +0000</pubDate>
+      
+      <guid>/posts/fuzz/</guid>
+      <description>I&amp;rsquo;ve found plenty of &amp;ldquo;crashers&amp;rdquo; using go-fuzz. If you browse the trophy cabinet, you&amp;rsquo;ll notice that I added a few. With Golang being a memory-safe language, the impact of these bugs is reduced to denial of service vectors. I&amp;rsquo;d like to point out here that fuzzing can be used for so much more than shaking out off-by-one errors: if we know invariants or properties that our function outputs must satisfy, then we can build fuzz tests to check for violations.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -2,6 +2,8 @@
 title: "Gofuzz (Without the Hyphen)"
 date: 2021-02-11T16:55:20Z
 draft: false
+categories:
+    - fuzzing
 ---
 
 ## Hyphens
@@ -21,10 +23,10 @@ package mypackage
 import fuzz "github.com/google/gofuzz"
 
 func Fuzz(data []byte) int {
-        var i int
-        fuzz.NewFromGoFuzz(data).Fuzz(&i)
-        MyFunc(i)
-        return 0
+    var i int
+    fuzz.NewFromGoFuzz(data).Fuzz(&i)
+    MyFunc(i)
+    return 0
 }
 ```
 
@@ -58,10 +60,10 @@ func MyFunc(i int) {
 }
 
 func Fuzz(data []byte) int {
-        var i int
-        fuzz.NewFromGoFuzz(data).Fuzz(&i)
-        MyFunc(i)
-        return 0
+    var i int
+    fuzz.NewFromGoFuzz(data).Fuzz(&i)
+    MyFunc(i)
+    return 0
 }
 ```
 

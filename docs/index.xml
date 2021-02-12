@@ -6,7 +6,17 @@
     <description>Recent content in Home on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Feb 2021 16:55:20 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 12 Feb 2021 13:21:22 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Gofuzz Part 2: Strings</title>
+      <link>/posts/go-fuzz-part-2/</link>
+      <pubDate>Fri, 12 Feb 2021 13:21:22 +0000</pubDate>
+      
+      <guid>/posts/go-fuzz-part-2/</guid>
+      <description>In this post, I&amp;rsquo;ll continue going into far too much detail about how NewFromGoFuzz in gofuzz doesn&amp;rsquo;t play nicely with go-fuzz (note the hyphen).
+Strings  It&amp;rsquo;s important to state right up front that a string holds arbitrary bytes. It is not required to hold Unicode text, UTF-8 text, or any other predefined format. As far as the content of a string is concerned, it is exactly equivalent to a slice of bytes.</description>
+    </item>
+    
     <item>
       <title>Gofuzz (Without the Hyphen)</title>
       <link>/posts/go-fuzz-without-the-hyphen/</link>
@@ -191,8 +201,8 @@ Over the years, TLS has been an excellent source of examples for such a course.<
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/single/</guid>
-      <description>2021-11-02 Gofuzz (Without the Hyphen)  Hyphens There are two different go fuzzing &amp;ldquo;things&amp;rdquo;: go-fuzz and gofuzz. Both are authored by Google employees. The naming is unfortunate but once you know the difference it clears up a lot of confusion.
-gofuzz (note the lack of hyphen) creates Go objects from random sources. go-fuzz does coverage guided mutation fuzzing with some extra tricks. gofuzz provides functionality to use go-fuzz as its source of &amp;ldquo;randomness&amp;rdquo; (are you keeping up with the hyphens?</description>
+      <description>2021-12-02 Gofuzz Part 2: Strings  In this post, I&amp;rsquo;ll continue going into far too much detail about how NewFromGoFuzz in gofuzz doesn&amp;rsquo;t play nicely with go-fuzz (note the hyphen).
+Strings  It&amp;rsquo;s important to state right up front that a string holds arbitrary bytes. It is not required to hold Unicode text, UTF-8 text, or any other predefined format. As far as the content of a string is concerned, it is exactly equivalent to a slice of bytes.</description>
     </item>
     
   </channel>
