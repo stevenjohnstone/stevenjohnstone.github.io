@@ -3,6 +3,21 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/post/2021/02/24/autism/</loc>
+    <lastmod>2021-02-24T13:50:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2021-02-24T13:50:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2021-02-24T13:50:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/categories/</loc>
     <lastmod>2021-02-12T13:21:22+00:00</lastmod>
   </url>
@@ -14,11 +29,6 @@
   
   <url>
     <loc>/posts/go-fuzz-part-2/</loc>
-    <lastmod>2021-02-12T13:21:22+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/</loc>
     <lastmod>2021-02-12T13:21:22+00:00</lastmod>
   </url>
   
