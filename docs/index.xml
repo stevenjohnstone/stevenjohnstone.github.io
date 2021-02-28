@@ -6,7 +6,19 @@
     <description>Recent content in Home on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 24 Feb 2021 13:50:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 27 Feb 2021 23:47:04 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ghidra High-DPI on Ubuntu</title>
+      <link>/posts/ghidra-dpi/</link>
+      <pubDate>Sat, 27 Feb 2021 23:47:04 +0000</pubDate>
+      
+      <guid>/posts/ghidra-dpi/</guid>
+      <description>Problem The fonts are scaled so as to be unreadable (for me).
+Solution Find the file support/launch.properties where you installed Ghidra and edit the line
+VMARGS_LINUX=-Dsun.java2d.uiScale=1 to
+VMARGS_LINUX=-Dsun.java2d.uiScale=2 </description>
+    </item>
+    
     <item>
       <title>Autism</title>
       <link>/post/2021/02/24/autism/</link>
@@ -211,8 +223,11 @@ Over the years, TLS has been an excellent source of examples for such a course.<
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/single/</guid>
-      <description>2021-24-02 Autism  I have autism. I&amp;rsquo;m high-functioning. I went far in education and have had success in employment. That&amp;rsquo;s a big deal given the depressing statistics. In a sense, I&amp;rsquo;m outing myself online.
-In a cliched autistic move, I&amp;rsquo;m going to list things which make me a bit different from the &amp;ldquo;average person&amp;rdquo;, should such a person exist. Partly, this is to get my own thoughts straight about this.</description>
+      <description>2021-27-02 Ghidra High-DPI on Ubuntu  Problem The fonts are scaled so as to be unreadable (for me).
+Solution Find the file support/launch.properties where you installed Ghidra and edit the line
+VMARGS_LINUX=-Dsun.java2d.uiScale=1 to
+VMARGS_LINUX=-Dsun.java2d.uiScale=2 2021-24-02 Autism  I have autism. I&amp;rsquo;m high-functioning. I went far in education and have had success in employment. That&amp;rsquo;s a big deal given the depressing statistics. In a sense, I&amp;rsquo;m outing myself online.
+In a cliched autistic move, I&amp;rsquo;m going to list things which make me a bit different from the &amp;ldquo;average person&amp;rdquo;, should such a person exist.</description>
     </item>
     
   </channel>

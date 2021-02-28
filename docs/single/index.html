@@ -48,6 +48,20 @@
 
 <main id="maincontent">
 
+    <h2>2021-27-02
+    Ghidra High-DPI on Ubuntu
+    </h2>
+    <h2 id="problem">Problem</h2>
+<p><img src="/images/highdpi/scale1-small.jpg#center" alt="small fonts"></p>
+<p>The fonts are scaled so as to be unreadable (for me).</p>
+<h2 id="solution">Solution</h2>
+<p>Find the file support/launch.properties where you installed Ghidra and edit the line</p>
+<pre><code>VMARGS_LINUX=-Dsun.java2d.uiScale=1
+</code></pre><p>to</p>
+<pre><code>VMARGS_LINUX=-Dsun.java2d.uiScale=2
+</code></pre><p><img src="/images/highdpi/scale2-small.jpg#center" alt="larger fonts"></p>
+
+
     <h2>2021-24-02
     Autism
     </h2>

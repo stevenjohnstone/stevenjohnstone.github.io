@@ -1,259 +1,160 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
+    <loc>/posts/ghidra-dpi/</loc>
+    <lastmod>2021-02-27T23:47:04+00:00</lastmod>
+  </url><url>
+    <loc>/</loc>
+    <lastmod>2021-02-27T23:47:04+00:00</lastmod>
+  </url><url>
+    <loc>/posts/</loc>
+    <lastmod>2021-02-27T23:47:04+00:00</lastmod>
+  </url><url>
     <loc>/post/2021/02/24/autism/</loc>
     <lastmod>2021-02-24T13:50:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/</loc>
-    <lastmod>2021-02-24T13:50:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/post/</loc>
     <lastmod>2021-02-24T13:50:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/</loc>
     <lastmod>2021-02-12T13:21:22+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/fuzzing/</loc>
     <lastmod>2021-02-12T13:21:22+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/go-fuzz-part-2/</loc>
     <lastmod>2021-02-12T13:21:22+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/posts/</loc>
-    <lastmod>2021-02-12T13:21:22+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/go-fuzz-without-the-hyphen/</loc>
     <lastmod>2021-02-11T16:55:20+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/lua/</loc>
     <lastmod>2021-02-11T13:32:36+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/luarocks/</loc>
     <lastmod>2021-02-11T13:32:36+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/security/</loc>
     <lastmod>2021-02-11T13:32:36+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/supply-chains/</loc>
     <lastmod>2021-02-11T13:32:36+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/fuzz/</loc>
     <lastmod>2021-01-10T20:55:53+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/golang-testing/</loc>
     <lastmod>2021-01-06T14:03:52+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/weekend-projects/</loc>
     <lastmod>2021-01-05T23:27:23+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/tis-100/</loc>
     <lastmod>2021-01-04T19:28:33+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/startups/</loc>
     <lastmod>2021-01-03T20:13:07+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/codian1/</loc>
     <lastmod>2021-01-03T20:13:07+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/types2/</loc>
     <lastmod>2021-01-02T19:37:42+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/types/</loc>
     <lastmod>2021-01-01T19:36:58+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/cve-2020-7711/</loc>
     <lastmod>2020-09-19T22:18:02+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/cve-2020-7731/</loc>
     <lastmod>2020-09-19T22:18:02+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/golang/</loc>
     <lastmod>2020-09-19T22:18:02+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/snyk/</loc>
     <lastmod>2020-09-19T22:18:02+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/</loc>
     <lastmod>2020-09-19T22:18:02+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/expectation/</loc>
     <lastmod>2020-02-08T18:40:13+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/four-of-a-kind/</loc>
     <lastmod>2020-02-08T18:40:13+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/hypergeometric/</loc>
     <lastmod>2020-02-08T18:40:13+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/mathematics/</loc>
     <lastmod>2020-02-08T18:40:13+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/nerd-snipe/</loc>
     <lastmod>2020-02-08T18:40:13+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/probability/</loc>
     <lastmod>2020-02-08T18:40:13+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/puzzles/</loc>
     <lastmod>2020-02-08T18:40:13+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/random-variable/</loc>
     <lastmod>2020-02-08T18:40:13+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/symmetry/</loc>
     <lastmod>2020-02-08T18:40:13+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/about/</loc>
     <lastmod>2020-01-29T10:40:48+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/bugs/</loc>
     <lastmod>2020-01-28T19:16:22+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/panic/</loc>
     <lastmod>2020-01-28T19:16:22+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/panic/</loc>
     <lastmod>2020-01-28T19:16:22+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/assembly-language/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/reverse-engineering/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/sat/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/unicorn-engine/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/xchg-raxrax/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/xchg-rax-rax/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/z3/</loc>
     <lastmod>2019-01-12T17:16:29+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/so_reuaseaddr-golang/</loc>
     <lastmod>2017-10-13T13:53:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/bugs/</loc>
     <lastmod>2017-10-13T11:39:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/file-descriptor-go/</loc>
     <lastmod>2017-10-13T11:39:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/cve-2017-15042/</loc>
     <lastmod>2017-10-07T14:46:09+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/posts/cve-2017-15042/</loc>
     <lastmod>2017-10-07T14:46:09+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/single/</loc>
   </url>
-  
 </urlset>

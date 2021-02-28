@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Weaponised Autism">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ghidra High-DPI on Ubuntu" />
+    <meta property="og:url" content="/posts/ghidra-dpi/" />
+    
+   <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+    <title>Ghidra High-DPI on Ubuntu | rm -rf /</title>
+   
+
+<link rel="stylesheet" type="text/css" href="/css/style.css">
+<link rel="stylesheet" type="text/css" href="/css/fonts.css">
+<link rel="stylesheet" href="/css/syntax/syntax.css" />
+
+    
+  </head>
+
+  <body>
+    <a class="skip-link" href="#maincontent">Skip to main</a>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/about">About</a></li>
+      
+      <li><a href="/categories/">Categories</a></li>
+      
+      <li><a href="/tags/">Tags</a></li>
+      
+      <li><a href="/index.xml">Subscribe</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Ghidra High-DPI on Ubuntu</span></h1>
+
+<h2 class="date">2021/02/27</h2>
+</div>
+
+<main id="maincontent">
+<h2 id="problem">Problem</h2>
+<p><img src="/images/highdpi/scale1-small.jpg#center" alt="small fonts"></p>
+<p>The fonts are scaled so as to be unreadable (for me).</p>
+<h2 id="solution">Solution</h2>
+<p>Find the file support/launch.properties where you installed Ghidra and edit the line</p>
+<pre><code>VMARGS_LINUX=-Dsun.java2d.uiScale=1
+</code></pre><p>to</p>
+<pre><code>VMARGS_LINUX=-Dsun.java2d.uiScale=2
+</code></pre><p><img src="/images/highdpi/scale2-small.jpg#center" alt="larger fonts"></p>
+
+</main>
+
+  <footer>
+  
+  
+  <hr/>
+  © Stevie Johnstone 2017-2020 | <a href="https://github.com/stevenjohnstone">Github</a>
+  
+  </footer>
+  </body>
+</html>
+

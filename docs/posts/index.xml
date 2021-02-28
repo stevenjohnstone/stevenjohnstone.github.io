@@ -6,7 +6,19 @@
     <description>Recent content in Posts on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 12 Feb 2021 13:21:22 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 27 Feb 2021 23:47:04 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ghidra High-DPI on Ubuntu</title>
+      <link>/posts/ghidra-dpi/</link>
+      <pubDate>Sat, 27 Feb 2021 23:47:04 +0000</pubDate>
+      
+      <guid>/posts/ghidra-dpi/</guid>
+      <description>Problem The fonts are scaled so as to be unreadable (for me).
+Solution Find the file support/launch.properties where you installed Ghidra and edit the line
+VMARGS_LINUX=-Dsun.java2d.uiScale=1 to
+VMARGS_LINUX=-Dsun.java2d.uiScale=2 </description>
+    </item>
+    
     <item>
       <title>Gofuzz Part 2: Strings</title>
       <link>/posts/go-fuzz-part-2/</link>
