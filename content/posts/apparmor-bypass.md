@@ -74,7 +74,7 @@ in ~/.aws:
 
 ![user namespace bypass](/images/apparmorbypass/mount.gif#center)
 
-Here, a user namespace is created running
+Here, a user namespace is created
 from our "bosh" shell. ~/.aws is bind mounted
 to ~/target and the file "foo" is copied. So,
 if docker (or anything which can run docker) is compromised, then the AppArmor profile

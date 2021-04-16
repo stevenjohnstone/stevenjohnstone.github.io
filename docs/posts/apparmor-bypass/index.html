@@ -98,7 +98,7 @@ the deny rule</p>
 </code></pre></div><p>Here&rsquo;s an example of (ab)using user namespaces to access secrets
 in ~/.aws:</p>
 <p><img src="/images/apparmorbypass/mount.gif#center" alt="user namespace bypass"></p>
-<p>Here, a user namespace is created running
+<p>Here, a user namespace is created
 from our &ldquo;bosh&rdquo; shell. ~/.aws is bind mounted
 to ~/target and the file &ldquo;foo&rdquo; is copied. So,
 if docker (or anything which can run docker) is compromised, then the AppArmor profile
