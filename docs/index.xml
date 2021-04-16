@@ -8,7 +8,7 @@
     <language>en-us</language>
     <lastBuildDate>Fri, 16 Apr 2021 08:59:40 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Apparmor Gotcha</title>
+      <title>AppArmor Gotcha</title>
       <link>/posts/apparmor-bypass/</link>
       <pubDate>Fri, 16 Apr 2021 08:59:40 +0000</pubDate>
       
@@ -234,7 +234,7 @@ Over the years, TLS has been an excellent source of examples for such a course.<
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/single/</guid>
-      <description>2021-16-04 Apparmor Gotcha   I use Ubuntu. Mileage may vary on other distributions
+      <description>2021-16-04 AppArmor Gotcha   I use Ubuntu. Mileage may vary on other distributions
  Protecting Secrets in Home With AppArmor Plenty of applications stash secrets in sub-directories of home. You may not even notice as the directories are sometimes hidden e.g ~/.aws may contain API keys for AWS. Firefox, for example, has no real need to access API keys for cloud services so I have added the following to /etc/apparmor.</description>
     </item>
     

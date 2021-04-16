@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Weaponised Autism">
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Apparmor Gotcha" />
+    <meta property="og:title" content="AppArmor Gotcha" />
     <meta property="og:url" content="/posts/apparmor-bypass/" />
     
    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
 
-    <title>Apparmor Gotcha | rm -rf /</title>
+    <title>AppArmor Gotcha | rm -rf /</title>
    
 
 <link rel="stylesheet" type="text/css" href="/css/style.css">
@@ -41,7 +41,7 @@
     </nav>
 
 <div class="article-meta">
-<h1><span class="title">Apparmor Gotcha</span></h1>
+<h1><span class="title">AppArmor Gotcha</span></h1>
 
 <h2 class="date">2021/04/16</h2>
 </div>
@@ -103,6 +103,29 @@ from our &ldquo;bosh&rdquo; shell. ~/.aws is bind mounted
 to ~/target and the file &ldquo;foo&rdquo; is copied. So,
 if docker (or anything which can run docker) is compromised, then the AppArmor profile
 isn&rsquo;t enough to protect files in ~/.aws.</p>
+<h2 id="rootless-docker-impacts-apparmor-rules">Rootless Docker Impacts AppArmor Rules</h2>
+<p>If you have non-rootless docker installed and the your user has access to the docker socket,
+the user has root access. For example, by running</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">docker run -it -v /:/root alpine /bin/sh
+</code></pre></div><p>allows access to all the root-filesystem at /root in the container. As the container is running as root, you can do
+whatever you like to the system: steal files, reset passwords,
+create backdoor accounts etc.</p>
+<p>With rootless-docker, access will be limited as the user inside
+the container (running /bin/sh) is an unpriviliged user e.g.</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">/ <span class="c1"># whoami</span>
+root
+/ <span class="c1"># cat /root/etc/shadow</span>
+cat: can<span class="s1">&#39;t open &#39;</span>/root/etc/shadow<span class="err">&#39;</span>: Permission denied
+/ <span class="c1"># </span>
+</code></pre></div><p>The user is called &ldquo;root&rdquo; but is mapped to an unprivileged user
+and so /root/etc/shadow is off limits.</p>
+<p>Although rootless-docker is an improvement from a security point of view, AppArmor profile
+writers should be aware that access to the docker socket (/run/user/1000/docker.sock on my
+system) allows file access rules to be bypassed. In the running example of protecting ~/.aws,
+running the following (or driving the docker API in an equivalent way)</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">docker run --rm -v <span class="s2">&#34;</span><span class="nv">$HOME</span><span class="s2">&#34;</span>:/homecopy alpine /bin/sh -c <span class="s2">&#34;cp -R /homecopy/.aws /homecopy/awscopy&#34;</span>
+</code></pre></div><p>copies the directory ~/.aws to ~/awscopy and the secrets therein are no longer protected by
+the AppArmor profile.</p>
 <h2 id="is-this-a-bug">Is This A Bug?</h2>
 <p>I think it&rsquo;s at least a very sharp-edge you could cut yourself on when writing AppArmor profiles
 when user namespaces and bind mounts are in the mix.</p>
