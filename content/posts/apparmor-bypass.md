@@ -80,22 +80,20 @@ to ~/target and the file "foo" is copied. So,
 if docker (or anything which can run docker) is compromised, then the AppArmor profile
 isn't enough to protect files in ~/.aws.
 
-## Rootless Docker Impacts AppArmor Rules
+## Docker Impacts AppArmor Rules
 
-If you have non-rootless docker installed and the your user has access to the docker socket,
+If you have non-rootless docker installed and your user has access to the docker socket,
 the user has root access. For example, by running
 
 ```shell
 docker run -it -v /:/root alpine /bin/sh
 ```
 
-allows access to all the root-filesystem at /root in the container. As the container is running as root, you can do
-whatever you like to the system: steal files, reset passwords,
-create backdoor accounts etc.
+you drop into a shell as root with the host computer's root-filesystem available at /root.
+You can no do whatever you like to the system: steal files, reset passwords,
+create backdoor accounts, modify local logs to hide the intrusion etc.
 
-With rootless-docker, access will be limited as the user inside
-the container (running /bin/sh) is an unpriviliged user e.g.
-
+With rootless-docker, the user in the container shell isn't root but the normal user account, even if "whoami" claims otherwise:
 ```shell
 / # whoami
 root
@@ -104,8 +102,7 @@ cat: can't open '/root/etc/shadow': Permission denied
 / # 
 ```
 
-The user is called "root" but is mapped to an unprivileged user
-and so /root/etc/shadow is off limits.
+The user is called "root" but is mapped to our normal, unprivileged user account and so /root/etc/shadow is off limits.
 
 Although rootless-docker is an improvement from a security point of view, AppArmor profile
 writers should be aware that access to the docker socket (/run/user/1000/docker.sock on my
@@ -118,6 +115,8 @@ docker run --rm -v "$HOME":/homecopy alpine /bin/sh -c "cp -R /homecopy/.aws /ho
 
 copies the directory ~/.aws to ~/awscopy and the secrets therein are no longer protected by
 the AppArmor profile.
+
+> AppArmor profile writers should restrict access the docker socket unless it is required. If it is required, it should be noted that pathname based restrictions can be bypassed.
 
 ## Is This A Bug?
 
