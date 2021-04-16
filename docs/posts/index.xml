@@ -6,7 +6,18 @@
     <description>Recent content in Posts on rm -rf /</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 27 Feb 2021 23:47:04 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 16 Apr 2021 08:59:40 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Apparmor Gotcha</title>
+      <link>/posts/apparmor-bypass/</link>
+      <pubDate>Fri, 16 Apr 2021 08:59:40 +0000</pubDate>
+      
+      <guid>/posts/apparmor-bypass/</guid>
+      <description>I use Ubuntu. Mileage may vary on other distributions
+ Protecting Secrets in Home With AppArmor Plenty of applications stash secrets in sub-directories of home. You may not even notice as the directories are sometimes hidden e.g ~/.aws may contain API keys for AWS. Firefox, for example, has no real need to access API keys for cloud services so I have added the following to /etc/apparmor.d/local/usr.bin.firefox:
+# Site-specific additions and overrides for usr.</description>
+    </item>
+    
     <item>
       <title>Ghidra High-DPI on Ubuntu</title>
       <link>/posts/ghidra-dpi/</link>

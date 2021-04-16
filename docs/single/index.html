@@ -48,6 +48,72 @@
 
 <main id="maincontent">
 
+    <h2>2021-16-04
+    Apparmor Gotcha
+    </h2>
+    <blockquote>
+<p>I use Ubuntu. Mileage may vary on other distributions</p>
+</blockquote>
+<h2 id="protecting-secrets-in-home-with-apparmor">Protecting Secrets in Home With AppArmor</h2>
+<p>Plenty of applications stash secrets in sub-directories of home. You may
+not even notice as the directories are sometimes hidden e.g ~/.aws may contain
+API keys for AWS. Firefox, for example, has
+no real need to access API keys for cloud services
+so I have added the following to /etc/apparmor.d/local/usr.bin.firefox:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># Site-specific additions and overrides for usr.bin.firefox.</span>
+<span class="c1"># For more details, please see /etc/apparmor.d/local/README.</span>
+
+<span class="c1"># covers google and firebase credentials</span>
+deny @<span class="o">{</span>HOME<span class="o">}</span>/.config/ rmkl,
+deny @<span class="o">{</span>HOME<span class="o">}</span>/.config/** rwmkl,
+<span class="c1"># aws has its own directory</span>
+deny @<span class="o">{</span>HOME<span class="o">}</span>/.aws/ rwmkl,
+deny @<span class="o">{</span>HOME<span class="o">}</span>/.aws/** rwmkl,
+</code></pre></div><p>When I use Firefox to browse files in my home dir, permission to access ~/.aws is denied because AppArmor prevents access as intended:</p>
+<p><img src="/images/apparmorbypass/denied.png#center" alt="firefox permission denied"></p>
+<p>The idea is to limit the impact of Firefox
+being compromised.</p>
+<h2 id="paths-and-namespaces">Paths and Namespaces</h2>
+<p>I use <a href="https://docs.docker.com/engine/security/rootless/">rootless docker</a> which requires <a href="https://man7.org/linux/man-pages/man7/user_namespaces.7.html">user
+namespace</a> functionality to operate without
+root. It&rsquo;s a huge improvement over the usual
+insecure workflow with docker where any program running as an unprivileged user
+can start up a container running as root with access to all system resources. As an extra layer of security, I was interested in writing an apparmor profile for docker
+and the containers it launches which would
+protect secrets in my home directory.</p>
+<p>To test the profile, I made of copy of bash called &ldquo;bosh&rdquo; and wrote a basic profile which would
+resemble what I had in mind for docker:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1">#include &lt;tunables/global&gt;</span>
+profile bosh /home/vagrant/bosh <span class="o">{</span>
+  <span class="c1"># Allow all rules</span>
+  capability,
+  mount,
+  file,
+  unix,
+  ptrace,
+  /dev/pts/* rw,
+  <span class="c1"># aws has its own directory</span>
+  audit deny @<span class="o">{</span>HOME<span class="o">}</span>/.aws/<span class="o">{</span>,**<span class="o">}</span> mrkwl,
+<span class="o">}</span>
+</code></pre></div><p>Docker needs to be able to do bind mounts and this causes us
+problems: the directory ~/.aws can be bind mounted to, say, ~/target/. The contents of ~/.aws will be available at ~/target and, crucially, will be considered by AppArmor to not match
+the deny rule</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">audit deny @<span class="o">{</span>HOME<span class="o">}</span>/.aws/<span class="o">{</span>,**<span class="o">}</span> mrkwl,
+</code></pre></div><p>Here&rsquo;s an example of (ab)using user namespaces to access secrets
+in ~/.aws:</p>
+<p><img src="/images/apparmorbypass/mount.gif#center" alt="user namespace bypass"></p>
+<p>Here, a user namespace is created running
+from our &ldquo;bosh&rdquo; shell. ~/.aws is bind mounted
+to ~/target and the file &ldquo;foo&rdquo; is copied. So,
+if docker (or anything which can call run dokcer) is compromised, then the AppArmor profile
+isn&rsquo;t enough to protect files in ~/.aws.</p>
+<h2 id="is-this-a-bug">Is This A Bug?</h2>
+<p>I think it&rsquo;s at least a very sharp-edge you could cut yourself on when writing apparmor profiles
+when user namespaces and bind mounts are in the mix.</p>
+<p>Maybe the whole concept of controlling access by the filename is flawed? Maybe SELinux labels are
+more appropriate for modern container setups?</p>
+
+
     <h2>2021-27-02
     Ghidra High-DPI on Ubuntu
     </h2>
