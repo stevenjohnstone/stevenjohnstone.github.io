@@ -77,7 +77,7 @@ in ~/.aws:
 Here, a user namespace is created running
 from our "bosh" shell. ~/.aws is bind mounted
 to ~/target and the file "foo" is copied. So,
-if docker (or anything which can call run dokcer) is compromised, then the AppArmor profile
+if docker (or anything which can run docker) is compromised, then the AppArmor profile
 isn't enough to protect files in ~/.aws.
 
 ## Is This A Bug?

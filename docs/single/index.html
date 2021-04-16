@@ -105,7 +105,7 @@ in ~/.aws:</p>
 <p>Here, a user namespace is created running
 from our &ldquo;bosh&rdquo; shell. ~/.aws is bind mounted
 to ~/target and the file &ldquo;foo&rdquo; is copied. So,
-if docker (or anything which can call run dokcer) is compromised, then the AppArmor profile
+if docker (or anything which can run docker) is compromised, then the AppArmor profile
 isn&rsquo;t enough to protect files in ~/.aws.</p>
 <h2 id="is-this-a-bug">Is This A Bug?</h2>
 <p>I think it&rsquo;s at least a very sharp-edge you could cut yourself on when writing AppArmor profiles
