@@ -19,7 +19,7 @@ so I have added the following to /etc/apparmor.d/local/usr.bin.firefox:
 # For more details, please see /etc/apparmor.d/local/README.
 
 # covers google and firebase credentials
-deny @{HOME}/.config/ rmkl,
+deny @{HOME}/.config/ rwmkl,
 deny @{HOME}/.config/** rwmkl,
 # aws has its own directory
 deny @{HOME}/.aws/ rwmkl,
@@ -90,11 +90,12 @@ docker run -it -v /:/root alpine /bin/sh
 ```
 
 you drop into a shell as root with the host computer's root-filesystem available at /root.
-You can no do whatever you like to the system: steal files, reset passwords,
+You can now do whatever you like to the system: steal files, reset passwords,
 create backdoor accounts, modify local logs to hide the intrusion etc.
 
 With rootless-docker, the user in the container shell isn't root but the normal user account, even if "whoami" claims otherwise:
-```shell
+
+```
 / # whoami
 root
 / # cat /root/etc/shadow
@@ -102,7 +103,7 @@ cat: can't open '/root/etc/shadow': Permission denied
 / # 
 ```
 
-The user is called "root" but is mapped to our normal, unprivileged user account and so /root/etc/shadow is off limits.
+The user is called "root" inside the container but is mapped to our normal, unprivileged user account and so /root/etc/shadow is off limits.
 
 Although rootless-docker is an improvement from a security point of view, AppArmor profile
 writers should be aware that access to the docker socket (/run/user/1000/docker.sock on my
