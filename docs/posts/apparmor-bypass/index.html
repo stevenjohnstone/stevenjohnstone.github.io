@@ -60,7 +60,7 @@ so I have added the following to /etc/apparmor.d/local/usr.bin.firefox:</p>
 <span class="c1"># For more details, please see /etc/apparmor.d/local/README.</span>
 
 <span class="c1"># covers google and firebase credentials</span>
-deny @<span class="o">{</span>HOME<span class="o">}</span>/.config/ rmkl,
+deny @<span class="o">{</span>HOME<span class="o">}</span>/.config/ rwmkl,
 deny @<span class="o">{</span>HOME<span class="o">}</span>/.config/** rwmkl,
 <span class="c1"># aws has its own directory</span>
 deny @<span class="o">{</span>HOME<span class="o">}</span>/.aws/ rwmkl,
@@ -108,15 +108,15 @@ isn&rsquo;t enough to protect files in ~/.aws.</p>
 the user has root access. For example, by running</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">docker run -it -v /:/root alpine /bin/sh
 </code></pre></div><p>you drop into a shell as root with the host computer&rsquo;s root-filesystem available at /root.
-You can no do whatever you like to the system: steal files, reset passwords,
+You can now do whatever you like to the system: steal files, reset passwords,
 create backdoor accounts, modify local logs to hide the intrusion etc.</p>
 <p>With rootless-docker, the user in the container shell isn&rsquo;t root but the normal user account, even if &ldquo;whoami&rdquo; claims otherwise:</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">/ <span class="c1"># whoami</span>
+<pre><code>/ # whoami
 root
-/ <span class="c1"># cat /root/etc/shadow</span>
-cat: can<span class="s1">&#39;t open &#39;</span>/root/etc/shadow<span class="err">&#39;</span>: Permission denied
-/ <span class="c1"># </span>
-</code></pre></div><p>The user is called &ldquo;root&rdquo; but is mapped to our normal, unprivileged user account and so /root/etc/shadow is off limits.</p>
+/ # cat /root/etc/shadow
+cat: can't open '/root/etc/shadow': Permission denied
+/ # 
+</code></pre><p>The user is called &ldquo;root&rdquo; inside the container but is mapped to our normal, unprivileged user account and so /root/etc/shadow is off limits.</p>
 <p>Although rootless-docker is an improvement from a security point of view, AppArmor profile
 writers should be aware that access to the docker socket (/run/user/1000/docker.sock on my
 system) allows file access rules to be bypassed. In the running example of protecting ~/.aws,
